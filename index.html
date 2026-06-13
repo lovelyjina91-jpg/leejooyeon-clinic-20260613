@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>이주연 · 오답 클리닉 (중2 영어 Lesson 4 · Are You Money Smart?)</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#28344b;
+    --ink-soft:#dde3ef;
+    --teal:#1f9e8f;
+    --teal-soft:#d6efea;
+    --amber:#e0a02b;
+    --amber-soft:#f8ecd0;
+    --bg:#f3f5f8;
+    --card:#ffffff;
+    --text:#2b2f36;
+    --muted:#6b7280;
+    --kakao:#fee500;
+    --kakao-text:#3c1e1e;
+    --good:#0d9b63;
+    --bad:#e05656;
+    --line:#e6e9ef;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;line-height:1.6}
+  .screen{display:none;padding:24px 20px 80px;max-width:760px;margin:0 auto}
+  .screen.active{display:block}
+  h1{font-size:1.7rem;margin:0 0 6px;color:var(--ink);font-weight:900;letter-spacing:-0.5px}
+  h2{font-size:1.25rem;margin:0 0 12px;color:var(--ink);font-weight:800}
+  h3{font-size:1.05rem;margin:18px 0 8px;color:var(--teal);font-weight:800}
+  p{margin:0 0 10px}
+  .pill{display:inline-block;padding:4px 10px;border-radius:999px;font-size:.78rem;font-weight:700;margin-right:6px;margin-bottom:6px}
+  .pill.teal{background:var(--teal-soft);color:#0c6357}
+  .pill.amber{background:var(--amber-soft);color:#8a6310}
+  .pill.ink{background:var(--ink-soft);color:var(--ink)}
+
+  .header{
+    background:linear-gradient(135deg,var(--ink) 0%,#3a4a68 55%,var(--teal) 130%);
+    color:#fff;border-radius:22px;padding:22px 22px 26px;margin-bottom:18px;
+    box-shadow:0 10px 30px rgba(40,52,75,.22);
+  }
+  .header .who{font-size:.95rem;font-weight:700;opacity:.95;margin-bottom:4px}
+  .header h1{color:#fff;font-size:1.5rem}
+  .header .sub{font-size:.92rem;font-weight:500;opacity:.95}
+  .header .brand{display:inline-block;margin-top:10px;font-size:.78rem;font-weight:700;background:rgba(255,255,255,.18);padding:4px 12px;border-radius:999px;letter-spacing:.3px}
+
+  .card{background:var(--card);border-radius:18px;padding:18px 18px 16px;margin-bottom:14px;
+    box-shadow:0 4px 16px rgba(40,52,75,.06);border:1px solid var(--line)}
+  .card.accent-teal{border-left:6px solid var(--teal)}
+  .card.accent-amber{border-left:6px solid var(--amber)}
+  .card.accent-ink{border-left:6px solid var(--ink)}
+
+  .dialog{background:#f8fafc;border-radius:12px;padding:12px 14px;border:1px dashed #cdd5e2;font-size:.95rem;margin:8px 0}
+  .dialog .line{margin:3px 0}
+  .dialog .a{color:#1f6f9e;font-weight:700}
+  .dialog .b{color:#0c6357;font-weight:700}
+  .reading{background:#f8fafc;border-radius:12px;padding:12px 14px;border:1px dashed #cdd5e2;font-size:.95rem;margin:8px 0;line-height:1.8}
+  .reading .u{font-weight:800;color:var(--ink)}
+  .reading .cir{font-weight:800;color:var(--teal)}
+
+  .note{background:#fdf6e9;border-left:4px solid var(--amber);padding:10px 12px;border-radius:8px;font-size:.92rem;margin:10px 0}
+  .check{background:#eafaf2;border-left:4px solid var(--good);padding:10px 12px;border-radius:8px;font-size:.92rem;margin:10px 0}
+
+  .field{margin-top:10px}
+  .field label{display:block;font-size:.9rem;font-weight:700;color:var(--ink);margin-bottom:6px}
+  .field input{width:100%;padding:13px 14px;border:2px solid var(--line);border-radius:12px;font-size:1.05rem;font-family:inherit;background:#fafbfd}
+  .field input:focus{outline:none;border-color:var(--teal);background:#fff}
+
+  .btnrow{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+  .btn{flex:1;min-width:140px;padding:13px 18px;border:none;border-radius:14px;font-weight:800;font-size:1rem;cursor:pointer;font-family:inherit;transition:transform .08s ease, box-shadow .08s ease}
+  .btn:active{transform:translateY(1px)}
+  .btn.primary{background:var(--teal);color:#fff;box-shadow:0 6px 16px rgba(31,158,143,.32)}
+  .btn.primary:disabled{background:#b8c2cf;box-shadow:none;cursor:not-allowed}
+  .btn.ghost{background:#fff;color:var(--ink);border:2px solid var(--line)}
+  .btn.kakao{background:var(--kakao);color:var(--kakao-text);font-size:1.05rem;padding:16px;box-shadow:0 6px 16px rgba(254,229,0,.45)}
+
+  .progress{position:sticky;top:0;background:rgba(243,245,248,.92);backdrop-filter:blur(6px);padding:10px 0;z-index:10;margin-bottom:8px}
+  .progress .bar{height:8px;background:#e4e8ef;border-radius:4px;overflow:hidden}
+  .progress .fill{height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--amber));transition:width .3s ease}
+  .progress .label{font-size:.85rem;color:var(--muted);margin-bottom:4px;font-weight:700}
+
+  .qcard{background:#fff;border-radius:18px;padding:16px 18px;margin-bottom:14px;box-shadow:0 4px 14px rgba(40,52,75,.05);border:1px solid var(--line)}
+  .qcard .qmeta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+  .qcard .qnum{font-size:1.05rem;font-weight:900;color:var(--ink);margin-bottom:6px}
+  .qcard .qbody{font-size:.95rem;margin-bottom:10px}
+  .choices{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+  .choice{background:#fafbfd;border:2px solid #eceff3;border-radius:10px;padding:10px 12px;cursor:pointer;font-size:.95rem;transition:all .12s ease;display:flex;align-items:flex-start;gap:8px}
+  .choice .num{font-weight:800;color:var(--teal);min-width:18px}
+  .choice:hover{border-color:var(--teal-soft);background:#f3fbf9}
+  .choice.selected{border-color:var(--teal);background:var(--teal-soft);color:#0c5247}
+  .choice.locked{cursor:default;opacity:.9}
+  .feedback{margin-top:8px;font-size:.92rem;font-weight:700;padding:6px 10px;border-radius:8px;display:none}
+  .feedback.show{display:block}
+  .feedback.ok{background:#e6f9f0;color:#0a7a4e}
+  .feedback.ng{background:#fdeaea;color:#a83232}
+  .explanation{margin-top:10px;padding:11px 13px;border-radius:10px;background:var(--amber-soft);font-size:.92rem;color:#5b4500;display:none;border-left:4px solid var(--amber);line-height:1.8}
+  .explanation.show{display:block}
+  .explanation strong{color:#0c6357}
+
+  .scorebox{background:linear-gradient(135deg,var(--ink) 0%,var(--teal) 130%);color:#fff;border-radius:20px;padding:22px;text-align:center;margin-bottom:14px;box-shadow:0 8px 24px rgba(40,52,75,.25)}
+  .scorebox .big{font-size:2.6rem;font-weight:900;line-height:1.1}
+  .scorebox .sub{font-size:.95rem;opacity:.95}
+  .summary{background:#fff;border-radius:14px;padding:14px;margin-bottom:14px;border:1px solid var(--line)}
+  .summary .row{display:flex;justify-content:space-between;padding:5px 0;font-size:.95rem;border-bottom:1px dashed #eee}
+  .summary .row:last-child{border-bottom:none}
+  .summary .row b{color:var(--ink)}
+  .preview{background:#fafbfd;border-radius:12px;padding:14px;font-family:'Noto Sans KR',monospace;font-size:.85rem;white-space:pre-wrap;max-height:300px;overflow-y:auto;border:1px solid var(--line);line-height:1.55}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:30px;font-weight:700;font-size:.92rem;opacity:0;transition:all .25s ease;z-index:100;box-shadow:0 6px 20px rgba(0,0,0,.3)}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  .kbd{display:inline-block;background:#fff;border:1px solid #ccc;border-bottom-width:2px;border-radius:5px;padding:1px 7px;font-size:.8rem;font-family:monospace;font-weight:700;color:var(--ink)}
+  code.eng{background:#eef2f7;padding:2px 6px;border-radius:5px;font-family:'Courier New',monospace;font-size:.95em;color:var(--ink);font-weight:700}
+  .foot{text-align:center;font-size:.8rem;color:var(--muted);margin-top:20px}
+</style>
+</head>
+<body>
+
+<!-- ========== START SCREEN ========== -->
+<section id="screen-start" class="screen active">
+  <div class="header">
+    <div class="who">📘 이주연 학생 오답 클리닉</div>
+    <h1>중2 영어 Lesson 4 · Are You Money Smart?</h1>
+    <div class="sub">내신대비 오답 6문항 → 유사문제 12개로 완전 정복!</div>
+    <span class="brand">제공 · 영핏 지나티처</span>
+  </div>
+
+  <div class="card accent-teal">
+    <h2>🎯 오늘의 클리닉</h2>
+    <p>지난 시험에서 아쉽게 틀린 <b>6문제(7·8·12·14·15·16번)</b>를, 똑같은 개념의 <b>유사문제 2개씩(총 12문제)</b>로 다시 풀어볼 거예요.</p>
+    <p>한 문제씩 풀고 선택하면 바로 다음 문제로 넘어가요. <b>친절한 해설은 12문제를 모두 푼 뒤 한 번에 공개</b>됩니다 😊</p>
+  </div>
+
+  <div class="card accent-amber">
+    <h3>✍️ 시작하기 전에 — 이름을 적어주세요</h3>
+    <p style="font-size:.92rem;color:var(--muted);margin-bottom:4px">결과를 카톡으로 보낼 때 이름이 들어가요. 꼭 입력해 주세요!</p>
+    <div class="field">
+      <label for="studentName">학생 이름</label>
+      <input id="studentName" type="text" placeholder="예) 이주연" autocomplete="off" />
+    </div>
+  </div>
+
+  <div class="note">
+    ⌨️ <b>객관식</b>은 <span class="kbd">1</span>~<span class="kbd">5</span> 키로 선택하면 바로 채점되고 다음 문제로 넘어가요!
+  </div>
+
+  <button class="btn primary" id="startBtn" disabled>이름을 입력하면 시작돼요</button>
+</section>
+
+<!-- ========== QUIZ SCREEN ========== -->
+<section id="screen-quiz" class="screen">
+  <div class="progress">
+    <div class="label" id="progressLabel">진행 0 / 12</div>
+    <div class="bar"><div class="fill" id="progressFill"></div></div>
+  </div>
+
+  <div id="quizList"></div>
+
+  <div class="note" id="quizEndNote" style="display:none">
+    🎉 모든 문제를 풀었어요! 해설을 확인하고, 잠시 후 결과 화면으로 이동해요.
+  </div>
+</section>
+
+<!-- ========== RESULT SCREEN ========== -->
+<section id="screen-result" class="screen">
+  <div class="scorebox">
+    <div class="sub" id="resultName">학생 점수</div>
+    <div class="big" id="finalScore">0 / 12</div>
+    <div class="sub" id="finalRate">정답률 0%</div>
+  </div>
+
+  <div class="summary">
+    <div class="row"><span>총 문제 수</span><b>12문제</b></div>
+    <div class="row"><span>맞힌 문제</span><b id="finalCorrect">0개</b></div>
+    <div class="row"><span>틀린 문제</span><b id="finalWrong">0개</b></div>
+    <div class="row"><span>풀이 시간</span><b id="finalTime">0분</b></div>
+  </div>
+
+  <div class="card accent-teal">
+    <h2>💬 지나티처에게 보낼 카톡 메시지</h2>
+    <p style="font-size:.9rem;color:var(--muted)">아래 버튼을 누르면 메시지가 복사돼요. 카톡 열어서 붙여넣기!</p>
+    <button class="btn kakao" id="copyBtn">💬 카카오톡 메시지 복사하기</button>
+    <div style="margin-top:14px">
+      <div style="font-size:.85rem;font-weight:700;color:var(--muted);margin-bottom:6px">미리보기</div>
+      <div class="preview" id="kakaoPreview"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📚 풀이 다시 보기</h3>
+    <p style="font-size:.9rem">아래 버튼으로 모든 문제의 해설을 다시 볼 수 있어요.</p>
+    <button class="btn ghost" onclick="show('screen-quiz');window.scrollTo(0,0)">문제 화면으로 돌아가기</button>
+  </div>
+
+  <div class="foot">영핏 지나티처 · 이주연 오답 클리닉 · Lesson 4 Are You Money Smart?</div>
+</section>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============== DATA ==============
+const TEACHER = "지나티처";
+let STUDENT = "학생";
+
+const QUESTIONS = [
+  // ===== 원본 7번 · 문맥상 알맞은 어휘 (A)(B)(C) =====
+  {
+    id:1, type:"객관식", origin:"원본 7번", topic:"문맥상 알맞은 어휘",
+    body:`다음 글의 (A), (B), (C) 안에서 문맥에 맞는 낱말로 가장 적절한 것은?
+      <div class="reading">Hold on, Somi! Your <span class="cir">(A) [ budget / bucket ]</span> is 30 dollars, but you are buying a 40-dollar lipstick. The 40-dollar lipstick sounds <span class="cir">(B) [ cheap / expensive ]</span> only because the salesperson showed you a 50-dollar lipstick first. This is an example of the anchoring effect. Usually, the first piece of information becomes an 'anchor' and <span class="cir">(C) [ ignores / influences ]</span> the shopper's decision.</div>`,
+    choices:[
+      "(A) bucket — (B) cheap — (C) influences",
+      "(A) budget — (B) cheap — (C) influences",
+      "(A) budget — (B) expensive — (C) ignores",
+      "(A) bucket — (B) expensive — (C) influences",
+      "(A) budget — (B) cheap — (C) ignores"
+    ],
+    answer:2,
+    explanation:"<strong>(A) budget</strong>(예산) — '양동이(bucket)'가 아니라 쓸 수 있는 돈, 즉 예산이에요. <strong>(B) cheap</strong>(싸게) — 50달러를 먼저 보여줬기 때문에 40달러가 '싸게' 느껴진 거예요. 비싸게(expensive) 느껴졌다면 안 샀겠죠. <strong>(C) influences</strong>(영향을 준다) — 처음 본 정보(앵커)가 결정에 '영향을 준다'는 게 글의 핵심! ignores(무시한다)는 정반대예요. 그래서 정답은 ② budget–cheap–influences 😊"
+  },
+  {
+    id:2, type:"객관식", origin:"원본 7번", topic:"문맥상 알맞은 어휘",
+    body:`다음 글의 (A), (B), (C) 안에서 문맥에 맞는 낱말로 가장 적절한 것은?
+      <div class="reading">You only want the dress because you saw it again and again on social media. Information about a product can <span class="cir">(A) [ spread / stop ]</span> quickly and widely on the Internet, just like a 'virus.' If a product becomes <span class="cir">(B) [ hot / cold ]</span> on social media, people naturally want to have it. But remember that a popular product isn't always <span class="cir">(C) [ right / wrong ]</span> for you.</div>`,
+    choices:[
+      "(A) spread — (B) hot — (C) right",
+      "(A) stop — (B) hot — (C) right",
+      "(A) spread — (B) cold — (C) wrong",
+      "(A) spread — (B) hot — (C) wrong",
+      "(A) stop — (B) cold — (C) right"
+    ],
+    answer:1,
+    explanation:"<strong>(A) spread</strong>(퍼지다) — 바이러스처럼 '퍼진다'고 했으니 stop(멈추다)은 어색해요. <strong>(B) hot</strong>(인기 있는) — 소셜미디어에서 'hot'해지면(뜨면) 사람들이 갖고 싶어 하죠. cold는 반대! <strong>(C) right</strong> — 'isn't always <u>right</u> for you'(항상 너에게 맞는 것은 아니다)가 글의 교훈이에요. 정답은 ① spread–hot–right 입니다 👍"
+  },
+
+  // ===== 원본 8번 · 문맥상 어색한 낱말 찾기 =====
+  {
+    id:3, type:"객관식", origin:"원본 8번", topic:"문맥상 어색한 낱말",
+    body:`다음 글의 밑줄 친 ①~⑤ 중, 문맥상 낱말의 쓰임이 적절하지 <b>않은</b> 것은?
+      <div class="reading">Do you think you are a <span class="u">① smart</span> shopper? There are various marketing strategies which <span class="u">② influence</span> your decisions. "The sale ends in two hours! If I don't buy these sneakers now, I'll have to pay a <span class="u">③ higher</span> price later." Stop! You only want them because you don't want to <span class="u">④ miss</span> the sale. If people can buy a product only for an <span class="u">⑤ unlimited</span> time, they often feel 'hungry' for it.</div>`,
+    choices:[
+      "① smart",
+      "② influence",
+      "③ higher",
+      "④ miss",
+      "⑤ unlimited"
+    ],
+    answer:5,
+    explanation:"헝거 마케팅(hunger marketing)은 '<b>한정된(limited)</b> 시간'에만 살 수 있게 해서 사람들을 조급하게 만드는 전략이에요. 그런데 ⑤ <code class='eng'>unlimited</code>(무제한)은 '시간이 무한정 있다'는 뜻이라 정반대! <code class='eng'>limited</code>로 바꿔야 자연스러워요. ① smart(똑똑한), ② influence(영향을 주다), ③ higher(더 높은 가격 → 지금 안 사면 손해라는 압박), ④ miss(세일을 놓치다)는 모두 알맞아요. 정답 ⑤ 😊"
+  },
+  {
+    id:4, type:"객관식", origin:"원본 8번", topic:"문맥상 어색한 낱말",
+    body:`다음 글의 밑줄 친 ①~⑤ 중, 문맥상 낱말의 쓰임이 적절하지 <b>않은</b> 것은?
+      <div class="reading">You only want the dress because you saw it <span class="u">① again</span> and again on social media. Information about a product can <span class="u">② spread</span> quickly and widely, just like a 'virus.' If a product becomes <span class="u">③ hot</span> on social media, people naturally want to have it. But a popular product is <span class="u">④ always</span> right for you. So think <span class="u">⑤ carefully</span> before you buy.</div>`,
+    choices:[
+      "① again",
+      "② spread",
+      "③ hot",
+      "④ always",
+      "⑤ carefully"
+    ],
+    answer:4,
+    explanation:"이 글의 핵심 교훈은 '유행하는 제품이 <b>항상</b> 너에게 맞는 건 <b>아니다</b>(isn't <u>always</u> right)'예요. 그런데 ④처럼 그냥 <code class='eng'>always right</code>(항상 옳다)이라고 하면 글의 뜻과 정반대가 돼요. <code class='eng'>isn't always right</code>(항상 맞는 건 아니다)가 되어야 자연스럽죠. ① again(반복해서), ② spread(퍼지다), ③ hot(인기 있는), ⑤ carefully(신중하게)는 모두 알맞아요. 정답 ④!"
+  },
+
+  // ===== 원본 12번 · 글의 제목 =====
+  {
+    id:5, type:"객관식", origin:"원본 12번", topic:"글의 제목",
+    body:`다음 글의 제목으로 가장 적절한 것은?
+      <div class="reading">Information about a product can spread quickly and widely on the Internet, just like a 'virus.' If a product becomes hot on social media, people naturally want to have it. Yuna, just remember that a popular product isn't always right for you.</div>`,
+    choices:[
+      "Viral Marketing: Why We Want Popular Items",
+      "The Best Social Media Sites for Buying Gifts",
+      "The Danger of Computer Viruses on the Internet",
+      "Why You Should Always Follow Popular Fashion",
+      "How to Buy a Cheap Lipstick for Your Family"
+    ],
+    answer:1,
+    explanation:"글 전체가 '<b>인기 있는 제품을 왜 갖고 싶어지는가(바이럴 마케팅)</b>'를 설명하고 있어요. 그래서 제목은 ① <code class='eng'>Viral Marketing: Why We Want Popular Items</code>! ③의 'virus'는 진짜 컴퓨터 바이러스가 아니라 '바이러스처럼 퍼진다'는 비유라서 함정이에요. ④는 글의 교훈(유행을 무조건 따르지 말라)과 반대라 오답이에요 😊"
+  },
+  {
+    id:6, type:"객관식", origin:"원본 12번", topic:"글의 제목",
+    body:`다음 글의 제목으로 가장 적절한 것은?
+      <div class="reading">The 40-dollar lipstick sounds cheap only because the salesperson showed you a 50-dollar lipstick first. The first price you hear becomes an 'anchor' and influences your decision. Don't just rely on the first piece of information given to you!</div>`,
+    choices:[
+      "The Anchor Price: How the First Price Tricks You",
+      "The Best Lipstick Brands for Teenagers",
+      "How to Get a Big Discount at Every Store",
+      "Why Salespeople Are Always Honest with Us",
+      "The Cheapest Way to Buy Cosmetics Online"
+    ],
+    answer:1,
+    explanation:"글이 '<b>처음 들은 가격(앵커)이 어떻게 우리 판단을 속이는가</b>'를 설명하므로 제목은 ① <code class='eng'>The Anchor Price: How the First Price Tricks You</code>가 딱 맞아요. 립스틱 브랜드(②), 할인 방법(③), 화장품 구매(⑤)는 글의 일부 단어만 보고 고르면 빠지는 함정이에요. 글 '전체 주제'를 담은 제목을 골라야 해요!"
+  },
+
+  // ===== 원본 14번 · 답할 수 없는 질문 =====
+  {
+    id:7, type:"객관식", origin:"원본 14번", topic:"독해 · 답할 수 없는 질문",
+    body:`다음 글을 읽고 <b>답할 수 없는</b> 질문을 고르시오.
+      <div class="reading">Wait, Yuna! You only want the dress because you saw it again and again on social media. There are a lot of people who fall for a viral marketing strategy. Information about a product can spread quickly and widely on the Internet, just like a 'virus.' If a product becomes hot on social media, people naturally want to have it.</div>`,
+    choices:[
+      "Why does Yuna want the dress?",
+      "What does information about a product spread like?",
+      "Is Yuna the only person who falls for viral marketing?",
+      "How much does the dress cost?",
+      "Where did Yuna see the dress many times?"
+    ],
+    answer:4,
+    explanation:"본문에서 ① 이유(소셜미디어에서 반복해서 봐서), ② 무엇처럼 퍼지는지(virus처럼), ③ 유나만 그런 건 아님(a lot of people), ⑤ 어디서 봤는지(social media)는 모두 찾을 수 있어요. 하지만 ④ <b>드레스 가격(how much)</b>은 글 어디에도 나오지 않아요. 그래서 '답할 수 없는 질문'은 ④ 입니다 😊"
+  },
+  {
+    id:8, type:"객관식", origin:"원본 14번", topic:"독해 · 답할 수 없는 질문",
+    body:`다음 글을 읽고 <b>답할 수 없는</b> 질문을 고르시오.
+      <div class="reading">Stop, Junho! You're buying the sneakers just because you don't want to miss the sale. You're falling for a hunger marketing strategy. If people can buy a product only for a limited time, they often feel 'hungry' for it. About missing the sale, don't worry — you'll soon see a similar sale again.</div>`,
+    choices:[
+      "What is Junho buying?",
+      "Why does Junho want to buy the sneakers now?",
+      "What marketing strategy is Junho falling for?",
+      "How much do the sneakers cost?",
+      "Will there be a similar sale again?"
+    ],
+    answer:4,
+    explanation:"① 무엇을 사는지(sneakers), ② 지금 사려는 이유(세일을 놓치기 싫어서), ③ 어떤 전략인지(hunger marketing), ⑤ 비슷한 세일이 또 있는지(soon see a similar sale again)는 모두 본문에 있어요. 하지만 ④ <b>운동화 가격</b>은 나오지 않아요. 정답은 ④! '글에 적힌 정보'만으로 답할 수 있는지 하나씩 확인하면 쉬워요 👍"
+  },
+
+  // ===== 원본 15번 · 빈칸 추론 =====
+  {
+    id:9, type:"객관식", origin:"원본 15번", topic:"빈칸 추론",
+    body:`다음 글의 빈칸에 들어갈 말로 가장 적절한 것을 고르시오.
+      <div class="reading">Do you think you are a smart shopper? You may think you are, but hold on! There are various marketing strategies which influence your decisions. <span class="u">_______________.</span> What? The sale ends in two hours? If I don't buy the sneakers now, I will have to buy them at a higher price...</div>`,
+    choices:[
+      "So you should never go shopping again",
+      "Learning about them will make you a smarter shopper",
+      "Expensive products are always the best choice",
+      "You should buy things as fast as you can",
+      "Marketing has nothing to do with you"
+    ],
+    answer:2,
+    explanation:"앞에서 '여러 마케팅 전략이 우리 결정에 영향을 준다'고 했어요. 그럼 자연스러운 다음 말은 '<b>그것들을 알면 더 똑똑한 소비자가 된다</b>' → ② <code class='eng'>Learning about them will make you a smarter shopper</code> 예요. ①(다신 쇼핑하지 마라), ④(빨리 사라)는 글의 목적(똑똑한 소비)과 어긋나고, ③·⑤도 흐름과 맞지 않아요. 정답 ② 😊"
+  },
+  {
+    id:10, type:"객관식", origin:"원본 15번", topic:"빈칸 추론",
+    body:`다음 글의 빈칸에 들어갈 말로 가장 적절한 것을 고르시오.
+      <div class="reading">The 40-dollar lipstick sounds cheap only because the salesperson showed you a 50-dollar lipstick first. This is the anchoring effect — the first price became an 'anchor.' Somi, <span class="u">_______________.</span></div>`,
+    choices:[
+      "always trust the first price you hear",
+      "don't just rely on the first piece of information given to you",
+      "you must buy two lipsticks to save money",
+      "the salesperson is your best friend",
+      "a 50-dollar lipstick is the cheapest one"
+    ],
+    answer:2,
+    explanation:"글은 '처음 들은 가격(앵커)에 속지 말라'는 내용이에요. 그러니 결론은 ② '<b>처음 주어진 정보에만 의존하지 마라</b>'(don't just rely on the first piece of information)가 자연스러워요. ①(처음 가격을 항상 믿어라)은 정반대 함정! ③·④·⑤는 글에 근거가 없어요. 정답 ② 입니다 👍"
+  },
+
+  // ===== 원본 16번 · 흐름과 무관한 문장 =====
+  {
+    id:11, type:"객관식", origin:"원본 16번", topic:"흐름과 무관한 문장",
+    body:`다음 글에서 전체 흐름과 <b>관계가 없는</b> 문장은?
+      <div class="reading">Wait, Yuna! You only want the dress because you saw it again and again on social media. <span class="u">①</span> There are a lot of people who fall for a viral marketing strategy. <span class="u">②</span> Information about a product can spread quickly and widely, just like a 'virus.' <span class="u">③</span> My favorite subject at school is math. <span class="u">④</span> If a product becomes hot on social media, people naturally want to have it. <span class="u">⑤</span> So remember that a popular product isn't always right for you.</div>`,
+    choices:[
+      "① There are a lot of people who fall for a viral marketing strategy.",
+      "② Information about a product can spread quickly and widely, just like a 'virus.'",
+      "③ My favorite subject at school is math.",
+      "④ If a product becomes hot on social media, people naturally want to have it.",
+      "⑤ So remember that a popular product isn't always right for you."
+    ],
+    answer:3,
+    explanation:"글 전체는 '<b>바이럴 마케팅</b>'을 설명하고 있어요. 그런데 ③ '내가 학교에서 가장 좋아하는 과목은 수학이다'는 마케팅과 전혀 상관없는 엉뚱한 문장이죠. 이렇게 '흐름과 무관한 문장' 문제는 <b>주제(여기선 바이럴 마케팅)와 관계없는 문장</b>을 찾으면 돼요. 정답 ③ 😊"
+  },
+  {
+    id:12, type:"객관식", origin:"원본 16번", topic:"흐름과 무관한 문장",
+    body:`다음 글에서 전체 흐름과 <b>관계가 없는</b> 문장은?
+      <div class="reading">Stop, Junho! <span class="u">①</span> You're buying the sneakers just because you don't want to miss the sale. <span class="u">②</span> You're falling for a hunger marketing strategy. <span class="u">③</span> If people can buy a product only for a limited time, they often feel 'hungry' for it. <span class="u">④</span> My brother can run very fast in his new sneakers. <span class="u">⑤</span> About missing the sale, don't worry — you'll soon see a similar sale again.</div>`,
+    choices:[
+      "① You're buying the sneakers just because you don't want to miss the sale.",
+      "② You're falling for a hunger marketing strategy.",
+      "③ If people can buy a product only for a limited time, they often feel 'hungry' for it.",
+      "④ My brother can run very fast in his new sneakers.",
+      "⑤ About missing the sale, don't worry — you'll soon see a similar sale again."
+    ],
+    answer:4,
+    explanation:"글의 주제는 '<b>헝거 마케팅</b>'이에요. ④ '내 형은 새 운동화를 신고 아주 빨리 달릴 수 있다'는 운동화가 등장하긴 하지만 마케팅 이야기와는 관계없는 문장이에요. 같은 단어(sneakers)가 나온다고 방심하면 함정에 빠져요! 주제와 연결되는지 보면 ④가 동떨어져 있죠. 정답 ④ 👍"
+  }
+];
+
+// ============== STATE ==============
+let state = { answers:{}, correct:{}, startTime:null, endTime:null };
+
+// ============== NAV ==============
+function show(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ============== START (name required) ==============
+const nameInput = document.getElementById('studentName');
+const startBtn = document.getElementById('startBtn');
+function refreshStart(){
+  const ok = nameInput.value.trim().length > 0;
+  startBtn.disabled = !ok;
+  startBtn.textContent = ok ? '클리닉 시작하기 →' : '이름을 입력하면 시작돼요';
+}
+nameInput.addEventListener('input', refreshStart);
+nameInput.addEventListener('keydown', e => { if(e.key==='Enter' && nameInput.value.trim()) startQuiz(); });
+
+function startQuiz(){
+  const name = nameInput.value.trim();
+  if(!name){ showToast('이름을 먼저 입력해 주세요 ✍️'); nameInput.focus(); return; }
+  STUDENT = name;
+  state.startTime = Date.now();
+  renderQuiz();
+  show('screen-quiz');
+}
+
+// ============== QUIZ RENDERING ==============
+function renderQuiz(){
+  const list = document.getElementById('quizList');
+  list.innerHTML = '';
+  QUESTIONS.forEach((q) => {
+    const card = document.createElement('div');
+    card.className = 'qcard';
+    card.id = 'q' + q.id;
+    let meta = `<div class="qmeta">
+      <span class="pill teal">객관식</span>
+      <span class="pill ink">${q.origin}</span>
+      <span class="pill amber">${q.topic}</span>
+    </div>`;
+    let inner = `${meta}<div class="qnum">문제 ${q.id} / 12</div><div class="qbody">${q.body}</div>`;
+    inner += `<div class="choices">`;
+    q.choices.forEach((c,i) => {
+      inner += `<div class="choice" data-idx="${i+1}" onclick="answerChoice(${q.id}, ${i+1})">
+        <span class="num">${i+1}.</span><span>${escapeHtml(c)}</span></div>`;
+    });
+    inner += `</div>
+    <div class="feedback" id="fb${q.id}"></div>
+    <div class="explanation" id="ex${q.id}"></div>`;
+    card.innerHTML = inner;
+    list.appendChild(card);
+  });
+}
+
+function escapeHtml(s){
+  return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// ============== ANSWER HANDLING ==============
+// 객관식: 선택 즉시 채점 → 0.25초 뒤 자동으로 다음 문제로
+function answerChoice(qid, idx){
+  if(state.answers[qid] !== undefined) return;
+  const card = document.getElementById('q'+qid);
+  card.querySelectorAll('.choice').forEach(c => c.classList.remove('selected'));
+  card.querySelector(`.choice[data-idx="${idx}"]`).classList.add('selected');
+  const q = QUESTIONS.find(x => x.id === qid);
+  const ok = (idx === q.answer);
+  state.answers[qid] = idx;
+  state.correct[qid] = ok;
+  card.querySelectorAll('.choice').forEach(c => c.classList.add('locked'));
+  const fb = card.querySelector('#fb'+qid);
+  fb.className = 'feedback show ' + (ok ? 'ok':'ng');
+  fb.textContent = ok ? '정답! 🎉 (해설은 다 푼 뒤 공개)' : '체크 완료 ✏️ (해설은 다 푼 뒤 공개)';
+  afterAnswer();
+  if(Object.keys(state.answers).length < QUESTIONS.length){
+    setTimeout(() => scrollToNext(qid), 250);
+  }
+}
+
+// 다음 미답 문제로 부드럽게 이동
+function scrollToNext(qid){
+  const ids = QUESTIONS.map(q => q.id);
+  const i = ids.indexOf(qid);
+  let target = null;
+  for(let j=i+1; j<ids.length; j++){ if(state.answers[ids[j]]===undefined){ target=ids[j]; break; } }
+  if(target===null){ for(let j=0; j<i; j++){ if(state.answers[ids[j]]===undefined){ target=ids[j]; break; } } }
+  if(target===null) return;
+  const el = document.getElementById('q'+target);
+  if(!el) return;
+  el.scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+function afterAnswer(){
+  const total = QUESTIONS.length;
+  const done = Object.keys(state.answers).length;
+  document.getElementById('progressLabel').textContent = `진행 ${done} / ${total}`;
+  document.getElementById('progressFill').style.width = (done/total*100) + '%';
+  if(done === total){
+    state.endTime = Date.now();
+    QUESTIONS.forEach(q => {
+      const ex = document.getElementById('ex'+q.id);
+      const correctAns = q.choices[q.answer-1];
+      ex.innerHTML = `<strong>✅ 정답: ${escapeHtml(correctAns)}</strong><br>${q.explanation}`;
+      ex.classList.add('show');
+    });
+    document.getElementById('quizEndNote').style.display = 'block';
+    setTimeout(showResult, 1600);
+  }
+}
+
+// ============== RESULT ==============
+function showResult(){
+  const total = QUESTIONS.length;
+  const correct = Object.values(state.correct).filter(v => v).length;
+  const wrong = total - correct;
+  const rate = Math.round(correct/total*100);
+  const minutes = Math.max(1, Math.round((state.endTime - state.startTime)/60000));
+  document.getElementById('resultName').textContent = `${STUDENT} 학생 점수`;
+  document.getElementById('finalScore').textContent = `${correct} / ${total}`;
+  document.getElementById('finalRate').textContent = `정답률 ${rate}%`;
+  document.getElementById('finalCorrect').textContent = `${correct}개`;
+  document.getElementById('finalWrong').textContent = `${wrong}개`;
+  document.getElementById('finalTime').textContent = `${minutes}분`;
+  document.getElementById('kakaoPreview').textContent = buildMessage(correct, total, wrong, rate, minutes);
+  show('screen-result');
+}
+
+function buildMessage(correct, total, wrong, rate, minutes){
+  let msg = `안녕하세요 ${TEACHER}님! 🌸\n\n`;
+  if(rate === 100) msg += `와! ${STUDENT} 학생, 변형문제를 전부 다 맞혔어요!! 정말 대단해요 🌟\n\n`;
+  else if(rate >= 80) msg += `${STUDENT} 학생 정말 잘했어요! 거의 다 맞혔네요 👍\n\n`;
+  else if(rate >= 60) msg += `${STUDENT} 학생 잘 풀었어요! 몇 개만 더 보면 완벽해요 💪\n\n`;
+  else if(rate >= 40) msg += `${STUDENT} 학생, 끝까지 푼 게 정말 멋져요! 오답 같이 보면 금방 늘어요 🌱\n\n`;
+  else msg += `어려운 부분 끝까지 푼 ${STUDENT} 학생, 박수! 같이 차근차근 봐요 🤗\n\n`;
+
+  msg += `📊 오답 클리닉 결과 (중2 영어 Lesson 4 · Are You Money Smart?)\n`;
+  msg += `━━━━━━━━━━━━━━━\n`;
+  msg += `학생: ${STUDENT}\n`;
+  msg += `총 문제: ${total}개\n`;
+  msg += `정답: ${correct}개 / 오답: ${wrong}개\n`;
+  msg += `풀이 시간: ${minutes}분\n`;
+  msg += `정답률: ${rate}%\n`;
+  msg += `━━━━━━━━━━━━━━━\n\n`;
+
+  if(correct === total){
+    msg += `🎉🎉 모든 문제를 다 맞혔어요!! 🎉🎉\n${STUDENT} 학생 정말 자랑스러워요 ✨\n\n`;
+  } else {
+    msg += `📝 오답 정리\n\n`;
+    QUESTIONS.forEach(q => {
+      if(state.correct[q.id]) return;
+      const myAns = state.answers[q.id];
+      const correctAns = q.choices[q.answer-1];
+      const myAnsText = `${myAns}번 (${q.choices[myAns-1]})`;
+      msg += `❌ 문제 ${q.id} [${q.origin}]\n`;
+      msg += `유형: ${q.topic}\n`;
+      msg += `📝 ${STUDENT} 답: ${myAnsText}\n`;
+      msg += `✅ 정답: ${correctAns}\n`;
+      msg += `💡 해설: ${stripHtml(q.explanation)}\n`;
+      msg += `👉 다음엔 꼭 맞힐 수 있어요!\n`;
+      msg += `━━━━━━━━━━━━━━━\n\n`;
+    });
+  }
+  msg += `오늘도 수고 많았어요~ 😊\n- 영핏 지나티처`;
+  return msg;
+}
+
+function stripHtml(s){
+  return s.replace(/<[^>]+>/g,'').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&').replace(/&#39;/g,"'").replace(/&quot;/g,'"');
+}
+
+// ============== COPY ==============
+function copyMessage(){
+  const text = document.getElementById('kakaoPreview').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('메시지가 복사됐어요! 카톡에 붙여넣기 하세요 📋');
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    showToast('메시지가 복사됐어요! 카톡에 붙여넣기 하세요 📋');
+  });
+}
+
+function showToast(text){
+  const t = document.getElementById('toast');
+  t.textContent = text; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+// ============== KEYBOARD ==============
+document.addEventListener('keydown', e => {
+  const quiz = document.getElementById('screen-quiz');
+  if(!quiz.classList.contains('active')) return;
+  const cards = Array.from(document.querySelectorAll('.qcard'));
+  const center = window.innerHeight/2;
+  let best=null, bestDist=Infinity;
+  cards.forEach(c => {
+    const q = QUESTIONS.find(x => x.id === parseInt(c.id.slice(1)));
+    if(state.answers[q.id] !== undefined) return;
+    const rect = c.getBoundingClientRect();
+    if(rect.bottom < 0 || rect.top > window.innerHeight) return;
+    const dist = Math.abs((rect.top+rect.bottom)/2 - center);
+    if(dist < bestDist){ bestDist=dist; best=q; }
+  });
+  if(!best) return;
+  if(/^[1-5]$/.test(e.key)){
+    const n = parseInt(e.key);
+    if(n <= best.choices.length){ e.preventDefault(); answerChoice(best.id, n); }
+  }
+});
+
+// ============== INIT ==============
+startBtn.addEventListener('click', startQuiz);
+document.getElementById('copyBtn').addEventListener('click', copyMessage);
+refreshStart();
+</script>
+<!-- 영핏 지나티처 · 이주연 오답 클리닉 · Lesson 4 · auto-advance 0.25s -->
+</body>
+</html>
