@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>장새봄 부사 마스터 클리닉 — 영핏 지나티처</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; background: #eef4f3; color: #2d3436; min-height: 100vh; display: flex; justify-content: center; padding: 20px 14px; }
+  .wrap { width: 100%; max-width: 560px; }
+  .card { background: #fff; border-radius: 16px; padding: 26px 22px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 14px; }
+  h1 { font-size: 1.3rem; color: #2e7d6e; margin-bottom: 6px; }
+  .sub { font-size: 0.9rem; color: #6b7b78; margin-bottom: 16px; line-height: 1.55; }
+  .badge-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; }
+  .badge { font-size: 0.78rem; background: #e3f0ed; color: #2e7d6e; border-radius: 999px; padding: 5px 11px; font-weight: bold; }
+  input[type=text] { width: 100%; padding: 13px; font-size: 1.05rem; border: 1.5px solid #c6d4d1; border-radius: 10px; outline-color: #2e7d6e; }
+  .btn { display: block; width: 100%; margin-top: 14px; padding: 14px; font-size: 1.05rem; font-weight: bold; color: #fff; background: #2e7d6e; border: none; border-radius: 10px; cursor: pointer; }
+  .btn:disabled { background: #b8c4c2; cursor: default; }
+  .btn.ghost { background: #fff; color: #2e7d6e; border: 1.5px solid #2e7d6e; }
+  .progress-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .progress { font-size: 0.85rem; color: #6b7b78; font-weight: bold; }
+  .sec-badge { font-size: 0.76rem; background: #2e7d6e; color: #fff; border-radius: 999px; padding: 4px 10px; font-weight: bold; }
+  .bar { height: 6px; background: #e0e9e7; border-radius: 3px; overflow: hidden; margin-bottom: 16px; }
+  .bar > div { height: 100%; background: #2e7d6e; width: 0; transition: width 0.25s; }
+  .qtext { font-size: 1.06rem; line-height: 1.65; margin-bottom: 6px; font-weight: bold; }
+  .ko { font-size: 0.9rem; color: #4a7a6f; margin-bottom: 14px; font-weight: bold; }
+  .choice { display: block; width: 100%; text-align: left; padding: 13px 14px; margin-bottom: 9px; font-size: 0.98rem; line-height: 1.45; background: #f6f9f8; border: 1.5px solid #dde5e3; border-radius: 10px; cursor: pointer; font-family: inherit; color: inherit; }
+  .choice.sel { background: #dff0ec; border-color: #2e7d6e; }
+  .num { color: #2e7d6e; font-weight: bold; margin-right: 6px; }
+  .hint-key { font-size: 0.78rem; color: #9ab0ac; text-align: center; margin-top: 4px; }
+  .score-big { font-size: 2.1rem; font-weight: bold; color: #2e7d6e; text-align: center; margin: 12px 0 4px; }
+  .cheer { text-align: center; font-size: 0.95rem; color: #4a5a57; margin-bottom: 14px; line-height: 1.6; }
+  .exp { background: #f6f9f8; border-left: 4px solid #2e7d6e; border-radius: 8px; padding: 13px 14px; margin-bottom: 10px; font-size: 0.92rem; line-height: 1.62; }
+  .exp.wrong { border-left-color: #d96a4f; background: #fdf6f4; }
+  .exp b { color: #2e7d6e; }
+  .exp.wrong b { color: #c05a41; }
+  .exp .sent { font-weight: bold; }
+  .sec-head { font-size: 0.95rem; font-weight: bold; color: #2e7d6e; margin: 18px 0 8px; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- 시작 화면 -->
+  <div class="card" id="start-card">
+    <h1>🌿 장새봄 부사 마스터 클리닉</h1>
+    <p class="sub">초6 상위권 도전! 🔥 이번에 헷갈렸던 부사 개념 5가지를 완전히 내 것으로 만드는 시간이에요.<br>총 25문제 · 제공: <b>영핏 지나티처</b></p>
+    <div class="badge-row">
+      <span class="badge">-ly 없이 쓰는 부사</span>
+      <span class="badge">형용사+ly</span>
+      <span class="badge">be동사 뒤엔 형용사</span>
+      <span class="badge">동사 꾸밀 땐 부사</span>
+      <span class="badge">불규칙 과거형</span>
+    </div>
+    <input type="text" id="name-input" placeholder="이름을 입력해야 시작할 수 있어요" maxlength="20" autocomplete="off">
+    <button class="btn" id="start-btn" disabled>시작하기</button>
+  </div>
+
+  <!-- 문제 화면 -->
+  <div class="card hidden" id="quiz-card">
+    <div class="progress-row">
+      <span class="progress" id="progress"></span>
+      <span class="sec-badge" id="sec-badge"></span>
+    </div>
+    <div class="bar"><div id="bar-fill"></div></div>
+    <div class="qtext" id="qtext"></div>
+    <div class="ko" id="ko-line"></div>
+    <div id="choices"></div>
+    <p class="hint-key">숫자키 1~5로도 답을 고를 수 있어요</p>
+  </div>
+
+  <!-- 결과 화면 -->
+  <div class="card hidden" id="result-card">
+    <h1>수고했어요, <span id="result-name"></span>! 🎉</h1>
+    <div class="score-big" id="score-line"></div>
+    <p class="cheer" id="cheer-line"></p>
+    <button class="btn" id="kakao-btn">📋 결과 복사하기 (지나티처에게 카톡으로 보내주세요!)</button>
+    <div style="margin-top:22px">
+      <p class="sub" style="margin-bottom:4px">📝 전체 해설 — 천천히 읽어보면 실력이 쑥쑥!</p>
+      <div id="explanations"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+"use strict";
+
+/* ══════ 결과 자동 전송 (영핏 공통 · 조용히 실행) ══════ */
+var ENGFIT_SUBMIT_URL = "https://script.google.com/macros/s/AKfycbz5IC3cEtaBGW10qZhrjwtjdtGugmcmYb4ZTHS4k-1LOqTRYzW-LfoAPyFB_ShjAqNp/exec";
+
+async function engfitSubmit(r) {
+  var body = JSON.stringify(r);
+  try {
+    var res = await fetch(ENGFIT_SUBMIT_URL, { method: "POST", body: body });
+    var j = await res.json();
+    return j.ok === true;
+  } catch (e) {
+    try {
+      await fetch(ENGFIT_SUBMIT_URL, { method: "POST", mode: "no-cors", body: body });
+      return true;
+    } catch (e2) { return false; }
+  }
+}
+var _engfitSent = false;
+function engfitSubmitSilently(r) {
+  if (_engfitSent) return; _engfitSent = true;
+  try { engfitSubmit(r); } catch (e) {}
+}
+
+/* ══════ 문제 데이터 ══════ */
+var SECTIONS = [
+  "PART 1 · -ly 없이 쓰는 부사",
+  "PART 2 · 형용사+ly = 부사",
+  "PART 3 · be동사·감각동사 뒤엔 형용사",
+  "PART 4 · 동사를 꾸밀 땐 부사",
+  "PART 5 · 불규칙 동사 과거형"
+];
+
+var QUESTIONS = [
+  /* ── PART 1: 원본 48번 (too fastly) ── */
+  { sec: 0, q: "다음 중 어법상 <u>잘못된</u> 문장은?",
+    choices: ["The bird flies high in the sky.", "He studied hard for the test.", "She came home late last night.", "The rabbit runs fastly.", "I get up early every morning."],
+    answer: "The rabbit runs fastly.",
+    exp: "<span class='sent'>fastly라는 단어는 영어에 아예 없어요!</span> fast는 형용사(빠른)와 부사(빠르게)의 모양이 똑같은 특별한 단어라서 <b>runs fast</b>라고 그대로 써요. 시험에서도 \"speaks too fastly\"가 바로 이 함정이었죠. high(높이), hard(열심히), late(늦게), early(일찍)도 모두 -ly 없이 그대로 부사로 쓰는 친구들이에요." },
+  { sec: 0, q: "Kangaroos can jump really ______.", ko: "캥거루는 정말 높이 뛸 수 있다.",
+    choices: ["high", "highly", "height", "tall", "heighten"],
+    answer: "high",
+    exp: "'높이' 뛴다처럼 <b>실제 높이</b>를 말할 때는 high를 그대로 부사로 써요. <span class='sent'>highly는 '매우, 대단히'라는 전혀 다른 뜻</span>이에요(highly recommend = 강력 추천). height는 명사(높이), tall은 형용사(키가 큰)라서 jump를 꾸밀 수 없어요. \"Jason can jump high\"가 맞는 문장이었던 것 기억나죠?" },
+  { sec: 0, q: "Jacob studied ______ to pass the exam.", ko: "Jacob은 시험에 합격하기 위해 열심히 공부했다.",
+    choices: ["hard", "hardly", "hardful", "more hard", "hardness"],
+    answer: "hard",
+    exp: "hard는 '열심히'라는 부사로 <b>-ly 없이 그대로</b> 써요. 여기서 제일 위험한 함정은 hardly! <span class='sent'>hardly는 '거의 ~않다'라는 부정의 뜻</span>이라 He hardly studied라고 하면 '그는 거의 공부를 안 했다'가 되어 뜻이 반대가 돼요. 시험에서 이 문제(49번)를 맞혔으니, hardly 함정까지 알아두면 완벽!" },
+  { sec: 0, q: "The bus arrived ______ because of the heavy snow.", ko: "버스는 폭설 때문에 늦게 도착했다.",
+    choices: ["late", "lately", "lateness", "later than", "latey"],
+    answer: "late",
+    exp: "late도 형용사(늦은)와 부사(늦게)의 모양이 같은 단어예요. → <b>arrived late</b>. <span class='sent'>lately는 '최근에'라는 전혀 다른 뜻!</span> (I've been busy lately = 나 요즘 바빴어.) \"she sometimes comes late\"가 맞는 문장이었던 것과 같은 원리예요." },
+  { sec: 0, q: "다음 중 어법상 <u>옳은</u> 문장은?",
+    choices: ["He can jump highly.", "She works hardly at the bakery.", "The plane flew high above the clouds.", "I woke up lately this morning.", "The cheetah runs fastly."],
+    answer: "The plane flew high above the clouds.",
+    exp: "PART 1 총정리! <b>flew high(높이 날았다)</b>만 올바른 문장이에요. jump highly(✗ → high), works hardly(✗ → hard, hardly면 '거의 일을 안 한다'는 뜻이 됨), woke up lately(✗ → late), runs fastly(✗ → fast, fastly는 없는 단어). <span class='sent'>fast·hard·high·late·early는 -ly 붙이면 오히려 틀려요!</span>" },
+
+  /* ── PART 2: 원본 50번 (differently) ── */
+  { sec: 1, q: "Scientists see things ______.", ko: "과학자들은 사물을 다르게 본다.",
+    choices: ["differently", "different", "difficultly", "difficulty", "difference"],
+    answer: "differently",
+    exp: "시험에 나왔던 바로 그 문제! '다르게'는 <b>different(다른) + ly = differently</b>예요. 시험에서 difficultly라고 썼는데, <span class='sent'>difficult는 '어려운', different는 '다른'</span> — 모양이 비슷해서 정말 헷갈리기 쉬운 짝이에요. 이번 기회에 확실하게 구별! 그리고 see(동사)를 꾸미는 자리니까 부사 형태가 와야 해요." },
+  { sec: 1, q: "This math problem is really ______, but I'll try again.", ko: "이 수학 문제는 정말 어렵지만, 다시 도전할 거야.",
+    choices: ["difficult", "different", "difficultly", "differently", "difficulty"],
+    answer: "difficult",
+    exp: "이번엔 반대로 '<b>어려운</b>'을 골라야 해요! be동사(is) 뒤 보어 자리라서 형용사 difficult가 정답. <span class='sent'>different(다른) vs difficult(어려운)</span> 짝을 한 번 더 연습했어요. difficulty는 명사(어려움)이고, difficultly는 실제로 거의 쓰지 않는 어색한 말이에요." },
+  { sec: 1, q: "The mechanic repaired the machine ______.", ko: "정비사는 그 기계를 쉽게 수리했다.",
+    choices: ["easily", "easy", "easyly", "ease", "easiness"],
+    answer: "easily",
+    exp: "easy처럼 <b>y로 끝나는 형용사는 y를 i로 바꾸고 -ly</b>를 붙여요! easy → easily, happy → happily, lucky → luckily. <span class='sent'>easyly(✗)로 쓰지 않도록 철자 주의!</span> repaired(동사)를 꾸미니까 부사 자리예요. \"repaired the machine easily\"가 맞는 문장이었던 것과 같은 문제!" },
+  { sec: 1, q: "Please speak ______ in the library.", ko: "도서관에서는 조용히 말해 주세요.",
+    choices: ["quietly", "quiet", "quite", "quietness", "quietful"],
+    answer: "quietly",
+    exp: "quiet(조용한) + ly = <b>quietly(조용히)</b>. 여기서 조심할 함정은 quite! <span class='sent'>quiet(조용한)와 quite(꽤, 상당히)는 철자가 거의 똑같지만 전혀 다른 단어</span>예요. e의 위치를 잘 보세요: qui<b>et</b> / qui<b>te</b>. speak(동사)를 꾸미니까 부사가 필요해요." },
+  { sec: 1, q: "다음 중 어법상 <u>잘못된</u> 문장은?",
+    choices: ["She smiled happily.", "He drove carefully.", "They danced beautiful.", "The dog barked loudly.", "We waited patiently."],
+    answer: "They danced beautiful.",
+    exp: "danced(춤췄다)라는 동사를 꾸미려면 부사 <b>beautifully</b>가 필요해요. beautiful(아름다운)은 형용사라서 동사를 꾸밀 수 없어요. <span class='sent'>'어떻게 ~했는지'를 말하고 싶으면 항상 -ly 부사!</span> 나머지는 모두 동사 뒤에 부사가 잘 쓰인 올바른 문장이에요." },
+
+  /* ── PART 3: 원본 59번 (very interesting) ── */
+  { sec: 2, q: "We watched the action movie. It was very ______.", ko: "우리는 액션 영화를 봤다. 그것은 매우 흥미로웠다.",
+    choices: ["interesting", "interestingly", "interestly", "interest", "interested"],
+    answer: "interesting",
+    exp: "시험에 나왔던 59번 문제예요! <span class='sent'>be동사(was) 뒤에는 주어를 설명하는 보어가 오고, 보어 자리에는 형용사</span>를 써요. 그래서 It was very <b>interesting</b>이 정답. 시험에서 interestingly로 고쳤었는데, 부사는 보어 자리에 올 수 없어요. (앞부분의 finished my homework quickly는 동사를 꾸미니까 -ly가 맞았던 거예요 — 자리가 다르답니다!) 참고로 interested는 사람이 흥미를 '느낄' 때 써요: I'm interested." },
+  { sec: 2, q: "다음 중 어법상 <u>잘못된</u> 문장은?",
+    choices: ["The music sounds beautiful.", "This candy tastes sweetly.", "She looks happy today.", "The room was very quiet.", "He seemed tired after school."],
+    answer: "This candy tastes sweetly.",
+    exp: "taste(~한 맛이 나다), sound(~하게 들리다), look(~해 보이다), feel, smell 같은 <b>감각동사 뒤에도 형용사</b>를 써요! 그래서 tastes <b>sweet</b>(달콤한 맛이 난다)이 맞아요. <span class='sent'>감각동사 + 형용사</span> 세트는 중학교 시험에 계속 나오니까 지금 확실히 잡아두면 큰 무기가 돼요." },
+  { sec: 2, q: "Her voice sounds really ______.", ko: "그녀의 목소리는 정말 아름답게 들린다.",
+    choices: ["beautiful", "beautifully", "beauty", "beautify", "beautifulness"],
+    answer: "beautiful",
+    exp: "우리말로는 '아름답<u>게</u> 들린다'라서 부사 같지만, <span class='sent'>sounds(감각동사) 뒤 보어 자리니까 형용사 beautiful</span>이 정답! 이게 이 단원 최고의 함정이에요. beautifully는 She sings beautifully처럼 일반동사를 꾸밀 때, beauty는 명사(아름다움), beautify는 동사(아름답게 만들다)예요." },
+  { sec: 2, q: "The new game was so ______ that we played it all day.", ko: "그 새 게임은 너무 신나서 우리는 하루 종일 그것을 했다.",
+    choices: ["exciting", "excitingly", "excite", "excitement", "excitedly"],
+    answer: "exciting",
+    exp: "was 뒤 보어 자리 → 형용사! 그런데 exciting과 excited 중 뭘까요? <span class='sent'>게임이 우리를 신나게 '만드는' 쪽이니까 exciting</span>이에요. 사람이 신났으면 excited(We were excited). <b>사물·일 → -ing / 사람의 감정 → -ed</b>, 이 구별도 중학교 단골 문제라 미리 알아두면 좋아요!" },
+  { sec: 2, q: "다음 중 어법상 <u>옳은</u> 문장은?",
+    choices: ["The test was very difficultly.", "The flowers smell nicely.", "Your idea sounds greatly.", "The night sky was beautiful.", "This blanket feels softly."],
+    answer: "The night sky was beautiful.",
+    exp: "PART 3 총정리! was/smell/sounds/feels 뒤에는 전부 <b>형용사</b>가 와야 해요. difficultly(✗ → difficult), nicely(✗ → nice), greatly(✗ → great), softly(✗ → soft). 정답은 The night sky was <b>beautiful</b>. <span class='sent'>\"be동사·감각동사 뒤 = 형용사\"</span> 이 규칙 하나면 네 개의 함정을 한 번에 걸러낼 수 있어요!" },
+
+  /* ── PART 4: 원본 61번 (deliciously and fast) ── */
+  { sec: 3, q: "She ate the food ______ and fast.", ko: "그녀는 그 음식을 맛있게 그리고 빨리 먹었다.",
+    choices: ["deliciously", "delicious", "deliciousness", "deliciousful", "more delicious"],
+    answer: "deliciously",
+    exp: "시험에 나왔던 61번 문제! ate(먹었다)라는 <b>동사를 꾸미니까 부사 deliciously(맛있게)</b>가 정답이에요. delicious(맛있는)는 형용사라서 delicious food처럼 명사를 꾸밀 때 쓰죠. 뒤의 fast는 PART 1에서 배운 대로 <span class='sent'>-ly 없이 그대로 부사가 되는 단어라 fast 그대로 맞는 것</span>이고요. 그래서 deliciously and fast — 둘 다 부사로 짝이 맞아요!" },
+  { sec: 3, q: "He sang the song ______ and loudly.", ko: "그는 그 노래를 잘 그리고 크게 불렀다.",
+    choices: ["well", "good", "goodly", "better than", "nice"],
+    answer: "well",
+    exp: "good(좋은)의 부사는 특별하게 <b>well(잘)</b>이에요! goodly라는 말은 쓰지 않아요. sang(불렀다)을 꾸미니까 부사 well이 정답. 시험에서 맞혔던 \"wash your hands <b>well</b>\"의 바로 그 well이에요. <span class='sent'>a good singer(좋은 가수 — 형용사) / sings well(잘 부른다 — 부사)</span>로 비교해서 기억하세요!" },
+  { sec: 3, q: "She ______ opened the door.", ko: "그녀는 조심스럽게 문을 열었다.",
+    choices: ["carefully", "careful", "care", "carefulness", "carely"],
+    answer: "carefully",
+    exp: "시험에서 맞혔던 \"I patted the dog carefully\"와 같은 개념이에요! opened(열었다)를 꾸미는 부사 <b>carefully</b>. 그리고 부사는 위치가 자유로워서 <span class='sent'>She carefully opened the door / She opened the door carefully 둘 다 OK</span>예요. 동사 앞에 부사가 와도 놀라지 마세요!" },
+  { sec: 3, q: "다음 중 어법상 <u>잘못된</u> 문장은?",
+    choices: ["He speaks English fluently.", "She finished breakfast quick.", "They walked slowly to school.", "He smiled brightly.", "The baby slept peacefully."],
+    answer: "She finished breakfast quick.",
+    exp: "finished(끝냈다)를 꾸미려면 부사 <b>quickly</b>가 필요해요. quick은 형용사(빠른)예요. 시험 47번의 \"solves the problems too quick\"(✗)과 똑같은 함정! <span class='sent'>주의: fast는 그대로 부사가 되지만 quick은 반드시 quickly로!</span> 이 둘을 섞어서 헷갈리게 하는 게 시험 단골 패턴이에요." },
+  { sec: 3, q: "She made the cake ______ and fast.", ko: "그녀는 그 케이크를 예쁘게 그리고 빠르게 만들었다.",
+    choices: ["beautifully", "beautiful", "beauty", "beautifuly", "being beautiful"],
+    answer: "beautifully",
+    exp: "PART 3의 Her voice sounds beautiful과 비교해 보세요! 여기서는 made(만들었다)라는 <b>일반동사를 꾸미니까 부사 beautifully</b>예요. <span class='sent'>같은 단어라도 자리가 정해요: be동사·감각동사 뒤 → beautiful(형용사) / 일반동사 꾸밈 → beautifully(부사)</span>. 철자도 주의: beautiful + ly = beautifu<b>lly</b> (l이 두 개!)." },
+
+  /* ── PART 5: 원본 69번 (drank) ── */
+  { sec: 4, q: "She ______ water slowly.", ko: "그녀는 물을 천천히 마셨다.",
+    choices: ["drank", "drant", "drinked", "drink", "drunk"],
+    answer: "drank",
+    exp: "시험에 나왔던 69번! drink의 과거형은 <b>drank</b>예요. 시험에서 drant라고 썼는데 철자 딱 하나 차이 — 정말 아까웠어요! <span class='sent'>drink(마시다) – drank(마셨다) – drunk(과거분사)</span> 3단 변화로 외워두세요. slowly(천천히)는 부사로 잘 쓴 거였어요. 동사 철자만 잡으면 완벽한 문장!" },
+  { sec: 4, q: "I ______ a letter to my grandmother yesterday.", ko: "나는 어제 할머니께 편지를 썼다.",
+    choices: ["wrote", "writed", "write", "written", "writted"],
+    answer: "wrote",
+    exp: "write의 과거형은 <b>wrote</b>! yesterday(어제)가 있으니 과거형 자리예요. <span class='sent'>불규칙 동사에는 -ed를 붙이면 안 돼요</span> — writed(✗). write – wrote – written으로 외우고, written은 have written처럼 완료형에서 쓰는 과거분사예요." },
+  { sec: 4, q: "We ______ in the river last summer.", ko: "우리는 지난여름에 강에서 수영했다.",
+    choices: ["swam", "swimmed", "swum", "swim", "swimed"],
+    answer: "swam",
+    exp: "swim – <b>swam</b> – swum! <span class='sent'>drink – drank – drunk와 똑같은 i → a 패턴</span>이에요. sing – sang – sung, ring – rang – rung도 같은 팀이라 묶어서 외우면 4개를 한 번에 잡을 수 있어요. last summer(지난여름)가 있으니 과거형 swam이 정답." },
+  { sec: 4, q: "다음 중 동사의 과거형이 <u>잘못</u> 짝지어진 것은?",
+    choices: ["drink – drank", "eat – ate", "run – ran", "sing – sang", "catch – catched"],
+    answer: "catch – catched",
+    exp: "catch의 과거형은 <b>caught</b>(발음: 코트)예요! catched(✗). <span class='sent'>teach – taught, buy – bought, think – thought처럼 -ught 팀</span>으로 묶어 외우면 편해요. 나머지는 전부 올바른 짝: drink–drank(오늘의 주인공!), eat–ate, run–ran, sing–sang." },
+  { sec: 4, q: "다음 중 어법상 <u>옳은</u> 문장은?",
+    choices: ["He drinked all the juice.", "She drank a glass of milk after the race.", "They eated lunch at noon.", "I writed my name on the paper.", "We goed to the park last weekend."],
+    answer: "She drank a glass of milk after the race.",
+    exp: "마지막 총정리! <b>She drank a glass of milk</b>만 올바른 문장이에요. drinked(✗ → drank), eated(✗ → ate), writed(✗ → wrote), goed(✗ → went). <span class='sent'>불규칙 동사는 -ed 금지!</span> 오늘 클리닉을 여기까지 해낸 새봄이, drink의 과거형 drank는 이제 평생 안 잊어버릴 거예요. 상위권 도전 성공! 💪" }
+];
+
+/* ══════ 진행 로직 ══════ */
+var studentName = "";
+var current = 0;
+var correctCount = 0;
+var wrongNumbers = [];
+var answersLog = [];
+var startTime = 0;
+
+var nameInput = document.getElementById("name-input");
+var startBtn = document.getElementById("start-btn");
+
+nameInput.addEventListener("input", function () {
+  startBtn.disabled = nameInput.value.trim().length === 0;
+});
+nameInput.addEventListener("keydown", function (e) {
+  if (e.key === "Enter" && nameInput.value.trim()) startBtn.click();
+});
+
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+
+/* 정답 위치 균등 분산 셔플: 25문항 × 5지선다 → 각 위치 정확히 5번씩 */
+function shuffleChoices() {
+  var n = QUESTIONS.length, k = 5;
+  var per = Math.floor(n / k);
+  var pool = [];
+  for (var p = 0; p < k; p++) for (var i = 0; i < per; i++) pool.push(p);
+  var extras = shuffle([0, 1, 2, 3, 4]).slice(0, n - per * k);
+  extras.forEach(function (p) { pool.push(p); });
+  pool = shuffle(pool);
+  QUESTIONS.forEach(function (q, qi) {
+    var mixed = shuffle(q.choices);
+    var target = pool[qi];
+    var ai = mixed.indexOf(q.answer);
+    var t = mixed[target]; mixed[target] = mixed[ai]; mixed[ai] = t;
+    q.choices = mixed;
+  });
+}
+
+var CIRCLED = ["①", "②", "③", "④", "⑤"];
+
+startBtn.addEventListener("click", function () {
+  studentName = nameInput.value.trim();
+  if (!studentName) return;
+  startTime = Date.now();
+  shuffleChoices();
+  document.getElementById("start-card").classList.add("hidden");
+  document.getElementById("quiz-card").classList.remove("hidden");
+  showQuestion();
+});
+
+function showQuestion() {
+  var q = QUESTIONS[current];
+  document.getElementById("progress").textContent = (current + 1) + " / " + QUESTIONS.length;
+  document.getElementById("sec-badge").textContent = SECTIONS[q.sec];
+  document.getElementById("bar-fill").style.width = (current / QUESTIONS.length * 100) + "%";
+  document.getElementById("qtext").innerHTML = "Q" + (current + 1) + ". " + q.q;
+  var koEl = document.getElementById("ko-line");
+  if (q.ko) { koEl.textContent = "💬 " + q.ko; koEl.style.display = ""; }
+  else { koEl.style.display = "none"; }
+  var box = document.getElementById("choices");
+  box.innerHTML = "";
+  q.choices.forEach(function (c, i) {
+    var b = document.createElement("button");
+    b.className = "choice";
+    b.innerHTML = '<span class="num">' + CIRCLED[i] + "</span>" + c;
+    b.addEventListener("click", function () { pick(i, b); });
+    box.appendChild(b);
+  });
+  window.scrollTo(0, 0);
+}
+
+var locked = false;
+function pick(idx, btnEl) {
+  if (locked) return; locked = true;
+  if (btnEl) btnEl.classList.add("sel");
+  var q = QUESTIONS[current];
+  var choice = q.choices[idx];
+  var ok = choice === q.answer;
+  if (ok) correctCount++;
+  else wrongNumbers.push(current + 1);
+  answersLog.push({ no: current + 1, ok: ok, chosen: choice, answer: q.answer });
+  setTimeout(function () {
+    locked = false;
+    current++;
+    if (current < QUESTIONS.length) showQuestion();
+    else showResult();
+  }, 250);
+}
+
+document.addEventListener("keydown", function (e) {
+  if (document.getElementById("quiz-card").classList.contains("hidden")) return;
+  var n = parseInt(e.key, 10);
+  if (n >= 1 && n <= 5) {
+    var btns = document.getElementById("choices").children;
+    if (btns[n - 1]) pick(n - 1, btns[n - 1]);
+  }
+});
+
+function cheerText(score, total) {
+  var r = score / total;
+  if (r === 1) return "완벽해요! 25문제 전부 정답 — 진짜 상위권의 실력이에요! 🏆";
+  if (r >= 0.9) return "대단해요! 상위권 도전, 거의 다 왔어요! 틀린 문제 해설만 한 번 더 읽어보면 완성! ✨";
+  if (r >= 0.7) return "잘했어요! 헷갈렸던 개념이 확실히 자리 잡고 있어요. 해설을 읽으며 한 번 더 다지기! 💪";
+  return "도전 완료! 지금부터가 진짜 실력이 크는 시간이에요. 아래 해설을 천천히 읽어보면 다음엔 훨씬 잘 풀 수 있어요! 🌱";
+}
+
+function showResult() {
+  document.getElementById("quiz-card").classList.add("hidden");
+  document.getElementById("result-card").classList.remove("hidden");
+  document.getElementById("result-name").textContent = studentName;
+  document.getElementById("score-line").textContent = correctCount + " / " + QUESTIONS.length;
+  document.getElementById("cheer-line").textContent = cheerText(correctCount, QUESTIONS.length);
+
+  var expBox = document.getElementById("explanations");
+  var lastSec = -1;
+  QUESTIONS.forEach(function (q, i) {
+    if (q.sec !== lastSec) {
+      lastSec = q.sec;
+      var h = document.createElement("div");
+      h.className = "sec-head";
+      h.textContent = SECTIONS[q.sec];
+      expBox.appendChild(h);
+    }
+    var log = answersLog[i];
+    var d = document.createElement("div");
+    d.className = "exp" + (log.ok ? "" : " wrong");
+    d.innerHTML = "<b>Q" + (i + 1) + ". " + (log.ok ? "정답! ⭕" : "다시 보기 (내 답: " + log.chosen + " → 정답: " + q.answer + ")") + "</b><br>" + q.exp;
+    expBox.appendChild(d);
+  });
+
+  engfitSubmitSilently({
+    quizId: "clinic-jsb-0721",
+    quizTitle: "장새봄 부사 클리닉 7/21",
+    student: studentName,
+    score: correctCount,
+    total: QUESTIONS.length,
+    wrong: wrongNumbers,
+    durationSec: Math.round((Date.now() - startTime) / 1000),
+    detail: answersLog
+  });
+}
+
+document.getElementById("kakao-btn").addEventListener("click", function () {
+  var mins = Math.round((Date.now() - startTime) / 1000 / 60);
+  var msg = "[영핏 오답 클리닉 결과]\n학생: " + studentName +
+            "\n퀴즈: 장새봄 부사 마스터 클리닉 (7/21)" +
+            "\n점수: " + correctCount + " / " + QUESTIONS.length +
+            "\n틀린 문항: " + (wrongNumbers.length ? wrongNumbers.join(", ") : "없음 🎉") +
+            "\n풀이 시간: 약 " + (mins < 1 ? "1분 미만" : mins + "분");
+  navigator.clipboard.writeText(msg).then(function () {
+    document.getElementById("kakao-btn").textContent = "복사 완료! 지나티처에게 카톡으로 붙여넣기 해주세요 ✓";
+  }).catch(function () {
+    prompt("아래 내용을 길게 눌러 복사한 뒤 지나티처에게 보내주세요", msg);
+  });
+});
+</script>
+</body>
+</html>
