@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>김하은 오답 클리닉 — 시간을 나타내는 전치사 낱말배열</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; background: #eef4f3; color: #2d3436; min-height: 100vh; display: flex; justify-content: center; padding: 20px 14px; }
+  .wrap { width: 100%; max-width: 540px; }
+  .card { background: #fff; border-radius: 16px; padding: 26px 22px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 14px; }
+  h1 { font-size: 1.3rem; color: #2e7d6e; margin-bottom: 6px; }
+  h2 { font-size: 1.05rem; color: #2e7d6e; margin-bottom: 10px; }
+  .sub { font-size: 0.88rem; color: #778; margin-bottom: 18px; line-height: 1.5; }
+  input[type=text] { width: 100%; padding: 13px; font-size: 1.05rem; border: 1.5px solid #cdd; border-radius: 10px; }
+  .btn { display: block; width: 100%; margin-top: 14px; padding: 14px; font-size: 1.05rem; font-weight: bold; color: #fff; background: #2e7d6e; border: none; border-radius: 10px; cursor: pointer; }
+  .btn:disabled { background: #b8c4c2; cursor: default; }
+  .btn.ghost { background: #eef4f3; color: #2e7d6e; border: 1.5px solid #cdd8d8; }
+  .progress { font-size: 0.85rem; color: #789; margin-bottom: 10px; }
+  .bar { height: 6px; background: #e0eae8; border-radius: 3px; margin-bottom: 16px; overflow: hidden; }
+  .bar > div { height: 100%; background: #2e7d6e; border-radius: 3px; width: 0%; transition: width 0.3s; }
+  .qtext { font-size: 1.08rem; line-height: 1.65; margin-bottom: 4px; font-weight: bold; color: #234; }
+  .hint { font-size: 0.82rem; color: #8a97a3; margin-bottom: 16px; }
+  .build { min-height: 56px; border: 2px dashed #bcd0d0; border-radius: 12px; padding: 10px; margin-bottom: 8px; display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start; background: #f7fafa; }
+  .build.ok { border-color: #2e7d6e; background: #eef8f4; }
+  .build.no { border-color: #c0392b; background: #fdeeec; }
+  .build-empty { color: #aab6b6; font-size: 0.9rem; align-self: center; }
+  .dot { align-self: center; font-size: 1.3rem; font-weight: bold; color: #567; margin-left: 2px; }
+  .pool { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 14px; margin-bottom: 4px; }
+  .tile { padding: 11px 15px; font-size: 1.05rem; background: #f0f5f5; border: 1.5px solid #cdd8d8; border-radius: 10px; cursor: pointer; user-select: none; }
+  .tile:active { background: #dcebe9; }
+  .tile.placed { background: #2e7d6e; color: #fff; border-color: #2e7d6e; }
+  .row { display: flex; gap: 10px; margin-top: 12px; }
+  .row .btn { margin-top: 0; }
+  .score-big { font-size: 2.1rem; font-weight: bold; color: #2e7d6e; text-align: center; margin: 12px 0 4px; }
+  .cheer { text-align: center; font-size: 0.95rem; color: #556; margin-bottom: 14px; line-height: 1.6; }
+  .exp { background: #f6f9f8; border-left: 4px solid #2e7d6e; border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; font-size: 0.92rem; line-height: 1.6; }
+  .exp.wrong { border-left-color: #d98032; background: #fdf8f2; }
+  .exp b { color: #2e7d6e; }
+  .exp.wrong b { color: #c26418; }
+  .exp .ans { display:inline-block; margin-top:5px; padding:3px 8px; background:#e7f1ef; border-radius:6px; font-weight:bold; color:#256; }
+  .concept { background: #f4f9f8; border: 1.5px solid #d5e6e2; border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; }
+  .concept .emo { font-size: 1.4rem; margin-bottom: 4px; }
+  .concept .word { font-weight: bold; color: #2e7d6e; font-size: 1.05rem; }
+  .concept .mean { font-size: 0.92rem; color: #445; margin: 3px 0; }
+  .concept .ex { font-size: 0.88rem; color: #667; background: #fff; border-radius: 8px; padding: 8px 10px; margin-top: 6px; line-height: 1.5; }
+  .tip { background: #fff7e8; border: 1.5px solid #f0d9a8; border-radius: 12px; padding: 14px 16px; margin: 14px 0; font-size: 0.92rem; line-height: 1.65; }
+  .tip b { color: #c26418; }
+  .footer { text-align: center; font-size: 0.8rem; color: #9ab; margin-top: 8px; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- 시작 화면 -->
+  <div class="card" id="start-card">
+    <h1>🌱 김하은 오답 클리닉</h1>
+    <p class="sub">시간을 나타내는 전치사 (on / at / in) · 낱말배열 30문항<br>기초부터 탄탄하게, 상위권 도전! 💪<br>이름을 입력하고 시작하세요.</p>
+    <input type="text" id="name-input" placeholder="이름을 입력하세요" maxlength="20" autocomplete="off">
+    <button class="btn" id="start-btn" disabled>시작하기</button>
+  </div>
+
+  <!-- 개념 카드 화면 -->
+  <div class="card hidden" id="concept-card">
+    <h1>📚 먼저 개념 정리!</h1>
+    <p class="sub">시간을 나타내는 전치사 3총사, on / at / in을 정리해 볼게요.</p>
+
+    <div class="concept">
+      <div class="emo">📅</div>
+      <div class="word">on = 요일 · 날짜 · 특별한 날</div>
+      <div class="mean"><b>요일</b>(Monday~Sunday), <b>날짜</b>(3월 10일 같은 정확한 날짜), <b>특별한 하루</b>(생일, 크리스마스)에는 on!</div>
+      <div class="ex">I clean my room <b>on</b> Sunday.<br>We have a test <b>on</b> March 10th.<br>I have a party <b>on</b> my birthday.</div>
+    </div>
+
+    <div class="concept">
+      <div class="emo">⏰</div>
+      <div class="word">at = 정확한 시각 · 콕 짚은 시점</div>
+      <div class="mean"><b>몇 시 몇 분</b>처럼 정확한 시각, 그리고 <b>night(밤) · noon(정오) · midnight(자정)</b>은 예외로 무조건 at!</div>
+      <div class="ex">Mary goes to bed <b>at</b> 10 o'clock.<br>He reads a book <b>at</b> night.<br>They eat lunch <b>at</b> noon.</div>
+    </div>
+
+    <div class="concept">
+      <div class="emo">🗓️</div>
+      <div class="word">in = 월 · 계절 · 연도 · 하루 중 때</div>
+      <div class="mean"><b>월</b>(May), <b>계절</b>(summer), <b>연도</b>(2020), 그리고 <b>morning/afternoon/evening</b>(오전·오후·저녁)에는 in!</div>
+      <div class="ex">Her birthday is <b>in</b> May.<br>We go camping <b>in</b> summer.<br>I visited Canada <b>in</b> 2020.<br>Jack does exercise <b>in</b> the morning.</div>
+    </div>
+
+    <div class="tip">💡 <b>하은이 맞춤 꿀팁!</b><br>
+    ① <b>night(밤)</b>은 다른 하루 때(morning/afternoon/evening)와 다르게 in이 아니라 <b>at night</b>이에요 — 예외로 통째로 외우기!<br>
+    ② noon(정오)·midnight(자정)도 at의 단짝이에요. <b>at noon, at midnight</b>.<br>
+    ③ 요일 뒤에 <b>s</b>를 붙여 <b>on Tuesdays</b>라고 하면 "화요일마다"처럼 "매주 ~요일마다"라는 뜻이 돼요. 최상위 문제에 자주 나와요!<br>
+    ④ 정확한 시각(o'clock)·날짜(10th)·연도(2020) 앞의 전치사가 뭔지 먼저 정하고, 그 다음 나머지 단어를 순서대로 배열해요.</div>
+
+    <button class="btn" id="go-quiz-btn">문제 풀러 가기 ✏️</button>
+  </div>
+
+  <!-- 문제 화면 -->
+  <div class="card hidden" id="quiz-card">
+    <div class="progress" id="progress"></div>
+    <div class="bar"><div id="bar-fill"></div></div>
+    <div class="qtext" id="qtext"></div>
+    <div class="hint">흩어진 단어를 순서대로 탭해서 영어 문장을 완성해요.</div>
+    <div class="build" id="build"></div>
+    <div class="pool" id="pool"></div>
+    <div class="row">
+      <button class="btn ghost" id="reset-btn" style="flex:1">다시 놓기</button>
+      <button class="btn" id="check-btn" style="flex:1.4" disabled>확인</button>
+    </div>
+  </div>
+
+  <!-- 결과 화면 -->
+  <div class="card hidden" id="result-card">
+    <h1>수고했어요, 하은! 🎉</h1>
+    <div class="score-big" id="score-line"></div>
+    <div class="cheer" id="cheer-line"></div>
+    <button class="btn" id="kakao-btn">📋 결과 복사하기 (지나티처에게 카톡으로 보내주세요!)</button>
+    <div style="margin-top:22px">
+      <h2>📝 전체 해설</h2>
+      <div id="explanations"></div>
+    </div>
+  </div>
+
+  <div class="footer">영핏 지나티처 · 영어를 핏하다</div>
+</div>
+
+<script>
+"use strict";
+
+/* ══════ 결과 자동 전송 (영핏 공통, 화면 표시 없음) ══════ */
+var ENGFIT_SUBMIT_URL = "https://script.google.com/macros/s/AKfycbz5IC3cEtaBGW10qZhrjwtjdtGugmcmYb4ZTHS4k-1LOqTRYzW-LfoAPyFB_ShjAqNp/exec";
+
+async function engfitSubmit(r) {
+  var body = JSON.stringify(r);
+  try {
+    var res = await fetch(ENGFIT_SUBMIT_URL, { method: "POST", body: body });
+    var j = await res.json();
+    return j.ok === true;
+  } catch (e) {
+    try {
+      await fetch(ENGFIT_SUBMIT_URL, { method: "POST", mode: "no-cors", body: body });
+      return true;
+    } catch (e2) { return false; }
+  }
+}
+
+var _engfitSent = false;
+function engfitSilentSubmit(r) {
+  if (_engfitSent) return; _engfitSent = true;
+  try { engfitSubmit(r); } catch (e) {}
+}
+
+/* ══════ 문제 데이터 (원본 10문항 × 유사문제 2개 = 총 30문항) ══════ */
+var QUESTIONS = [
+  { ko: "나는 일요일에 내 방을 청소한다.", words: ["I","clean","my","room","on","Sunday"],
+    exp: "'요일'에는 <b>on</b>! 일요일은 Sunday예요. 시험에서 요일을 다른 요일로 착각해서 썼던 문제죠 — 우리말 '일요일'을 끝까지 정확히 읽고 Sunday로 옮기는 연습을 해봐요. → <b>I clean my room on Sunday.</b>" },
+  { ko: "그는 토요일에 축구를 한다.", words: ["He","plays","soccer","on","Saturday"],
+    exp: "요일 앞에는 언제나 <b>on</b>. 토요일은 Saturday! → <b>He plays soccer on Saturday.</b> 주어가 He라서 동사에 s가 붙어 plays가 된 것도 함께 확인해요." },
+  { ko: "우리는 화요일마다 도서관에 간다.", words: ["We","go","to","the","library","on","Tuesdays"],
+    exp: "요일 뒤에 <b>s</b>를 붙여 Tuesdays라고 하면 '화요일마다(매주)'라는 뜻이 돼요. 그래도 전치사는 그대로 <b>on</b>! → <b>We go to the library on Tuesdays.</b> 최상위 문제에 자주 나오는 포인트예요." },
+
+  { ko: "나는 내 생일에 파티를 한다.", words: ["I","have","a","party","on","my","birthday"],
+    exp: "생일처럼 '특별한 하루'도 <b>on</b>을 써요. → <b>I have a party on my birthday.</b> my birthday를 통째로 하나의 시간 표현으로 기억해요." },
+  { ko: "그녀는 크리스마스에 선물을 받는다.", words: ["She","gets","presents","on","Christmas","Day"],
+    exp: "Christmas Day도 생일처럼 정해진 특별한 하루라서 <b>on</b>을 써요. → <b>She gets presents on Christmas Day.</b> Christmas와 Day를 붙여 하나의 이름처럼 써요." },
+  { ko: "우리는 어린이날에 소풍을 간다.", words: ["We","have","a","picnic","on","Children's","Day"],
+    exp: "어린이날(Children's Day)도 특별한 하루니까 <b>on</b>! → <b>We have a picnic on Children's Day.</b> Children's의 아포스트로피(')도 빠뜨리지 않기." },
+
+  { ko: "우리는 3월 10일에 시험이 있다.", words: ["We","have","a","test","on","March","10th"],
+    exp: "정확한 <b>날짜</b>에는 on! 3월 10일은 March 10th로 써요(십의 서수 10th). → <b>We have a test on March 10th.</b> 월(March)과 날짜(10th) 순서도 함께 기억해요." },
+  { ko: "그는 5월 5일에 태어났다.", words: ["He","was","born","on","May","5th"],
+    exp: "날짜 표현이라 <b>on</b>은 그대로! 태어난 건 과거 일이라 was born(태어났다)으로 써요. → <b>He was born on May 5th.</b>" },
+  { ko: "그녀는 7월 20일에 여기 온다.", words: ["She","comes","here","on","July","20th"],
+    exp: "월+날짜 조합이라 여전히 <b>on</b>. → <b>She comes here on July 20th.</b> comes에 s가 붙는 것도 She(3인칭 단수)와 짝을 맞춘 거예요." },
+
+  { ko: "그녀는 금요일에 피아노 레슨을 받는다.", words: ["She","takes","a","piano","lesson","on","Friday"],
+    exp: "요일이니까 <b>on</b> Friday! → <b>She takes a piano lesson on Friday.</b> 레슨 하나(a piano lesson)라서 lesson에 s를 붙이지 않아요." },
+  { ko: "나는 수요일에 태권도 수업을 듣는다.", words: ["I","take","a","taekwondo","class","on","Wednesday"],
+    exp: "수요일은 Wednesday, 요일이니 <b>on</b>. → <b>I take a taekwondo class on Wednesday.</b> take a class(수업을 듣다) 표현도 함께 기억해요." },
+  { ko: "그는 목요일마다 미술 수업을 듣는다.", words: ["He","takes","an","art","class","on","Thursdays"],
+    exp: "'목요일마다'니까 Thursdays처럼 <b>s</b>를 붙여요. 전치사는 여전히 <b>on</b>! → <b>He takes an art class on Thursdays.</b>" },
+
+  { ko: "Mary는 10시에 잠자리에 든다.", words: ["Mary","goes","to","bed","at","10","o'clock"],
+    exp: "정확한 <b>시각</b>에는 <b>at</b>! 10시는 10 o'clock. → <b>Mary goes to bed at 10 o'clock.</b> go to bed(잠자리에 들다)도 세트로 외워요." },
+  { ko: "나는 7시에 아침을 먹는다.", words: ["I","eat","breakfast","at","7","o'clock"],
+    exp: "몇 시 몇 분처럼 정확한 시각은 언제나 <b>at</b>. → <b>I eat breakfast at 7 o'clock.</b>" },
+  { ko: "그들은 정오에 점심을 먹는다.", words: ["They","eat","lunch","at","noon"],
+    exp: "noon(정오)은 정확한 시각과 같은 취급을 받는 예외 단어라서 <b>at</b>을 써요. → <b>They eat lunch at noon.</b> at night, at midnight과 같은 그룹으로 기억해요." },
+
+  { ko: "그는 밤에 책 한 권을 읽는다.", words: ["He","reads","a","book","at","night"],
+    exp: "밤(night)은 morning/afternoon/evening과 다르게 <b>at night</b>으로 예외적으로 써요(in night ✗). → <b>He reads a book at night.</b>" },
+  { ko: "나는 밤에 별을 본다.", words: ["I","watch","the","stars","at","night"],
+    exp: "night 앞에는 언제나 <b>at</b>! → <b>I watch the stars at night.</b> in night이라고 쓰지 않도록 조심해요." },
+  { ko: "그녀는 자정에 잠에서 깼다.", words: ["She","woke","up","at","midnight"],
+    exp: "midnight(자정)도 noon처럼 <b>at</b>의 단짝이에요. wake up의 과거형은 woke up. → <b>She woke up at midnight.</b>" },
+
+  { ko: "Jack은 아침에 운동을 한다.", words: ["Jack","does","exercise","in","the","morning"],
+    exp: "morning(오전)처럼 하루 중 한때는 <b>in the</b>를 붙여요(in night ✗, at night ✓과 헷갈리지 않기!). → <b>Jack does exercise in the morning.</b>" },
+  { ko: "나는 오후에 숙제를 한다.", words: ["I","do","my","homework","in","the","afternoon"],
+    exp: "afternoon(오후)도 morning과 같은 그룹! <b>in the afternoon</b>으로 써요. → <b>I do my homework in the afternoon.</b>" },
+  { ko: "그녀는 저녁에 피아노를 연습한다.", words: ["She","practices","the","piano","in","the","evening"],
+    exp: "evening(저녁)도 <b>in the</b> 그룹이에요. morning/afternoon/evening 세 단어를 한 세트로 외우면 편해요. → <b>She practices the piano in the evening.</b>" },
+
+  { ko: "나는 2020년에 캐나다를 방문했다.", words: ["I","visited","Canada","in","2020"],
+    exp: "<b>연도</b>에는 <b>in</b>! 2020년은 in 2020. → <b>I visited Canada in 2020.</b> 방문했다(과거)라서 visited로 써요." },
+  { ko: "그들은 2019년에 결혼했다.", words: ["They","got","married","in","2019"],
+    exp: "연도 앞은 언제나 <b>in</b>. → <b>They got married in 2019.</b> get married(결혼하다)의 과거형은 got married예요." },
+  { ko: "우리는 2023년에 이 학교에 왔다.", words: ["We","came","to","this","school","in","2023"],
+    exp: "연도라서 <b>in</b> 2023. → <b>We came to this school in 2023.</b> come의 과거형 came도 함께 확인해요." },
+
+  { ko: "우리는 여름에 캠핑을 간다.", words: ["We","go","camping","in","summer"],
+    exp: "<b>계절</b>에는 <b>in</b>! 여름은 summer. → <b>We go camping in summer.</b> go camping(캠핑을 가다)도 통째로 기억해요." },
+  { ko: "그는 겨울에 스키를 탄다.", words: ["He","goes","skiing","in","winter"],
+    exp: "계절 앞은 언제나 <b>in</b>. 겨울은 winter. → <b>He goes skiing in winter.</b>" },
+  { ko: "나는 봄에 꽃을 심는다.", words: ["I","plant","flowers","in","spring"],
+    exp: "봄(spring)도 계절이라 <b>in</b>을 써요. → <b>I plant flowers in spring.</b>" },
+
+  { ko: "그녀의 생일은 5월이다.", words: ["Her","birthday","is","in","May"],
+    exp: "<b>월</b> 이름 앞에는 <b>in</b>! 5월은 May. → <b>Her birthday is in May.</b> 시험에서 on May로 썼던 부분, 월은 on이 아니라 in이라는 걸 꼭 기억해요." },
+  { ko: "그의 생일은 9월이다.", words: ["His","birthday","is","in","September"],
+    exp: "월 이름 앞은 언제나 <b>in</b>. 9월은 September. → <b>His birthday is in September.</b>" },
+  { ko: "우리 학교 축제는 10월이다.", words: ["Our","school","festival","is","in","October"],
+    exp: "10월은 October, 월이니까 <b>in</b>. → <b>Our school festival is in October.</b>" }
+];
+
+/* ══════ 진행 로직 ══════ */
+var studentName = "";
+var current = 0;
+var correctCount = 0;
+var wrongNumbers = [];
+var answersLog = [];
+var startTime = 0;
+
+var nameInput = document.getElementById("name-input");
+var startBtn = document.getElementById("start-btn");
+
+nameInput.addEventListener("input", function () {
+  startBtn.disabled = nameInput.value.trim().length === 0;
+});
+nameInput.addEventListener("keydown", function (e) {
+  if (e.key === "Enter" && nameInput.value.trim()) startBtn.click();
+});
+
+startBtn.addEventListener("click", function () {
+  studentName = nameInput.value.trim();
+  if (!studentName) return;
+  document.getElementById("start-card").classList.add("hidden");
+  document.getElementById("concept-card").classList.remove("hidden");
+  window.scrollTo(0, 0);
+});
+
+document.getElementById("go-quiz-btn").addEventListener("click", function () {
+  startTime = Date.now();
+  document.getElementById("concept-card").classList.add("hidden");
+  document.getElementById("quiz-card").classList.remove("hidden");
+  window.scrollTo(0, 0);
+  showQuestion();
+});
+
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+
+/* 현재 문제 상태 */
+var tiles = [];      // { text, used } — 화면에 뿌릴 (소문자) 단어들
+var built = [];      // tiles 인덱스 배열 (놓은 순서)
+var locked = false;
+
+var buildEl = document.getElementById("build");
+var poolEl = document.getElementById("pool");
+var checkBtn = document.getElementById("check-btn");
+var resetBtn = document.getElementById("reset-btn");
+
+function correctLower() {
+  return QUESTIONS[current].words.map(function (w) { return w.toLowerCase(); });
+}
+
+function showQuestion() {
+  var q = QUESTIONS[current];
+  locked = false;
+  built = [];
+  var order = shuffle(q.words.map(function (w, i) { return i; }));
+  if (order.length > 1 && order.join() === q.words.map(function (_, i) { return i; }).join()) {
+    order = shuffle(order);
+  }
+  tiles = order.map(function (idx) { return { text: q.words[idx].toLowerCase(), used: false }; });
+  document.getElementById("progress").textContent = (current + 1) + " / " + QUESTIONS.length;
+  document.getElementById("bar-fill").style.width = Math.round(current / QUESTIONS.length * 100) + "%";
+  document.getElementById("qtext").textContent = "Q" + (current + 1) + ". " + q.ko;
+  buildEl.className = "build";
+  checkBtn.disabled = true;
+  render();
+  window.scrollTo(0, 0);
+}
+
+function render() {
+  buildEl.innerHTML = "";
+  if (built.length === 0) {
+    var ph = document.createElement("span");
+    ph.className = "build-empty";
+    ph.textContent = "여기에 단어가 순서대로 쌓여요";
+    buildEl.appendChild(ph);
+  } else {
+    built.forEach(function (ti, pos) {
+      var b = document.createElement("span");
+      b.className = "tile placed";
+      b.textContent = tiles[ti].text;
+      b.addEventListener("click", function () {
+        if (locked) return;
+        built.splice(pos, 1);
+        tiles[ti].used = false;
+        render();
+      });
+      buildEl.appendChild(b);
+    });
+    var dot = document.createElement("span");
+    dot.className = "dot";
+    dot.textContent = ".";
+    buildEl.appendChild(dot);
+  }
+  poolEl.innerHTML = "";
+  tiles.forEach(function (t, ti) {
+    if (t.used) return;
+    var b = document.createElement("span");
+    b.className = "tile";
+    b.textContent = t.text;
+    b.addEventListener("click", function () {
+      if (locked) return;
+      t.used = true;
+      built.push(ti);
+      render();
+    });
+    poolEl.appendChild(b);
+  });
+  checkBtn.disabled = built.length !== tiles.length;
+}
+
+resetBtn.addEventListener("click", function () {
+  if (locked) return;
+  built = [];
+  tiles.forEach(function (t) { t.used = false; });
+  buildEl.className = "build";
+  render();
+});
+
+checkBtn.addEventListener("click", function () {
+  if (locked || built.length !== tiles.length) return;
+  locked = true;
+  var q = QUESTIONS[current];
+  var chosenArr = built.map(function (ti) { return tiles[ti].text; });
+  var chosen = chosenArr.join(" ");
+  var ok = chosen === correctLower().join(" ");
+  if (ok) correctCount++;
+  else wrongNumbers.push(current + 1);
+  answersLog.push({
+    no: current + 1, ok: ok,
+    chosen: chosen + ".",
+    answer: q.words.join(" ") + "."
+  });
+  buildEl.className = "build " + (ok ? "ok" : "no");
+  checkBtn.disabled = true;
+  setTimeout(function () {
+    current++;
+    if (current < QUESTIONS.length) showQuestion();
+    else showResult();
+  }, 450);
+});
+
+function showResult() {
+  document.getElementById("quiz-card").classList.add("hidden");
+  document.getElementById("result-card").classList.remove("hidden");
+  document.getElementById("score-line").textContent = correctCount + " / " + QUESTIONS.length;
+
+  var cheer;
+  if (correctCount === QUESTIONS.length) cheer = "완벽해요! 시간 전치사 마스터 인정! 🏆<br>이 실력이면 상위권 도전 준비 끝!";
+  else if (correctCount >= QUESTIONS.length - 5) cheer = "아주 잘했어요! 조금만 더 다듬으면 만점이에요 ✨<br>아래 해설에서 틀린 문제만 한 번 더 읽어 보세요.";
+  else cheer = "끝까지 푼 것만으로도 멋져요! 💪<br>아래 해설을 천천히 읽고, 내일 한 번 더 도전해 보세요.";
+  document.getElementById("cheer-line").innerHTML = cheer;
+
+  var expBox = document.getElementById("explanations");
+  QUESTIONS.forEach(function (q, i) {
+    var log = answersLog[i];
+    var d = document.createElement("div");
+    d.className = "exp" + (log.ok ? "" : " wrong");
+    var head = log.ok
+      ? "정답! ⭕"
+      : "다시 볼까요? (내 배열: " + log.chosen + ")";
+    d.innerHTML = "<b>Q" + (i + 1) + ". " + q.ko + " — " + head + "</b><br>" +
+      q.exp + "<br><span class='ans'>정답: " + q.words.join(" ") + ".</span>";
+    expBox.appendChild(d);
+  });
+  window.scrollTo(0, 0);
+
+  engfitSilentSubmit({
+    quizId: "clinic-kimhaeun-0722",
+    quizTitle: "김하은 오답 클리닉 — 시간 전치사 낱말배열",
+    student: studentName,
+    score: correctCount,
+    total: QUESTIONS.length,
+    wrong: wrongNumbers,
+    durationSec: Math.round((Date.now() - startTime) / 1000),
+    detail: answersLog
+  });
+}
+
+document.getElementById("kakao-btn").addEventListener("click", function () {
+  var msg = "[영핏 오답 클리닉 결과]\n" +
+            "퀴즈: 시간 전치사 낱말배열\n" +
+            "학생: " + studentName + "\n" +
+            "점수: " + correctCount + "/" + QUESTIONS.length + "\n" +
+            "틀린 문항: " + (wrongNumbers.length ? wrongNumbers.join(", ") : "없음 🎉");
+  navigator.clipboard.writeText(msg).then(function () {
+    document.getElementById("kakao-btn").textContent = "복사 완료! 카톡에 붙여넣기 하세요 ✓";
+  }).catch(function () {
+    prompt("아래 내용을 길게 눌러 복사하세요", msg);
+  });
+});
+</script>
+</body>
+</html>
