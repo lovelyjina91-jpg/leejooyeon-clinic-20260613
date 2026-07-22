@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>이승민 오답 클리닉 — be동사의 현재형 총정리</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; background: #f0f4f4; color: #2d3436; min-height: 100vh; display: flex; justify-content: center; padding: 20px 14px; }
+  .wrap { width: 100%; max-width: 540px; }
+  .card { background: #fff; border-radius: 16px; padding: 26px 22px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 14px; }
+  h1 { font-size: 1.3rem; color: #2e7d6e; margin-bottom: 6px; }
+  h2 { font-size: 1.05rem; color: #2e7d6e; margin-bottom: 10px; }
+  .sub { font-size: 0.88rem; color: #778; margin-bottom: 6px; line-height: 1.55; }
+  .provider { font-size: 0.8rem; color: #9ab; margin-bottom: 18px; }
+  input[type=text] { width: 100%; padding: 13px; font-size: 1.05rem; border: 1.5px solid #cdd; border-radius: 10px; margin-top: 10px; }
+  .btn { display: block; width: 100%; margin-top: 14px; padding: 14px; font-size: 1.05rem; font-weight: bold; color: #fff; background: #2e7d6e; border: none; border-radius: 10px; cursor: pointer; }
+  .btn:disabled { background: #b8c4c2; cursor: default; }
+  .progress { font-size: 0.85rem; color: #789; margin-bottom: 6px; }
+  .bar { height: 6px; background: #e3ecea; border-radius: 3px; margin-bottom: 14px; overflow: hidden; }
+  .bar > div { height: 100%; background: #2e7d6e; width: 0; transition: width 0.25s; }
+  .tag { display: inline-block; font-size: 0.72rem; font-weight: bold; padding: 3px 8px; border-radius: 6px; margin-bottom: 10px; }
+  .tag.retry { background: #fdeaea; color: #c0392b; }
+  .tag.vari { background: #e5f2ef; color: #2e7d6e; }
+  .ko { background: #f6f9f8; border: 1px dashed #cfdedb; border-radius: 8px; padding: 10px 12px; font-size: 0.98rem; font-weight: bold; margin-bottom: 14px; }
+  .qtext { font-size: 1.05rem; line-height: 1.6; margin-bottom: 16px; font-weight: bold; }
+  .qtext u { text-decoration: underline; text-underline-offset: 3px; }
+  .en { font-family: Consolas, 'Malgun Gothic', monospace; }
+  .choice { display: block; width: 100%; text-align: left; padding: 13px 14px; margin-bottom: 9px; font-size: 1rem; font-family: inherit; background: #f6f9f8; border: 1.5px solid #dde5e3; border-radius: 10px; cursor: pointer; line-height: 1.5; }
+  .choice:active { background: #e2efec; }
+  .num { color: #2e7d6e; font-weight: bold; margin-right: 6px; }
+  .keyhint { font-size: 0.78rem; color: #9ab; text-align: center; margin-top: 4px; }
+  .score-big { font-size: 2rem; font-weight: bold; color: #2e7d6e; text-align: center; margin: 10px 0; }
+  .score-msg { text-align: center; font-size: 0.95rem; color: #567; margin-bottom: 8px; }
+  .exp { background: #f6f9f8; border-left: 4px solid #2e7d6e; border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; font-size: 0.92rem; line-height: 1.6; }
+  .exp.wrong { border-left-color: #c0392b; background:#fdf6f5; }
+  .exp b { color: #2e7d6e; }
+  .exp.wrong b { color: #c0392b; }
+  .foot { text-align:center; font-size:0.8rem; color:#9ab; padding: 10px 0 4px; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- 시작 화면 -->
+  <div class="card" id="start-card">
+    <h1>이승민의 오답 클리닉 🐼</h1>
+    <p class="sub">be동사의 현재형 — 부정문 &amp; 긍정문 총정리 · 문법훈련 7/1~7/22 오답노트<br>재도전 15문항 + 변형 30문항 = 총 45문항</p>
+    <p class="provider">제공: 영핏 지나티처</p>
+    <input type="text" id="name-input" placeholder="이름을 입력해야 시작할 수 있어요" maxlength="20" autocomplete="off">
+    <button class="btn" id="start-btn" disabled>시작하기</button>
+  </div>
+
+  <!-- 문제 화면 -->
+  <div class="card hidden" id="quiz-card">
+    <div class="progress" id="progress"></div>
+    <div class="bar"><div id="bar-fill"></div></div>
+    <div id="qbody"></div>
+    <p class="keyhint">숫자키 1~4로도 답할 수 있어요</p>
+  </div>
+
+  <!-- 결과 화면 -->
+  <div class="card hidden" id="result-card">
+    <h1>수고했어요, <span id="r-name"></span>! 🎉</h1>
+    <div class="score-big" id="score-line"></div>
+    <div class="score-msg" id="score-msg"></div>
+    <button class="btn" id="kakao-btn">지나티처에게 보낼 결과 복사 (카톡용)</button>
+    <div style="margin-top:20px">
+      <h2>📝 전체 해설 — 틀린 문제는 꼭 다시 읽어보세요!</h2>
+      <div id="explanations"></div>
+    </div>
+  </div>
+
+  <div class="foot">영핏 지나티처 · 영어를 핏하다</div>
+</div>
+
+<script>
+"use strict";
+
+/* ══════ 결과 자동 전송 (영핏 공통) ══════ */
+var ENGFIT_SUBMIT_URL = "https://script.google.com/macros/s/AKfycbz5IC3cEtaBGW10qZhrjwtjdtGugmcmYb4ZTHS4k-1LOqTRYzW-LfoAPyFB_ShjAqNp/exec";
+
+async function engfitSubmit(r) {
+  var body = JSON.stringify(r);
+  try {
+    var res = await fetch(ENGFIT_SUBMIT_URL, { method: "POST", body: body });
+    var j = await res.json();
+    return j.ok === true;
+  } catch (e) {
+    try {
+      await fetch(ENGFIT_SUBMIT_URL, { method: "POST", mode: "no-cors", body: body });
+      return true;
+    } catch (e2) { return false; }
+  }
+}
+
+var _engfitSent = false;
+function engfitSilentSubmit(r) {
+  if (_engfitSent) return; _engfitSent = true;
+  try { engfitSubmit(r); } catch (e) {}
+}
+
+/* ══════ 문제 데이터 ══════
+   tag: "재도전" = 오답노트 원본, "변형" = 유사 변형문제
+   ko: 우리말 뜻                                              */
+var QUESTIONS = [
+  /* ── [1] Check2번: be동사 부정문 고르기 ── */
+  { tag:"재도전", ko:"그들은 교실에 있지 않다.",
+    q:"빈칸에 알맞은 be동사를 골라 문장을 완성한 것은?<br><span class='en'>They ______ not in the classroom.</span>",
+    choices:["They are not in the classroom.","They is not in the classroom.","They am not in the classroom.","They be not in the classroom."],
+    answer:"They are not in the classroom.",
+    exp:"주어 <b>They</b>(그들)는 복수 → be동사는 <b>are</b>! 부정문은 be동사 뒤에 not만 붙이면 돼요: are + not = <b>are not</b>(줄임말 aren't). is, am, be는 they와 짝지어 쓰지 않아요." },
+  { tag:"변형", ko:"우리는 파티에 있지 않다.",
+    q:"빈칸에 알맞은 be동사를 골라 문장을 완성한 것은?<br><span class='en'>We ______ not at the party.</span>",
+    choices:["We are not at the party.","We is not at the party.","We am not at the party.","We not are at the party."],
+    answer:"We are not at the party.",
+    exp:"<b>We</b>(우리)도 복수 주어라서 <b>are</b>를 써요. We are not = We aren't. 마지막 보기처럼 not이 are 앞으로 가면 순서가 틀려요 — 순서는 항상 [주어 + be동사 + not]!" },
+  { tag:"변형", ko:"나는 아직 준비가 안 됐다.",
+    q:"빈칸에 알맞은 be동사를 골라 문장을 완성한 것은?<br><span class='en'>I ______ not ready yet.</span>",
+    choices:["I am not ready yet.","I is not ready yet.","I are not ready yet.","I not am ready yet."],
+    answer:"I am not ready yet.",
+    exp:"주어가 <b>I</b>(나)일 때는 무조건 <b>am</b>! I am not = I'm not. am은 I하고만 짝을 이루는 단짝이에요." },
+
+  /* ── [2] Check14번: aren't/isn't 구별(단복수) ── */
+  { tag:"재도전", ko:"레몬은 달콤하지 않다.",
+    q:"다음 중 알맞은 것을 고르세요.",
+    choices:["Lemons aren't sweet.","Lemons isn't sweet.","Lemon aren't sweet.","Lemons not sweet."],
+    answer:"Lemons aren't sweet.",
+    exp:"<b>Lemons</b>는 복수(레몬들)니까 부정문도 <b>aren't</b>(are not)를 써요. isn't는 단수 주어에만 써요. Lemon처럼 s를 빼먹으면 안 돼요 — 복수는 항상 s!" },
+  { tag:"변형", ko:"바나나들은 비싸지 않다.",
+    q:"다음 중 알맞은 것을 고르세요.",
+    choices:["Bananas aren't expensive.","Bananas isn't expensive.","Banana aren't expensive.","Bananas not expensive."],
+    answer:"Bananas aren't expensive.",
+    exp:"<b>Bananas</b>(바나나들)도 복수 → <b>aren't</b>. 복수 명사에는 반드시 aren't를 짝지어 기억하세요." },
+  { tag:"변형", ko:"이 사과는 시지 않다.",
+    q:"다음 중 알맞은 것을 고르세요.",
+    choices:["This apple isn't sour.","This apple aren't sour.","This apples isn't sour.","This apple not sour."],
+    answer:"This apple isn't sour.",
+    exp:"<b>This apple</b>(이 사과 하나)는 단수 → <b>isn't</b>(is not)를 써요. This(이) 뒤에는 항상 단수 명사가 와요 — apple에 s를 붙이면 안 돼요." },
+
+  /* ── [3] Practice6번: she/he/it → isn't ── */
+  { tag:"재도전", ko:"그녀는 나의 여동생이 아니다.",
+    q:"다음 문장에서 밑줄 친 부분을 바르게 고친 것은?<br><span class='en'>She <u>aren't</u> my sister.</span>",
+    choices:["She isn't my sister.","She aren't my sister.","She not is my sister.","She amn't my sister."],
+    answer:"She isn't my sister.",
+    exp:"<b>She</b>(그녀)는 단수 → be동사는 is, 부정은 <b>isn't</b>! aren't는 복수 주어(they, we, you)에만 써요. she/he/it은 항상 isn't로 기억하세요." },
+  { tag:"변형", ko:"그는 선생님이 아니다.",
+    q:"다음 문장에서 밑줄 친 부분을 바르게 고친 것은?<br><span class='en'>He <u>aren't</u> a teacher.</span>",
+    choices:["He isn't a teacher.","He aren't a teacher.","He not is a teacher.","He amn't a teacher."],
+    answer:"He isn't a teacher.",
+    exp:"He도 단수 → <b>isn't</b>. she/he/it은 셋 다 is 가족이라 부정문도 isn't 하나로 통일돼요." },
+  { tag:"변형", ko:"그것은 고장 나지 않았다.",
+    q:"다음 문장에서 밑줄 친 부분을 바르게 고친 것은?<br><span class='en'>It <u>aren't</u> broken.</span>",
+    choices:["It isn't broken.","It aren't broken.","It not is broken.","It amn't broken."],
+    answer:"It isn't broken.",
+    exp:"It도 단수 → <b>isn't</b>. he/she/it 세 친구는 모두 is·isn't를 쓴다는 것, 이제 확실하죠?" },
+
+  /* ── [4] Practice7번: amn't는 없는 말 → I'm not ── */
+  { tag:"재도전", ko:"나는 댄서가 아니다.",
+    q:"다음 문장에서 밑줄 친 부분을 바르게 고친 것은?<br><span class='en'>I <u>amn't</u> a dancer.</span>",
+    choices:["I'm not a dancer.","I amn't a dancer.","I not a dancer.","I isn't a dancer."],
+    answer:"I'm not a dancer.",
+    exp:"영어에는 <b>amn't</b>라는 말이 없어요! I는 항상 <b>I'm not</b>(= I am not)으로 부정문을 만들어요. 규칙이 아니라 그냥 외워야 하는 예외예요." },
+  { tag:"변형", ko:"나는 배고프지 않다.",
+    q:"다음 문장에서 밑줄 친 부분을 바르게 고친 것은?<br><span class='en'>I <u>amn't</u> hungry.</span>",
+    choices:["I'm not hungry.","I amn't hungry.","I not hungry.","I aren't hungry."],
+    answer:"I'm not hungry.",
+    exp:"역시 amn't는 틀린 표현! <b>I'm not</b>(I am not)으로만 써요. I + not 조합은 딱 하나, I'm not이에요." },
+  { tag:"변형", ko:"나는 학교에 있지 않다.",
+    q:"다음 문장에서 밑줄 친 부분을 바르게 고친 것은?<br><span class='en'>I <u>amn't</u> at school.</span>",
+    choices:["I'm not at school.","I amn't at school.","I not at school.","I isn't at school."],
+    answer:"I'm not at school.",
+    exp:"마찬가지로 amn't는 없는 말! <b>I'm not at school</b>이 맞아요. amn't라는 단어 자체를 지워버리세요 — 존재하지 않는 말이니까요." },
+
+  /* ── [5] Practice13번: A and B = we → aren't(줄임말) ── */
+  { tag:"재도전", ko:"Jenny와 나는 바쁘지 않다.",
+    q:"우리말과 같은 뜻이 되도록 빈칸에 알맞은 말을 줄임말로 쓴 것은?<br><span class='en'>Jenny and I ______ busy.</span>",
+    choices:["Jenny and I aren't busy.","Jenny and I isn't busy.","Jenny and I amn't busy.","Jenny and I not busy."],
+    answer:"Jenny and I aren't busy.",
+    exp:"Jenny and I(제니와 나) = 두 명이니까 <b>we</b>로 바꿀 수 있어요. we는 복수 → be동사 are, 부정 줄임말은 <b>aren't</b>! and로 연결되면 항상 복수예요." },
+  { tag:"변형", ko:"Tom과 Amy는 준비되지 않았다.",
+    q:"우리말과 같은 뜻이 되도록 빈칸에 알맞은 말을 줄임말로 쓴 것은?<br><span class='en'>Tom and Amy ______ ready.</span>",
+    choices:["Tom and Amy aren't ready.","Tom and Amy isn't ready.","Tom and Amy amn't ready.","Tom and Amy not ready."],
+    answer:"Tom and Amy aren't ready.",
+    exp:"Tom and Amy = <b>they</b>(그들)로 바꿀 수 있는 복수 주어 → <b>aren't</b>. and로 연결된 이름 두 개는 항상 복수 취급!" },
+  { tag:"변형", ko:"너와 Ben은 늦지 않았다.",
+    q:"우리말과 같은 뜻이 되도록 빈칸에 알맞은 말을 줄임말로 쓴 것은?<br><span class='en'>You and Ben ______ late.</span>",
+    choices:["You and Ben aren't late.","You and Ben isn't late.","You and Ben amn't late.","You and Ben not late."],
+    answer:"You and Ben aren't late.",
+    exp:"You and Ben도 두 명 이상 → 복수 → <b>aren't</b>. and로 묶인 주어는 항상 복수라는 규칙, 이제 확실히 기억됐죠?" },
+
+  /* ── [6] Practice18번: 줄임말 사용 안함 → is not/are not 풀어쓰기 ── */
+  { tag:"재도전", ko:"Ben은 나의 반 친구가 아니다.",
+    q:"우리말과 같은 뜻이 되도록 빈칸에 알맞은 말을 쓴 것은? (줄임말 사용 안 함)<br><span class='en'>Ben ______ ______ my classmate.</span>",
+    choices:["Ben is not my classmate.","Ben isn't not my classmate.","Ben are not my classmate.","Ben not is my classmate."],
+    answer:"Ben is not my classmate.",
+    exp:"Ben은 한 사람(he로 바꿀 수 있음) → 단수 → is. 문제에서 '줄임말 사용 안 함'이라 했으니 isn't가 아니라 <b>is not</b>을 풀어서 써야 해요. 조건을 꼭 확인하는 습관을 들이세요!" },
+  { tag:"변형", ko:"Mina는 나의 사촌이 아니다.",
+    q:"우리말과 같은 뜻이 되도록 빈칸에 알맞은 말을 쓴 것은? (줄임말 사용 안 함)<br><span class='en'>Mina ______ ______ my cousin.</span>",
+    choices:["Mina is not my cousin.","Mina isn't not my cousin.","Mina are not my cousin.","Mina not is my cousin."],
+    answer:"Mina is not my cousin.",
+    exp:"Mina도 한 사람(she) → is. 줄임말 없이 쓰라고 했으니 <b>is not</b>을 그대로 두 단어로 써야 해요." },
+  { tag:"변형", ko:"그 소년들은 나의 친구들이 아니다.",
+    q:"우리말과 같은 뜻이 되도록 빈칸에 알맞은 말을 쓴 것은? (줄임말 사용 안 함)<br><span class='en'>The boys ______ ______ my friends.</span>",
+    choices:["The boys are not my friends.","The boys is not my friends.","The boys isn't not my friends.","The boys not are my friends."],
+    answer:"The boys are not my friends.",
+    exp:"<b>The boys</b>(그 소년들)는 복수 → are. 줄임말 없이 쓰라 했으니 <b>are not</b> 그대로! 이번엔 주어가 복수로 바뀌었으니 be동사도 바뀐다는 것에 주의하세요." },
+
+  /* ── [7] Upgrade1번: I am not hungry ── */
+  { tag:"재도전", ko:"나는 배고프지 않다.",
+    q:"우리말과 같은 뜻이 되도록 바르게 완성한 문장은? (힌트: be, hungry)",
+    choices:["I am not hungry.","I not am hungry.","I is not hungry.","I amn't hungry."],
+    answer:"I am not hungry.",
+    exp:"주어 I → be동사 <b>am</b>, 부정문은 [주어+am+not+나머지] 순서예요 → <b>I am not hungry.</b> not의 위치가 am 뒤라는 것과, amn't라는 말은 없다는 것 두 가지를 함께 기억하세요." },
+  { tag:"변형", ko:"그는 피곤하지 않다.",
+    q:"우리말과 같은 뜻이 되도록 바르게 완성한 문장은? (힌트: be, tired)",
+    choices:["He is not tired.","He not is tired.","He are not tired.","He isn't not tired."],
+    answer:"He is not tired.",
+    exp:"주어 He(그는) → 단수 → is. 순서는 [He + is + not + tired] → <b>He is not tired.</b> = He isn't tired." },
+  { tag:"변형", ko:"우리는 늦지 않았다.",
+    q:"우리말과 같은 뜻이 되도록 바르게 완성한 문장은? (힌트: be, late)",
+    choices:["We are not late.","We not are late.","We is not late.","We amn't late."],
+    answer:"We are not late.",
+    exp:"주어 We(우리는) → 복수 → are. 순서는 [We + are + not + late] → <b>We are not late.</b> = We aren't late." },
+
+  /* ── [8] Upgrade3번: She is not a singer ── */
+  { tag:"재도전", ko:"그녀는 가수가 아니다.",
+    q:"우리말과 같은 뜻이 되도록 바르게 완성한 문장은? (힌트: be, a singer)",
+    choices:["She is not a singer.","She not is a singer.","She are not a singer.","She isn't a not singer."],
+    answer:"She is not a singer.",
+    exp:"주어 She → 단수 → is. [She + is + not + a singer] → <b>She is not a singer.</b> 셀 수 있는 명사 singer 앞에는 a도 잊지 마세요!" },
+  { tag:"변형", ko:"그는 의사가 아니다.",
+    q:"우리말과 같은 뜻이 되도록 바르게 완성한 문장은? (힌트: be, a doctor)",
+    choices:["He is not a doctor.","He not is a doctor.","He are not a doctor.","He isn't not a doctor."],
+    answer:"He is not a doctor.",
+    exp:"He → 단수 → is. [He + is + not + a doctor] → <b>He is not a doctor.</b>" },
+  { tag:"변형", ko:"그들은 학생들이 아니다.",
+    q:"우리말과 같은 뜻이 되도록 바르게 완성한 문장은? (힌트: be, students)",
+    choices:["They are not students.","They not are students.","They is not students.","They amn't students."],
+    answer:"They are not students.",
+    exp:"They → 복수 → are. [They + are + not + students] → <b>They are not students.</b> 복수 명사 students 앞에는 a를 붙이지 않아요." },
+
+  /* ── [9] Upgrade14번: The cap isn't mine (단어 배열) ── */
+  { tag:"재도전", ko:"그 모자는 나의 것이 아니다.",
+    q:"우리말에 맞게 주어진 단어를 배열한 것은? (mine / The / isn't / cap)",
+    choices:["The cap isn't mine.","The isn't cap mine.","Isn't the cap mine.","The cap mine isn't."],
+    answer:"The cap isn't mine.",
+    exp:"문장 순서는 [주어(The cap) + be동사 부정(isn't) + 나머지(mine)]예요. <b>The cap</b>(그 모자)은 단수 → isn't. 마지막 보기처럼 isn't가 문장 맨 뒤로 가면 안 돼요." },
+  { tag:"변형", ko:"그 가방은 너의 것이 아니다.",
+    q:"우리말에 맞게 주어진 단어를 배열한 것은? (yours / The / isn't / bag)",
+    choices:["The bag isn't yours.","The isn't bag yours.","Isn't the bag yours.","The bag yours isn't."],
+    answer:"The bag isn't yours.",
+    exp:"The bag(그 가방)도 단수 → isn't. 순서는 늘 [주어 + isn't + 나머지]. 문장 순서 지키는 연습, 잘 하고 있어요!" },
+  { tag:"변형", ko:"그 신발들은 그의 것이 아니다.",
+    q:"우리말에 맞게 주어진 단어를 배열한 것은? (his / aren't / The / shoes)",
+    choices:["The shoes aren't his.","The aren't shoes his.","Aren't the shoes his.","The shoes his aren't."],
+    answer:"The shoes aren't his.",
+    exp:"The shoes(그 신발들)는 복수(신발은 항상 짝으로 세서 복수 취급) → aren't! 순서는 [The shoes + aren't + his]." },
+
+  /* ── [10] Upgrade16번: The room isn't clean (단어 배열) ── */
+  { tag:"재도전", ko:"그 방은 깨끗하지 않다.",
+    q:"우리말에 맞게 주어진 단어를 배열한 것은? (clean / isn't / The / room)",
+    choices:["The room isn't clean.","The isn't room clean.","Isn't the room clean.","The room clean isn't."],
+    answer:"The room isn't clean.",
+    exp:"[주어(The room) + isn't + clean] 순서! The room(그 방)은 단수 → isn't. 문장 완성할 땐 항상 주어부터 찾고, 그다음 be동사 부정형을 배치하세요." },
+  { tag:"변형", ko:"그 창문들은 더럽지 않다.",
+    q:"우리말에 맞게 주어진 단어를 배열한 것은? (dirty / aren't / The / windows)",
+    choices:["The windows aren't dirty.","The aren't windows dirty.","Aren't the windows dirty.","The windows dirty aren't."],
+    answer:"The windows aren't dirty.",
+    exp:"The windows(그 창문들)는 복수 → aren't. [The windows + aren't + dirty] 순서를 지켜요." },
+  { tag:"변형", ko:"그 부엌은 작지 않다.",
+    q:"우리말에 맞게 주어진 단어를 배열한 것은? (small / isn't / The / kitchen)",
+    choices:["The kitchen isn't small.","The isn't kitchen small.","Isn't the kitchen small.","The kitchen small isn't."],
+    answer:"The kitchen isn't small.",
+    exp:"The kitchen(그 부엌)은 단수 → isn't. [The kitchen + isn't + small]. 부정문 순서, 이제 완전히 익혔어요!" },
+
+  /* ── [11] Check19번: 줄임말 만들기 ── */
+  { tag:"재도전", ko:"그녀는 똑똑하다.",
+    q:"<u>She is</u> smart.  밑줄 친 부분을 줄임말로 바르게 바꾼 것은?",
+    choices:["She's","She'is","Shes","She' is"], answer:"She's",
+    exp:"주어와 be동사를 줄일 때는 <b>빠진 글자 자리에 아포스트로피(')</b>를 찍어요. She is에서 is의 i가 빠지고 <b>She's</b>가 됩니다. She'is처럼 is를 그대로 두고 '만 붙이면 안 되고, Shes처럼 '를 빼먹어도 안 돼요." },
+  { tag:"변형", ko:"나는 학생이다.",
+    q:"<u>I am</u> a student.  밑줄 친 부분을 줄임말로 바르게 바꾼 것은?",
+    choices:["I'm","Im","I'am","Am'I"], answer:"I'm",
+    exp:"I am은 a가 빠지면서 <b>I'm</b>이 돼요. I'am은 am을 그대로 둔 채 '만 붙인 잘못된 형태이고, Im은 '를 빼먹은 형태예요. 줄임말 3총사: <b>I'm / You're / She's(He's, It's)</b>." },
+  { tag:"변형", ko:"너는 나의 가장 친한 친구이다.",
+    q:"<u>You are</u> my best friend.  밑줄 친 부분을 줄임말로 바르게 바꾼 것은?",
+    choices:["You're","Your","You'are","Youre"], answer:"You're",
+    exp:"You are의 줄임말은 <b>You're</b>예요. <b>Your</b>는 '너의'라는 뜻으로 완전히 다른 단어! 소리는 같지만 <b>You're = You are</b>, <b>Your = 너의</b>. 시험에 자주 나오는 구별이니 꼭 기억하세요!" },
+
+  /* ── [12] Practice20번: 빈칸 줄임말 ── */
+  { tag:"재도전", ko:"그들은 은행에 있다.",
+    q:"빈칸에 알맞은 줄임말은?<br><span class='en'>______ at the bank.</span>",
+    choices:["They're","Their","Theyre","They's"], answer:"They're",
+    exp:"'그들은'이 주어니까 They, be동사는 <b>are</b> → 줄이면 <b>They're</b>예요. <b>Their</b>는 '그들의'라는 뜻이라 뒤에 명사가 와야 해요. They's는 존재하지 않는 형태!" },
+  { tag:"변형", ko:"우리는 지금 도서관에 있다.",
+    q:"빈칸에 알맞은 줄임말은?<br><span class='en'>______ in the library now.</span>",
+    choices:["We're","Were","We'are","Our"], answer:"We're",
+    exp:"We + are = <b>We're</b>. 함정 보기 <b>Were</b>를 조심하세요! '를 빼면 be동사의 과거형 were(~이었다)와 같은 모양이 돼요. <b>Our</b>는 '우리의'라는 뜻이고요." },
+  { tag:"변형", ko:"그것은 나의 컵이다.",
+    q:"빈칸에 알맞은 줄임말은?<br><span class='en'>______ my cup.</span>",
+    choices:["It's","Its","It'is","Is't"], answer:"It's",
+    exp:"It + is = <b>It's</b>. <b>Its</b>('가 없음)는 '그것의'라는 뜻으로 전혀 다른 단어! <b>It's = It is</b>, <b>Its = 그것의</b>. '가 있으면 'is가 숨어있구나'라고 생각하면 헷갈리지 않아요." },
+
+  /* ── [13] Upgrade8번: 복수 주어 문장 완성 ── */
+  { tag:"재도전", ko:"그 연필들이 책상 위에 있다.",
+    q:"우리말과 같은 뜻이 되도록 바르게 완성한 문장은? (힌트: on, the, desk)",
+    choices:["The pencils are on the desk.","The pencils is on the desk.","The pencil are on the desk.","Are the pencils on the desk."], answer:"The pencils are on the desk.",
+    exp:"주어가 <b>The pencils</b>(연필들) — 복수니까 be동사는 <b>are</b>! pencil에 s를 꼭 붙여야 해요. '~ 위에'는 <b>on</b>. 순서는 [주어 + are + on the desk]." },
+  { tag:"변형", ko:"그 책들이 탁자 아래에 있다.",
+    q:"우리말과 같은 뜻이 되도록 바르게 완성한 문장은? (힌트: under, the, table)",
+    choices:["The books are under the table.","The books is under the table.","The book are under the table.","Under the table is the books."], answer:"The books are under the table.",
+    exp:"주어 <b>The books</b>는 복수 → be동사 <b>are</b>. '~ 아래에'는 <b>under</b>를 써요. 위치 표현 3형제 — <b>on(위에) / under(아래에) / in(안에)</b> — 세트로 정리해두면 쉬워요." },
+  { tag:"변형", ko:"내 친구들은 교실에 있다.",
+    q:"우리말과 같은 뜻이 되도록 바르게 완성한 문장은? (힌트: in, the, classroom)",
+    choices:["My friends are in the classroom.","My friends is in the classroom.","My friend are in the classroom.","My friends be in the classroom."], answer:"My friends are in the classroom.",
+    exp:"주어 <b>My friends</b>(내 친구들)는 복수 → <b>are</b>. '~ 안에'는 <b>in</b>이에요. be동사는 주어에 따라 모양이 바뀌기 때문에 be를 그대로 쓰면 안 돼요." },
+
+  /* ── [14] Upgrade9번: 단수 주어 + 형용사 ── */
+  { tag:"재도전", ko:"나의 개는 귀엽다.",
+    q:"우리말과 같은 뜻이 되도록 바르게 완성한 문장은? (힌트: cute)",
+    choices:["My dog is cute.","My dog are cute.","My is dog cute.","Cute is my dog."], answer:"My dog is cute.",
+    exp:"주어가 <b>My dog</b>(나의 개) — 한 마리, 단수니까 be동사는 <b>is</b>! 영어 문장의 기본 순서는 [주어 → be동사 → 나머지]예요. My dog을 한 덩어리 주어로 보는 게 포인트!" },
+  { tag:"변형", ko:"너의 여동생은 친절하다.",
+    q:"우리말과 같은 뜻이 되도록 바르게 완성한 문장은? (힌트: kind)",
+    choices:["Your sister is kind.","Your sister are kind.","Your is sister kind.","Kind your sister is."], answer:"Your sister is kind.",
+    exp:"주어 <b>Your sister</b>(너의 여동생)는 한 명, 단수 → <b>is</b>. 순서도 [주어 + is + kind]로! 주어가 he/she로 바꿀 수 있는 한 사람이면 무조건 is라고 생각하면 돼요." },
+  { tag:"변형", ko:"그의 양말들은 깨끗하다.",
+    q:"우리말과 같은 뜻이 되도록 바르게 완성한 문장은? (힌트: clean)",
+    choices:["His socks are clean.","His socks is clean.","His sock are clean.","Clean his socks are."], answer:"His socks are clean.",
+    exp:"함정 문제였어요! 주어가 His로 시작하지만 <b>His socks</b>(그의 양말들)는 <b>복수</b> → be동사는 <b>are</b>! His만 보고 is를 고르면 안 돼요. 주어의 맨 끝 명사가 단수인지 복수인지를 봐야 해요." },
+
+  /* ── [15] Upgrade10번: It is a + 명사 ── */
+  { tag:"재도전", ko:"그것은 판다이다.",
+    q:"우리말과 같은 뜻이 되도록 바르게 완성한 문장은? (힌트: a, panda)",
+    choices:["It is a panda.","It is panda.","It is a pandas.","Is it a panda."], answer:"It is a panda.",
+    exp:"주어 It(단수) + <b>is</b>, 셀 수 있는 명사 하나 앞에는 <b>a</b>를 꼭 붙여요 → <b>It is a panda.</b> a를 빼먹으면 틀린 문장이 되고, a 뒤에 복수를 쓰는 것도 모순이에요." },
+  { tag:"변형", ko:"그것은 달걀이다.",
+    q:"우리말과 같은 뜻이 되도록 바르게 완성한 문장은? (힌트: egg)",
+    choices:["It is an egg.","It is a egg.","It is egg.","It is an eggs."], answer:"It is an egg.",
+    exp:"egg는 <b>모음 소리(에)로 시작</b>하는 단어라서 a가 아니라 <b>an</b>을 써요 → <b>It is an egg.</b> a/an 규칙: 첫소리가 a,e,i,o,u(모음)면 an, 나머지는 a." },
+  { tag:"변형", ko:"그것들은 사과들이다.",
+    q:"우리말과 같은 뜻이 되도록 바르게 완성한 문장은? (힌트: apples)",
+    choices:["They are apples.","They are a apples.","It is apples.","They is apples."], answer:"They are apples.",
+    exp:"'그것들'은 여러 개니까 주어는 <b>They</b>, be동사는 <b>are</b> → <b>They are apples.</b> 복수 명사 apples 앞에는 a를 붙이지 않아요(a는 '하나'라는 뜻이니까요)." }
+];
+
+/* ══════ 보기 셔플 (정답 위치 1~4 균등 분산) ══════ */
+function fyShuffle(a) {
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+function shuffleChoices() {
+  var n = QUESTIONS.length;
+  var slots = 4;
+  var pool = [];
+  var base = Math.floor(n / slots);
+  for (var p = 0; p < slots; p++) for (var k = 0; k < base; k++) pool.push(p);
+  var extra = n % slots;
+  var posList = [0,1,2,3];
+  fyShuffle(posList);
+  for (var e = 0; e < extra; e++) pool.push(posList[e]);
+  fyShuffle(pool);
+  QUESTIONS.forEach(function (q, idx) {
+    var arr = fyShuffle(q.choices.slice());
+    var target = pool[idx];
+    var ai = arr.indexOf(q.answer);
+    var t = arr[target]; arr[target] = arr[ai]; arr[ai] = t;
+    q.choices = arr;
+  });
+}
+
+/* ══════ 진행 로직 ══════ */
+var studentName = "";
+var current = 0;
+var correctCount = 0;
+var wrongNumbers = [];
+var answersLog = [];
+var startTime = 0;
+var locked = false;
+
+var nameInput = document.getElementById("name-input");
+var startBtn = document.getElementById("start-btn");
+
+nameInput.addEventListener("input", function () {
+  startBtn.disabled = nameInput.value.trim().length === 0;
+});
+nameInput.addEventListener("keydown", function (e) {
+  if (e.key === "Enter" && nameInput.value.trim()) startBtn.click();
+});
+startBtn.addEventListener("click", function () {
+  studentName = nameInput.value.trim();
+  if (!studentName) return;
+  shuffleChoices();
+  document.getElementById("start-card").classList.add("hidden");
+  document.getElementById("quiz-card").classList.remove("hidden");
+  startTime = Date.now();
+  renderQuestion();
+});
+
+function renderQuestion() {
+  locked = false;
+  var q = QUESTIONS[current];
+  document.getElementById("progress").textContent = "문제 " + (current + 1) + " / " + QUESTIONS.length;
+  document.getElementById("bar-fill").style.width = (current / QUESTIONS.length * 100) + "%";
+  var html = "<span class='tag " + (q.tag === "재도전" ? "retry" : "vari") + "'>" + q.tag + "</span>";
+  if (q.ko) html += "<div class='ko'>" + q.ko + "</div>";
+  html += "<div class='qtext'>" + q.q + "</div><div id='choices'></div>";
+  document.getElementById("qbody").innerHTML = html;
+  var box = document.getElementById("choices");
+  q.choices.forEach(function (c, i) {
+    var b = document.createElement("button");
+    b.className = "choice";
+    b.innerHTML = "<span class='num'>" + (i + 1) + "</span>" + c;
+    b.addEventListener("click", function () { pick(i, b); });
+    box.appendChild(b);
+  });
+  window.scrollTo(0, 0);
+}
+
+function pick(i, btn) {
+  if (locked) return;
+  locked = true;
+  var q = QUESTIONS[current];
+  var chosen = q.choices[i];
+  var ok = chosen === q.answer;
+  if (ok) correctCount++;
+  else wrongNumbers.push(current + 1);
+  answersLog.push({ no: current + 1, ok: ok, chosen: chosen, answer: q.answer });
+  setTimeout(function () {
+    current++;
+    if (current < QUESTIONS.length) renderQuestion();
+    else showResult();
+  }, 250);
+}
+
+document.addEventListener("keydown", function (e) {
+  if (document.getElementById("quiz-card").classList.contains("hidden")) return;
+  var n = parseInt(e.key, 10);
+  if (n >= 1 && n <= QUESTIONS[current].choices.length) {
+    var btns = document.querySelectorAll("#choices .choice");
+    if (btns[n - 1]) pick(n - 1, btns[n - 1]);
+  }
+});
+
+/* ══════ 결과 화면 ══════ */
+function showResult() {
+  document.getElementById("quiz-card").classList.add("hidden");
+  document.getElementById("result-card").classList.remove("hidden");
+  document.getElementById("r-name").textContent = studentName;
+  document.getElementById("score-line").textContent = correctCount + " / " + QUESTIONS.length;
+  var msg;
+  if (correctCount === QUESTIONS.length) msg = "완벽해요! be동사 마스터 인정 👑";
+  else if (correctCount >= 36) msg = "정말 잘했어요! 틀린 문제만 한 번 더 보면 끝!";
+  else if (correctCount >= 25) msg = "잘했어요! 해설을 천천히 읽으면 금방 채워질 거예요 😊";
+  else msg = "끝까지 푼 것만으로도 멋져요! 해설 읽고 다시 도전해봐요 💪";
+  document.getElementById("score-msg").textContent = msg;
+
+  var expBox = document.getElementById("explanations");
+  QUESTIONS.forEach(function (q, idx) {
+    var log = answersLog[idx];
+    var d = document.createElement("div");
+    d.className = "exp" + (log.ok ? "" : " wrong");
+    d.innerHTML = "<b>" + (idx + 1) + "번 " + (log.ok ? "⭕ 정답" : "❌ 오답") + "</b> · 정답: <span class='en'>" + q.answer + "</span>" +
+      (log.ok ? "" : " (승민이가 고른 답: <span class='en'>" + log.chosen + "</span>)") +
+      "<br>" + q.exp;
+    expBox.appendChild(d);
+  });
+  window.scrollTo(0, 0);
+
+  engfitSilentSubmit({
+    quizId: "clinic-leeseungmin-20260722",
+    quizTitle: "이승민 오답 클리닉 — be동사의 현재형 총정리 7/22",
+    student: studentName,
+    score: correctCount,
+    total: QUESTIONS.length,
+    wrong: wrongNumbers,
+    durationSec: Math.round((Date.now() - startTime) / 1000),
+    detail: answersLog
+  });
+}
+
+/* ══════ 카톡 복사 ══════ */
+document.getElementById("kakao-btn").addEventListener("click", function () {
+  var lines = [
+    "[영핏 오답 클리닉 결과]",
+    "이름: " + studentName,
+    "퀴즈: be동사의 현재형 총정리 (7/22)",
+    "점수: " + correctCount + " / " + QUESTIONS.length,
+    "틀린 문항: " + (wrongNumbers.length ? wrongNumbers.join(", ") + "번" : "없음 🎉"),
+    "제공: 영핏 지나티처"
+  ];
+  var text = lines.join("\n");
+  var btn = this;
+  function done() { btn.textContent = "복사 완료! 카톡에 붙여넣기 하세요 ✓"; }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done, function () { fallbackCopy(text, done); });
+  } else { fallbackCopy(text, done); }
+});
+function fallbackCopy(text, done) {
+  var ta = document.createElement("textarea");
+  ta.value = text; document.body.appendChild(ta); ta.select();
+  try { document.execCommand("copy"); done(); } catch (e) { alert(text); }
+  document.body.removeChild(ta);
+}
+</script>
+</body>
+</html>
