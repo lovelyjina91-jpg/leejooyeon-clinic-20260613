@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>이서연의 오답 클리닉 (Unit 6·7) — 영핏 지나티처</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; background: #f0f4f4; color: #2d3436; min-height: 100vh; display: flex; justify-content: center; padding: 20px 14px; }
+  .wrap { width: 100%; max-width: 560px; }
+  .card { background: #fff; border-radius: 16px; padding: 26px 22px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 14px; }
+  h1 { font-size: 1.25rem; color: #2e7d6e; margin-bottom: 6px; }
+  .sub { font-size: 0.88rem; color: #778; margin-bottom: 18px; line-height: 1.5; }
+  input[type=text] { width: 100%; padding: 13px; font-size: 1.05rem; border: 1.5px solid #cdd; border-radius: 10px; }
+  .btn { display: block; width: 100%; margin-top: 14px; padding: 14px; font-size: 1.05rem; font-weight: bold; color: #fff; background: #2e7d6e; border: none; border-radius: 10px; cursor: pointer; }
+  .btn:disabled { background: #b8c4c2; cursor: default; }
+  .progress { font-size: 0.85rem; color: #789; margin-bottom: 4px; display: flex; justify-content: space-between; }
+  .srctag { display: inline-block; font-size: 0.75rem; color: #2e7d6e; background: #e8f3f1; border-radius: 6px; padding: 2px 8px; margin-bottom: 10px; }
+  .bar { height: 6px; background: #e3ecea; border-radius: 3px; margin-bottom: 14px; overflow: hidden; }
+  .bar > div { height: 100%; background: #2e7d6e; border-radius: 3px; width: 0; transition: width .25s; }
+  .tip { background: #fff8e6; border: 1px solid #f2e2b3; border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; font-size: 0.88rem; line-height: 1.65; color: #6b5a1e; }
+  .tip b { color: #a07800; }
+  .tip .tip-label { font-weight: bold; color: #a07800; display: block; margin-bottom: 4px; }
+  .qtext { font-size: 1.05rem; line-height: 1.65; margin-bottom: 16px; font-weight: bold; }
+  .choice { display: block; width: 100%; text-align: left; padding: 13px 14px; margin-bottom: 9px; font-size: 1rem; background: #f6f9f8; border: 1.5px solid #dde5e3; border-radius: 10px; cursor: pointer; line-height: 1.45; }
+  .choice:active { background: #e2efec; }
+  .num { color: #2e7d6e; font-weight: bold; margin-right: 6px; }
+  .score-big { font-size: 2rem; font-weight: bold; color: #2e7d6e; text-align: center; margin: 10px 0; }
+  #submit-status { text-align: center; font-size: 0.92rem; margin: 12px 0; min-height: 1.2em; }
+  .exp { background: #f6f9f8; border-left: 4px solid #2e7d6e; border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; font-size: 0.9rem; line-height: 1.6; }
+  .exp.wrong { border-left-color: #c0392b; }
+  .exp b { color: #2e7d6e; }
+  .exp.wrong .exp-head b { color: #c0392b; }
+  .footer { text-align: center; font-size: 0.8rem; color: #9ab; margin: 8px 0 20px; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- 시작 화면 -->
+  <div class="card" id="start-card">
+    <h1>이서연의 오답 클리닉 🌱</h1>
+    <p class="sub">The Best Reading 3.1 · Unit 6~7 오답노트 변형문제 · 총 12문항<br>
+    <b>full vs fall 헷갈리는 단어</b>랑 <b>날씨가 점점 ~해지다 (get/gets + 비교급)</b> 표현을 집중적으로 연습해요!<br>
+    💡 문제마다 위에 <b>개념 설명 카드</b>가 있으니 먼저 읽고 풀면 어렵지 않아요!<br>
+    다 풀면 친절한 해설이랑 카톡으로 보낼 결과 메시지까지 준비해 줄게요.<br>
+    이름을 입력하고 시작하세요!</p>
+    <input type="text" id="name-input" placeholder="이름" maxlength="20" autocomplete="off">
+    <button class="btn" id="start-btn" disabled>시작하기</button>
+  </div>
+
+  <!-- 문제 화면 -->
+  <div class="card hidden" id="quiz-card">
+    <div class="progress"><span id="prog-num"></span><span id="prog-pct"></span></div>
+    <div class="bar"><div id="bar-fill"></div></div>
+    <span class="srctag" id="srctag"></span>
+    <div class="tip" id="tipbox"></div>
+    <div class="qtext" id="qtext"></div>
+    <div id="choices"></div>
+  </div>
+
+  <!-- 결과 화면 -->
+  <div class="card hidden" id="result-card">
+    <h1>수고했어요! 🎉</h1>
+    <div class="score-big" id="score-line"></div>
+    <div id="submit-status"></div>
+    <button class="btn" id="kakao-btn">지나티처에게 보낼 결과 복사 (카톡용)</button>
+    <div style="margin-top:20px">
+      <p class="sub" style="margin-bottom:10px">📝 전체 해설 — 틀린 문제 위주로 꼭 읽어보세요!</p>
+      <div id="explanations"></div>
+    </div>
+  </div>
+
+  <div class="footer">영핏 지나티처 · 최상위 도전!! 이서연 화이팅 💪</div>
+</div>
+
+<script>
+"use strict";
+
+/* ══════ 결과 자동 전송 (영핏 공통) ══════ */
+var ENGFIT_SUBMIT_URL = "https://script.google.com/macros/s/AKfycbz5IC3cEtaBGW10qZhrjwtjdtGugmcmYb4ZTHS4k-1LOqTRYzW-LfoAPyFB_ShjAqNp/exec";
+
+async function engfitSubmit(r) {
+  var body = JSON.stringify(r);
+  try {
+    var res = await fetch(ENGFIT_SUBMIT_URL, { method: "POST", body: body });
+    var j = await res.json();
+    return j.ok === true;
+  } catch (e) {
+    try {
+      await fetch(ENGFIT_SUBMIT_URL, { method: "POST", mode: "no-cors", body: body });
+      return true;
+    } catch (e2) { return false; }
+  }
+}
+
+var _engfitSent = false;
+async function engfitSubmitWithStatus(r) {
+  if (_engfitSent) return; _engfitSent = true;
+  var ok = await engfitSubmit(r);
+  /* 학생 화면에는 표시하지 않고 조용히 전송 (자동 전송 사실은 비공개) */
+  return ok;
+}
+
+/* ══════ 개념 설명 (그룹별) ══════ */
+var TIPS = {
+  "①번 변형: full vs fall": "full(가득한)과 fall(동사: 떨어지다 / 명사: 가을)은 스펠링이 아주 비슷해요! full은 <b>f-u-ll</b>, fall은 <b>f-a-ll</b>로 가운데 모음(u/a)만 달라요.<br>full은 '~로 가득 차 있다'는 형용사, fall은 '뚝 떨어지다' 또는 '가을'이라는 뜻이에요. 문장 뜻을 먼저 생각하면서 골라보세요!",
+  "②번 변형: weather는 단수 (get/gets)": "'날씨가 점점 ~해진다'라고 할 때는 <b>get + 비교급</b>을 써요.<br>그런데 weather(날씨)나 it은 <b>하나(3인칭 단수)</b>라서 동사에 꼭 <b>-s</b>를 붙여야 해요 → get(X) → <b>gets</b>(O). getes처럼 -es를 붙이는 것도 잘못된 철자예요!",
+  "③번 변형: gets + 비교급 철자 (자음 겹치기)": "hot, wet처럼 <b>짧은 모음 + 자음 하나</b>로 끝나는 단어는 비교급을 만들 때 <b>마지막 자음을 한 번 더 쓰고 -er</b>을 붙여요.<br>hot → hot<b>t</b>er, wet → wet<b>t</b>er. hoter처럼 자음을 하나만 쓰면 스펠링이 틀려요!",
+  "④번 변형: gets + 비교급 철자 (그냥 -er)": "cool, cold, short처럼 이미 자음이 두 개 이상으로 끝나는 단어는 자음을 겹치지 않고 <b>그냥 -er만</b> 붙여요.<br>cool → cool<b>er</b>, cold → cold<b>er</b>. coolLer처럼 자음을 괜히 하나 더 쓰면 틀린 철자가 돼요!"
+};
+
+/* ══════ 문제 데이터 (원본 오답 4문항 × 유사문제 3개 = 12문항) ══════ */
+var QUESTIONS = [
+/* ── 원본 2번(full/fall 혼동) 변형 ── */
+{ src:"①번 변형: full vs fall", q:"My backpack is ______ of textbooks today.",
+  choices:["full","fall","warm"], answer:"full",
+  exp:"가방이 책으로 '가득 차' 있다는 뜻이니 형용사 <b>full</b>이 정답이에요. fall(떨어지다/가을)을 쓰면 문장 뜻이 이상해져요." },
+{ src:"①번 변형: full vs fall", q:"In ______, the leaves turn yellow and red.",
+  choices:["fall","full","cool"], answer:"fall",
+  exp:"낙엽이 노랗고 빨갛게 물드는 계절은 <b>fall</b>(가을)이에요. 계절을 말할 때는 full이 아니라 fall을 써야 해요." },
+{ src:"①번 변형: full vs fall", q:"Be careful! The cup is ______ of hot tea.",
+  choices:["full","fall","cold"], answer:"full",
+  exp:"컵에 뜨거운 차가 '가득 차' 있다는 뜻이니 <b>full</b>이 정답이에요. full(가득한)과 fall(가을/떨어지다)은 모음 하나(u/a)만 다르니 철자를 천천히 확인하는 습관을 들이세요!" },
+
+/* ── 원본 3번(The weather ___ colder — get/gets) 변형 ── */
+{ src:"②번 변형: weather는 단수 (get/gets)", q:"The weather ______ warmer in spring.",
+  choices:["get","gets","getting"], answer:"gets",
+  exp:"weather(날씨)는 한 가지(단수)라서 동사에 <b>-s</b>를 붙여야 해요. 그래서 get이 아니라 <b>gets</b>가 정답! 3인칭 단수 주어 뒤에는 항상 동사에 -s를 붙이는 것, 기억하죠?" },
+{ src:"②번 변형: weather는 단수 (get/gets)", q:"It ______ colder at night in winter.",
+  choices:["get","gets","getes"], answer:"gets",
+  exp:"It(그것 = 날씨)도 3인칭 단수라서 <b>gets</b>를 써야 해요. getes처럼 -es를 붙이는 건 잘못된 철자예요. get 뒤에 s만 붙이면 gets!" },
+{ src:"②번 변형: weather는 단수 (get/gets)", q:"The weather ______ better after the rain stops.",
+  choices:["gets","get","getting"], answer:"gets",
+  exp:"여기서도 주어는 weather(단수)! 그래서 정답은 <b>gets</b>예요. '날씨가 ~해진다'는 문장은 항상 weather/it + gets + 비교급 패턴으로 기억하세요." },
+
+/* ── 원본 4번(gets hotter — 철자 겹자음) 변형 ── */
+{ src:"③번 변형: gets + 비교급 철자 (자음 겹치기)", q:"The weather gets ______ in summer.",
+  choices:["hoter","hotter","hottter"], answer:"hotter",
+  exp:"hot은 '짧은 모음(o) + 자음(t)'으로 끝나서 비교급을 만들 때 <b>마지막 자음을 한 번 더 쓰고</b> -er을 붙여요 → hot<b>t</b>er. hoter(자음 하나)는 틀린 철자예요!" },
+{ src:"③번 변형: gets + 비교급 철자 (자음 겹치기)", q:"It gets ______ near the campfire.",
+  choices:["hoter","hotter","hoterr"], answer:"hotter",
+  exp:"모닥불 근처는 점점 뜨거워지죠? '뜨거워지다'는 <b>hotter</b>! t를 두 번 쓰는 것(hot+t+er)을 잊지 마세요." },
+{ src:"③번 변형: gets + 비교급 철자 (자음 겹치기)", q:"The ground gets ______ after the rain.",
+  choices:["weter","wetter","wettter"], answer:"wetter",
+  exp:"wet도 hot과 같은 규칙이에요! 짧은 모음(e) + 자음(t)으로 끝나니 t를 한 번 더 써서 <b>wetter</b>가 돼요. weter처럼 자음 하나만 쓰면 스펠링 오류예요." },
+
+/* ── 원본 5번(gets cooler — 철자 단순 -er) 변형 ── */
+{ src:"④번 변형: gets + 비교급 철자 (그냥 -er)", q:"The weather gets ______ in fall.",
+  choices:["cooler","cooller","coolerr"], answer:"cooler",
+  exp:"cool은 이미 모음이 두 개(oo)라서 자음을 겹치지 않고 그냥 <b>-er</b>만 붙여요 → cool<b>er</b>. cooller처럼 l을 하나 더 쓰면 틀려요!" },
+{ src:"④번 변형: gets + 비교급 철자 (그냥 -er)", q:"Soup gets ______ if you wait too long.",
+  choices:["colder","coldder","coldeer"], answer:"colder",
+  exp:"cold도 자음을 겹치지 않고 그냥 -er을 붙여서 <b>colder</b>가 돼요. hot/wet과 달리 cool, cold는 이미 자음이 두 개 이상이라 자음을 겹치지 않아요." },
+{ src:"④번 변형: gets + 비교급 철자 (그냥 -er)", q:"The days get ______ in winter.",
+  choices:["shorter","shortter","shorterr"], answer:"shorter",
+  exp:"short도 자음이 이미 rt 두 개라서 겹치지 않고 <b>-er</b>만 붙여요 → short<b>er</b>. 짧은 모음+자음 1개로 끝나는 단어만 자음을 겹쳐 쓴다는 것, 이제 확실히 알겠죠?" }
+];
+
+/* ══════ 진행 상태 ══════ */
+var studentName = "";
+var current = 0;
+var answersLog = [];
+var startTime = 0;
+var shuffledChoices = null;
+
+var nameInput = document.getElementById("name-input");
+var startBtn = document.getElementById("start-btn");
+
+nameInput.addEventListener("input", function () {
+  startBtn.disabled = nameInput.value.trim().length === 0;
+});
+nameInput.addEventListener("keydown", function (e) {
+  if (e.key === "Enter" && !startBtn.disabled) startBtn.click();
+});
+startBtn.addEventListener("click", function () {
+  studentName = nameInput.value.trim();
+  if (!studentName) return;
+  current = 0; answersLog = [];
+  startTime = Date.now();
+  document.getElementById("start-card").classList.add("hidden");
+  document.getElementById("quiz-card").classList.remove("hidden");
+  showQuestion();
+});
+
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+
+var CIRCLED = ["①", "②", "③", "④", "⑤"];
+
+function showQuestion() {
+  var q = QUESTIONS[current];
+  document.getElementById("prog-num").textContent = (current + 1) + " / " + QUESTIONS.length;
+  document.getElementById("prog-pct").textContent = Math.round(current / QUESTIONS.length * 100) + "%";
+  document.getElementById("bar-fill").style.width = (current / QUESTIONS.length * 100) + "%";
+  document.getElementById("srctag").textContent = q.src;
+  document.getElementById("tipbox").innerHTML = '<span class="tip-label">💡 개념 먼저 읽어보기</span>' + (TIPS[q.src] || "");
+  document.getElementById("qtext").innerHTML = "Q" + (current + 1) + ". " + q.q;
+  var box = document.getElementById("choices");
+  box.innerHTML = "";
+  shuffledChoices = shuffle(q.choices);
+  shuffledChoices.forEach(function (c, i) {
+    var b = document.createElement("button");
+    b.className = "choice";
+    b.innerHTML = '<span class="num">' + CIRCLED[i] + "</span>" + c;
+    b.addEventListener("click", function () { pick(c); });
+    box.appendChild(b);
+  });
+  window.scrollTo(0, 0);
+}
+
+document.addEventListener("keydown", function (e) {
+  if (document.getElementById("quiz-card").classList.contains("hidden")) return;
+  var n = parseInt(e.key, 10);
+  if (shuffledChoices && n >= 1 && n <= shuffledChoices.length) pick(shuffledChoices[n - 1]);
+});
+
+var locked = false;
+function pick(choice) {
+  if (locked) return; locked = true;
+  var q = QUESTIONS[current];
+  var ok = choice === q.answer;
+  answersLog.push({ no: current + 1, ok: ok, chosen: choice, answer: q.answer });
+  setTimeout(function () {
+    locked = false;
+    current++;
+    if (current < QUESTIONS.length) showQuestion();
+    else showResult();
+  }, 250);
+}
+
+function showResult() {
+  document.getElementById("quiz-card").classList.add("hidden");
+  document.getElementById("result-card").classList.remove("hidden");
+  var correctCount = answersLog.filter(function (l) { return l.ok; }).length;
+  var wrongNumbers = answersLog.filter(function (l) { return !l.ok; }).map(function (l) { return l.no; });
+  document.getElementById("score-line").textContent = correctCount + " / " + QUESTIONS.length;
+
+  var expBox = document.getElementById("explanations");
+  QUESTIONS.forEach(function (q, i) {
+    var log = answersLog[i];
+    var d = document.createElement("div");
+    d.className = "exp" + (log.ok ? "" : " wrong");
+    d.innerHTML = '<div class="exp-head"><b>Q' + (i + 1) + " (" + q.src + ") " +
+      (log.ok ? "정답! ✓" : "오답 (내 답: " + log.chosen + " → 정답: " + q.answer + ")") +
+      "</b></div>" + q.exp;
+    expBox.appendChild(d);
+  });
+
+  engfitSubmitWithStatus({
+    quizId: "clinic-leeseoyeon-0723",
+    quizTitle: "이서연 오답 클리닉 (Unit 6·7, full/fall + get/gets 비교급)",
+    student: studentName,
+    score: correctCount,
+    total: QUESTIONS.length,
+    wrong: wrongNumbers,
+    durationSec: Math.round((Date.now() - startTime) / 1000),
+    detail: answersLog
+  });
+
+  document.getElementById("kakao-btn").onclick = function () {
+    var msg = "[영핏 오답 클리닉 결과]\n학생: " + studentName +
+              "\n퀴즈: 이서연 오답 클리닉 (Unit 6·7)" +
+              "\n점수: " + correctCount + "/" + QUESTIONS.length +
+              "\n틀린 문항: " + (wrongNumbers.length ? wrongNumbers.join(", ") : "없음") +
+              "\n- 영핏 지나티처";
+    navigator.clipboard.writeText(msg).then(function () {
+      document.getElementById("kakao-btn").textContent = "복사 완료! 카톡에 붙여넣기 하세요 ✓";
+    }).catch(function () {
+      prompt("아래 내용을 길게 눌러 복사하세요", msg);
+    });
+  };
+}
+</script>
+</body>
+</html>
