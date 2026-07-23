@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>차정민의 부사 마스터 오답 클리닉 — 영핏 지나티처</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; background: #f0f4f4; color: #2d3436; min-height: 100vh; display: flex; justify-content: center; padding: 20px 14px; }
+  .wrap { width: 100%; max-width: 560px; }
+  .card { background: #fff; border-radius: 16px; padding: 26px 22px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 14px; }
+  h1 { font-size: 1.25rem; color: #2e7d6e; margin-bottom: 6px; }
+  .sub { font-size: 0.88rem; color: #778; margin-bottom: 18px; line-height: 1.5; }
+  input[type=text] { width: 100%; padding: 13px; font-size: 1.05rem; border: 1.5px solid #cdd; border-radius: 10px; }
+  .btn { display: block; width: 100%; margin-top: 14px; padding: 14px; font-size: 1.05rem; font-weight: bold; color: #fff; background: #2e7d6e; border: none; border-radius: 10px; cursor: pointer; }
+  .btn:disabled { background: #b8c4c2; cursor: default; }
+  .progress { font-size: 0.85rem; color: #789; margin-bottom: 4px; display: flex; justify-content: space-between; }
+  .srctag { display: inline-block; font-size: 0.75rem; color: #2e7d6e; background: #e8f3f1; border-radius: 6px; padding: 2px 8px; margin-bottom: 10px; }
+  .bar { height: 6px; background: #e3ecea; border-radius: 3px; margin-bottom: 14px; overflow: hidden; }
+  .bar > div { height: 100%; background: #2e7d6e; border-radius: 3px; width: 0; transition: width .25s; }
+  .tip { background: #fff8e6; border: 1px solid #f2e2b3; border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; font-size: 0.88rem; line-height: 1.65; color: #6b5a1e; }
+  .tip b { color: #a07800; }
+  .tip .tip-label { font-weight: bold; color: #a07800; display: block; margin-bottom: 4px; }
+  .passage { background: #f6f9f8; border: 1.5px solid #dde5e3; border-radius: 10px; padding: 12px 14px; margin-bottom: 12px; font-size: 0.93rem; line-height: 1.7; }
+  .qtext { font-size: 1.03rem; line-height: 1.65; margin-bottom: 16px; }
+  .choice { display: block; width: 100%; text-align: left; padding: 13px 14px; margin-bottom: 9px; font-size: 0.98rem; background: #f6f9f8; border: 1.5px solid #dde5e3; border-radius: 10px; cursor: pointer; line-height: 1.45; }
+  .choice:active { background: #e2efec; }
+  .num { color: #2e7d6e; font-weight: bold; margin-right: 6px; }
+  .score-big { font-size: 2rem; font-weight: bold; color: #2e7d6e; text-align: center; margin: 10px 0; }
+  .exp { background: #f6f9f8; border-left: 4px solid #2e7d6e; border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; font-size: 0.9rem; line-height: 1.6; }
+  .exp.wrong { border-left-color: #c0392b; }
+  .exp b { color: #2e7d6e; }
+  .exp.wrong .exp-head b { color: #c0392b; }
+  .footer { text-align: center; font-size: 0.8rem; color: #9ab; margin: 8px 0 20px; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- 시작 화면 -->
+  <div class="card" id="start-card">
+    <h1>차정민의 부사 마스터 오답 클리닉 🌟</h1>
+    <p class="sub">부사 단원 시험지(5/13) 변형문제 · 총 86문항<br>
+    <b>3개 영역</b>으로 나눠서 진행해요 — 1영역 부사의 형태(30) · 2영역 부사의 위치와 어순(32) · 3영역 시제와 독해(24)<br>
+    영역이 끝날 때마다 결과를 복사해서 지나티처에게 보내면 돼요!<br>
+    💡 문제마다 위에 <b>「왜 틀렸을까? + 개념 카드」</b>가 있어요. 문제를 푸는 것보다 <b>개념을 확실히 내 것으로</b> 만드는 게 목표니까, 꼭 먼저 읽고 풀기!<br>
+    풀던 기록은 자동 저장되니 중간에 꺼져도 이어서 할 수 있어요 😊<br>
+    이름을 입력하고 시작하세요!</p>
+    <input type="text" id="name-input" placeholder="이름" maxlength="20" autocomplete="off">
+    <button class="btn" id="start-btn" disabled>시작하기</button>
+  </div>
+
+  <!-- 문제 화면 -->
+  <div class="card hidden" id="quiz-card">
+    <div class="progress"><span id="prog-num"></span><span id="prog-pct"></span></div>
+    <div class="bar"><div id="bar-fill"></div></div>
+    <span class="srctag" id="srctag"></span>
+    <div class="tip" id="tipbox"></div>
+    <div class="qtext" id="qtext"></div>
+    <div id="choices"></div>
+  </div>
+
+  <!-- 이어하기 화면 -->
+  <div class="card hidden" id="resume-card">
+    <h1>이어서 풀 수 있어요! 🔄</h1>
+    <p class="sub" id="resume-info"></p>
+    <button class="btn" id="resume-btn">이어서 하기</button>
+    <button class="btn" id="restart-btn" style="background:#b8c4c2">처음부터 다시 하기</button>
+  </div>
+
+  <!-- 영역별 결과 화면 -->
+  <div class="card hidden" id="sec-result-card">
+    <h1 id="sec-result-title"></h1>
+    <div class="score-big" id="sec-score"></div>
+    <p class="sub" id="sec-wrong" style="text-align:center"></p>
+    <button class="btn" id="sec-copy-btn"></button>
+    <button class="btn" id="next-sec-btn" style="background:#38699e"></button>
+    <div id="total-block" class="hidden" style="margin-top:22px; border-top:2px dashed #dde5e3; padding-top:18px">
+      <p class="sub" style="text-align:center; margin-bottom:4px">🏆 전체 최종 결과</p>
+      <div class="score-big" id="total-score"></div>
+      <p class="sub" id="total-detail" style="text-align:center"></p>
+      <button class="btn" id="total-copy-btn">전체 결과 복사 (카톡용)</button>
+    </div>
+    <div style="margin-top:20px">
+      <p class="sub" style="margin-bottom:10px">📝 이 영역 해설 — 틀린 문제 위주로 꼭 읽어보세요!</p>
+      <div id="sec-explanations"></div>
+    </div>
+  </div>
+
+  <div class="footer">영핏 지나티처 · 기초를 완벽히, 상위권 도전!! 차정민 화이팅 💪</div>
+</div>
+
+<script>
+"use strict";
+
+/* ══════ 결과 자동 전송 (영핏 공통) ══════ */
+var ENGFIT_SUBMIT_URL = "https://script.google.com/macros/s/AKfycbz5IC3cEtaBGW10qZhrjwtjdtGugmcmYb4ZTHS4k-1LOqTRYzW-LfoAPyFB_ShjAqNp/exec";
+
+async function engfitSubmit(r) {
+  var body = JSON.stringify(r);
+  try {
+    var res = await fetch(ENGFIT_SUBMIT_URL, { method: "POST", body: body });
+    var j = await res.json();
+    return j.ok === true;
+  } catch (e) {
+    try {
+      await fetch(ENGFIT_SUBMIT_URL, { method: "POST", mode: "no-cors", body: body });
+      return true;
+    } catch (e2) { return false; }
+  }
+}
+
+/* ══════ 왜 틀렸을까? + 개념 카드 (유형별) ══════ */
+var TIPS = {
+"시험지 55번": "시험지에서 「단어의 관계가 다른 것」을 고르는 문제를 틀렸어요.<br>🔍 slow-slowly처럼 <b>「형용사-부사」</b> 짝이 네 개, good-better처럼 <b>「원급-비교급」</b> 짝이 하나 섞여 있었어요.<br>💡 -ly가 붙은 짝은 거의 다 「형용사→부사」예요. good의 부사는 goodly가 아니라 <b>well</b>이고, better는 good의 <b>비교급</b>(더 좋은)이라는 걸 꼭 구분하세요!",
+"시험지 63번": "시험지에서 he ran <b>rapid</b>가 왜 어색한지 찾지 못했어요.<br>🔍 ran(달렸다)은 동사죠? <b>동사를 꾸미는 건 부사</b>예요. rapid(빠른)는 형용사라서 동사를 꾸밀 수 없어요 → ran <b>rapidly</b>(빠르게).<br>💡 문장에서 밑줄이 <b>동사를 꾸미고 있으면 -ly 부사인지</b> 확인하는 습관을 들이세요!",
+"시험지 73번": "시험지에서 love-<b>lovely</b>가 다른 짝이라는 걸 놓쳤어요.<br>🔍 sad→sadly는 「형용사→부사」지만, love(사랑)→lovely(사랑스러운)는 <b>「명사→형용사」</b>예요!<br>💡 -ly로 끝나도 전부 부사가 아니에요. <b>lovely(사랑스러운), friendly(친절한), weekly(매주의)</b>처럼 명사+ly는 형용사! 이 함정 단어들을 통째로 외워두세요.",
+"시험지 106번": "시험지에서 get up <b>earlily</b>가 틀린 표현이라는 걸 찾아야 했어요.<br>🔍 early는 형용사(이른)와 부사(일찍)의 <b>모양이 똑같은 단어</b>예요. earlily라는 단어는 세상에 없어요!<br>💡 <b>fast, hard, late, early, high</b>는 형용사·부사 같은 모양. 여기에 -ly를 억지로 붙이면 없는 말(fastly, earlily)이 되거나 뜻이 확 달라져요(hardly, lately).",
+"시험지 46번": "시험지에서 「어법상 올바른 것」 고르기를 틀렸어요.<br>🔍 type very <b>fastly</b>(✗ fastly는 없는 말!), is <b>wise very</b>(✗ very는 꾸미는 말 앞!) 같은 함정을 걸러내야 했어요.<br>💡 체크 순서: (1) fast·hard·early·high엔 -ly 금지 (2) <b>very는 꾸미는 말 바로 앞</b> (3) 빈도부사(always, usually)는 일반동사 앞 — 이 세 가지만 확인하면 돼요!",
+"시험지 57번": "시험지에서 the <b>suddenly</b> change 같은 표현이 왜 틀렸는지 찾는 문제였어요.<br>🔍 change(변화)는 명사죠? <b>명사 앞에는 형용사</b>(sudden change)! suddenly는 부사라서 명사를 꾸밀 수 없어요.<br>💡 「the/a + ___ + 명사」 빈칸엔 무조건 <b>형용사</b>. 부사는 동사·형용사·문장을 꾸미는 담당이에요. The show finally started처럼 <b>동사를 꾸밀 때</b>가 부사 자리!",
+"시험지 117번": "시험지에서 밑줄 친 부사/형용사의 쓰임이 올바른 것을 고르는 문제를 틀렸어요.<br>🔍 an <b>amazingly</b> experience(✗)처럼 <b>명사 앞에 부사</b>가 오면 틀려요 → an amazing experience. 반대로 I <b>totally</b> agree는 동사(agree)를 부사가 꾸미니 올바른 문장!<br>💡 밑줄 바로 뒤를 보세요. <b>뒤가 명사면 형용사</b>, <b>동사를 꾸미면 부사</b> — 이것만 확인해도 대부분 풀려요.",
+"시험지 120번": "시험지에서 「어법상 올바른 것」을 고르는 문제를 틀렸어요. 함정이 4개나 있었어요!<br>🔍 (1) was very <b>well</b> at cooking ✗ → be동사 뒤 실력은 형용사 <b>good</b> (2) <b>enough big</b> ✗ → enough는 형용사 뒤! big enough (3) looks <b>dangerously</b> ✗ → look(~해 보이다) 뒤엔 형용사 dangerous (4) did <b>bad</b> ✗ → 동사 did를 꾸미니 부사 badly.<br>💡 특히 <b>look, sound, taste, feel + 형용사</b>는 시험 단골이에요!",
+"시험지 122번": "시험지에서 「관계가 다른 짝」으로 close-closely를 찾아야 했어요.<br>🔍 happy→happily는 뜻이 그대로(행복한→행복하게)지만, <b>close(가까운)→closely(면밀히, 자세히)</b>는 -ly가 붙으면서 <b>뜻이 달라져요!</b><br>💡 뜻이 달라지는 -ly 4형제를 외워요: <b>late(늦게)/lately(최근에), hard(열심히)/hardly(거의~않다), high(높이)/highly(매우), close(가까이)/closely(면밀히)</b>.",
+"시험지 77번": "시험지에서 They looked more <b>closely</b> at the issue를 「더 가까이 보았다」로 해석한 것이 함정이었어요.<br>🔍 closely는 「가까이」가 아니라 <b>「면밀히, 자세히」</b>예요! 그 문제를 더 자세히 들여다보았다는 뜻이죠.<br>💡 close(가까이)와 closely(자세히)는 다른 단어라고 생각하세요. highly(매우), lately(최근에), hardly(거의~않다)도 원래 단어 뜻과 달라지는 부사예요.",
+"시험지 100번": "시험지에서 lately와 hardly 짝 맞추기를 틀렸어요.<br>🔍 「기름값이 <b>최근에</b> 올랐다」 → <b>lately</b>(최근에), 「그녀는 기름진 음식을 <b>거의 안</b> 먹는다」 → <b>hardly</b>(거의 ~않다).<br>💡 late=늦게 / <b>lately=최근에</b>, hard=열심히 / <b>hardly=거의 ~않다</b>. -ly가 붙으면 완전히 다른 단어가 되는 대표 짝이에요. 해석을 먼저 하고 고르세요!",
+"시험지 111번": "시험지에서도 lately/hardly 짝 문제가 한 번 더 나왔는데 또 함정에 걸렸어요. 그만큼 시험에 잘 나온다는 뜻!<br>🔍 「<b>최근에</b> 많은 논쟁이 있었다」 → lately, 「아무도 그녀의 말을 믿을 수 없었다」 → <b>hardly</b>(거의 ~할 수 없다).<br>💡 hardly는 뜻 자체에 <b>부정(not)의 의미</b>가 들어 있어요. hardly believe = 거의 믿지 못하다. 그래서 not과 함께 쓰지 않아요!",
+"시험지 114번": "시험지에서 hardly와 바꿔 쓸 수 있는 말을 찾는 문제를 틀렸어요.<br>🔍 I could <b>hardly</b> do the task = 그 일을 <b>거의 할 수 없었다</b>. hardly ≒ <b>rarely, seldom</b>(거의 ~않다).<br>💡 hardly를 보면 무조건 「거의 ~않다」로 해석! hard(열심히)와 전혀 다른 뜻이라는 것, 그리고 같은 뜻 친구로 rarely·seldom이 있다는 것까지 세트로 기억하세요.",
+"시험지 118번": "시험지에서 He lives so ___ to me 빈칸에 closely를 골랐어요.<br>🔍 「그가 나에게 <b>가까이</b> 산다」는 뜻이니 <b>close</b>(가까이)를 써야 해요. closely는 「면밀히, 자세히」라서 어울리지 않아요!<br>💡 close는 형용사(가까운)이면서 부사(가까이)로도 쓰여요. <b>거리가 가까울 땐 close, 자세히 살펴볼 땐 closely</b> — 이렇게 구분하세요.",
+"시험지 81번": "시험지에서 「어색한 것을 모두」 고르는 문제였어요. 두 개를 다 찾아야 했죠!<br>🔍 (1) came to the party <b>lately</b> ✗ → 파티에 「늦게」 왔다니까 <b>late</b>! lately는 「최근에」 (2) investigated the problem <b>close</b> ✗ → 문제를 「면밀히」 조사했다니까 <b>closely</b>!<br>💡 해석부터 정확히: <b>늦게=late, 최근에=lately, 가까이=close, 면밀히=closely</b>. 우리말 뜻을 먼저 정하고 단어를 고르면 안 헷갈려요.",
+"시험지 24번": "시험지에서 「동사를 수식하는 부사」 찾기를 틀렸어요.<br>🔍 This cell phone works very <b>well</b> — well은 works(작동한다)라는 <b>동사</b>를 꾸며요. Surprisingly, my mother knew everything의 Surprisingly는 <b>문장 전체</b>를 꾸미고요.<br>💡 부사가 무엇을 꾸미는지 찾는 법: 부사를 가리고 <b>「어떻게?」라고 물었을 때 대답이 되는 말</b>을 찾으세요. 어떻게 작동해? → 잘(well)! 그러니 well은 works를 꾸미는 거예요.",
+"시험지 51번": "시험지에서 「수식하는 대상이 다른 하나」 고르기를 틀렸어요.<br>🔍 very sad, very smart, quite impressive, really delicious의 very·quite·really는 모두 <b>뒤의 형용사</b>를 꾸며요. 그런데 did not sleep <b>enough</b>의 enough는 <b>동사 sleep</b>(잤다)을 꾸며요 — 충분히 잤다!<br>💡 very·quite·really는 <b>앞에서</b> 형용사를 꾸미고, <b>enough는 뒤에서</b> 꾸미는 특별한 부사예요.",
+"시험지 86번": "시험지에서 (absolutely right / right absolutely) 중 고르기를 틀렸어요.<br>🔍 강조하는 부사(absolutely, very, quite)는 꾸미는 말 <b>바로 앞</b>! → You are <b>absolutely right</b>(완전히 옳다).<br>💡 딱 하나 반대인 녀석이 enough예요. <b>enough만 형용사 뒤</b>: high enough(충분히 높은). 「강조 부사는 앞, enough만 뒤」 — 이 한 줄로 정리!",
+"시험지 70번": "시험지에서 (tired quite / quite tired) 중 고르기를 틀렸어요.<br>🔍 quite(꽤)는 형용사 tired(피곤한)를 꾸미니까 <b>앞에</b> 와요 → We were all <b>quite tired</b>(우리 모두 꽤 피곤했다).<br>💡 very, quite, really, so, too 같은 정도 부사는 전부 <b>꾸미는 말 앞</b>이 정위치예요!",
+"시험지 104번": "시험지에서 단어 배열을 「I saw a huge building surprisingly」라고 써서 틀렸어요. 아쉽게 순서만 살짝 어긋났어요!<br>🔍 surprisingly(놀랄 만큼)는 huge(거대한)를 꾸미는 부사라서 <b>huge 바로 앞</b>에 들어가요 → I saw a <b>surprisingly huge</b> building(나는 놀랄 만큼 거대한 건물을 봤다).<br>💡 「관사(a) + <b>부사 + 형용사</b> + 명사」 순서를 공식으로 외워요: a really nice bag, a very tall boy처럼요!",
+"시험지 123번": "시험지에서 silently를 넣어 문장을 다시 쓰는 문제를 틀렸어요.<br>🔍 Mike studies <b>silently</b> math and English(✗)처럼 <b>동사와 목적어 사이</b>에 방법 부사를 끼우면 안 돼요! 「공부하다+수학을」은 한 덩어리거든요.<br>💡 silently(조용히) 같은 방법 부사의 정위치는 <b>문장 맨 끝</b>(…math and English silently) 또는 동사 앞(silently studies)이에요. <b>동사와 목적어 사이만은 절대 금지!</b>",
+"시험지 102번": "시험지에서 「여름 방학이 거의 끝났다」에 almost를 넣는 문제를 틀렸어요.<br>🔍 almost(거의)는 꾸미는 말 <b>바로 앞</b>에 놓아요 → The summer vacation is <b>almost over</b>(거의 끝났다).<br>💡 almost는 over(끝난), ten o'clock(10시), every day(매일) 같은 말 앞에 붙어서 「거의 ~」를 만들어요. is 뒤, over 앞이 정확한 자리!",
+"시험지 103번": "시험지에서 The moon shines brightly의 brightly가 꾸미는 말을 「The moon」이라고 써서 틀렸어요.<br>🔍 brightly(밝게)는 「어떻게 빛나는지」를 설명하죠? 그러니 <b>shines(빛난다)라는 동사</b>를 꾸며요. 달(명사)을 꾸미려면 형용사 bright를 써야 해요.<br>💡 -ly 부사는 <b>명사를 못 꾸며요!</b> 부사의 짝은 언제나 동사·형용사·다른 부사예요. 「어떻게?」의 답이 부사, 그 질문을 받는 말이 수식 대상!",
+"시험지 101번": "시험지에서 Listen to his talk ___ 빈칸을 틀렸어요.<br>🔍 「그의 말을 <b>주의 깊게</b> 들어라」가 자연스럽죠? 동사 listen을 꾸미는 부사 <b>carefully</b>가 정답이었어요. fast(빨리 들어라?)는 의미가 안 맞아요.<br>💡 빈칸 문제는 (1) 문법상 부사 자리인지 (2) <b>뜻이 자연스러운지</b> 두 가지를 다 확인해야 해요!",
+"시험지 108번": "시험지에서 빈도부사 위치가 어색한 문장(listen rarely)을 못 찾았어요.<br>🔍 rarely(거의 ~않다) 같은 <b>빈도부사</b>의 자리는 정해져 있어요: <b>일반동사 앞</b>(I rarely listen), <b>be동사·조동사 뒤</b>(She is always kind).<br>💡 「일·앞·비·조·뒤」로 외워요 — <b>일</b>반동사 <b>앞</b>, <b>b</b>e동사·<b>조</b>동사 <b>뒤</b>! always, usually, often, sometimes, never, rarely, hardly 전부 이 규칙이에요.",
+"시험지 48번": "시험지에서 I visit <b>often</b> that restaurant이 왜 틀렸는지 확인하는 문제였어요.<br>🔍 often은 빈도부사니까 <b>일반동사 visit 앞</b>! → I <b>often visit</b> that restaurant. 동사와 목적어 사이에 끼면 안 돼요.<br>💡 빈도부사 위치 규칙(일반동사 앞, be·조동사 뒤)은 문장이 길어져도 절대 안 변해요. 동사부터 찾고 그 앞에 넣으세요!",
+"시험지 31번": "시험지에서 「어제 안전하게 거기에 도착했다」의 부사 순서를 틀렸어요.<br>🔍 부사가 여러 개면 <b>「장소 → 방법 → 시간」</b> 순서예요! → The plane landed <b>there</b>(장소) <b>safely</b>(방법) <b>yesterday</b>(시간).<br>💡 「장·방·시」로 외워요! 우리말 순서(어제→안전하게→거기에)와 반대에 가까우니, 영어로 쓸 때는 꼭 장소부터 챙기세요.",
+"시험지 84번": "시험지에서 I studied <b>at six there</b>가 왜 어색한지 찾는 문제였어요.<br>🔍 장소(there)와 시간(at six)이 같이 오면 <b>장소가 먼저</b>! → I studied <b>there at six</b>(거기서 6시에 공부했다).<br>💡 「장소 먼저, 시간은 마지막」 — I'll meet you <b>there at three</b>, He came <b>here yesterday</b>처럼요. 시간 부사는 문장 맨 끝이 제일 편한 자리예요.",
+"시험지 105번": "시험지에서 there의 쓰임이 다른 것을 고르는 문제를 틀렸어요.<br>🔍 Put your shoes over <b>there</b>(거기에), How do I get <b>there</b>?(거기에) — 이런 there는 「거기에」라고 해석되는 <b>장소 부사</b>예요. 그런데 How many cows <b>are there</b> on the farm?의 there는 해석이 안 되는 <b>유도부사</b>(There is/are ~: ~가 있다)예요!<br>💡 구분법 초간단: <b>「거기에」라고 해석되면 장소 부사, 해석이 안 되면 유도부사!</b>",
+"시험지 44번": "시험지에서 high와 highly 구분 문제를 틀렸어요.<br>🔍 「에베레스트는 높이가 얼마인가?」 → How <b>high</b>(실제 높이). 「높이 평가받다」 → <b>highly</b> praised(매우, 크게).<br>💡 <b>high = 진짜 높이</b>(하늘 높이 나는 것), <b>highly = 매우·크게</b>(칭찬·평가에 쓰는 것). The bird flies high / She is highly respected — 짝을 통째로 외워두면 헷갈리지 않아요!",
+"시험지 40번": "시험지에서 (enough / is / good)을 배열해서 「is enough good」이라고 써서 틀렸어요.<br>🔍 enough는 청개구리 부사! 꾸미는 형용사 <b>뒤</b>에 서요 → My sister is <b>good enough</b> to help me(누나는 나를 도와줄 만큼 충분히 착하다).<br>💡 「<b>형용사 + enough + to동사</b>」 공식: strong enough to lift(들 만큼 힘센), old enough to drive(운전할 만큼 나이 든). enough가 앞에 오면 무조건 틀려요!",
+"시험지 43번": "시험지에서 Fred ___ a kite <b>three hours ago</b> 빈칸에 makes를 골랐어요.<br>🔍 three hours ago(3시간 전)는 <b>과거</b>를 나타내는 신호! 그러니 make의 <b>과거형 made</b>를 써야 해요. makes는 「지금 늘 그렇다」는 현재형이에요.<br>💡 <b>ago, yesterday, last ~</b>가 보이면 무조건 과거형! 그리고 make는 불규칙 동사라서 maked가 아니라 <b>made</b>예요.",
+"시험지 49번": "시험지에서 two hours ago가 있는 대화의 빈칸(were-was-played)을 틀렸어요.<br>🔍 Where <b>were</b> you two hours ago?(2시간 전에 어디 있었어?) — 과거니까 are가 아니라 were! 대답도 I <b>was</b> in the gym, I <b>played</b> basketball — 전부 과거형으로 맞춰요.<br>💡 시간 표현(two hours ago)이 과거면 <b>질문도 대답도 모든 동사가 과거형</b>이 돼야 해요. 하나만 현재형이 섞여도 틀린 문장!",
+"시험지 54번": "시험지에서 My father comes back soon을 바르게 고치는 문제를 틀렸어요.<br>🔍 soon(곧)은 <b>앞으로 일어날 일</b>이니까 미래를 나타내는 <b>will come</b>으로 고쳐요 → My father will come back soon(아빠가 곧 돌아오실 거야).<br>💡 미래 공식: <b>will + 동사원형</b>. soon, tomorrow, next ~가 보이면 will(또는 be going to)을 떠올리세요!",
+"시험지 87번": "시험지에서 find의 과거형을 finded라고 써서 틀렸어요.<br>🔍 find는 불규칙 동사! 과거형은 <b>found</b>예요. Long time ago I <b>found</b> the wallet(오래 전에 나는 지갑을 발견했다).<br>💡 자주 나오는 불규칙 3인방: <b>find-found, make-made, come-came</b>. -ed를 붙이면 틀리는 동사들은 만날 때마다 소리 내서 외워버리는 게 최고예요!",
+"시험지 88번": "시험지에서 「나도 그렇게 생각한다」를 영어로 쓰는 문제를 틀렸어요.<br>🔍 「그렇게」에 해당하는 부사가 <b>so</b>예요! → I think <b>so</b>, too. (so = 앞에서 말한 내용 전체를 받는 말)<br>💡 대화 필수 표현: A가 말한 것에 동의할 때 <b>I think so.</b>(그렇게 생각해) / <b>I think so, too.</b>(나도 그렇게 생각해) — 통째로 암기!",
+"시험지 98번": "시험지에서 우리말을 바르게 영작한 문장 고르기를 틀렸어요.<br>🔍 「매우 열심히 일한다」= works <b>so hard</b>가 정답이었어요. so(매우)+hard(열심히) 둘 다 올바른 부사! 함정: speaks English fluent(✗→fluently), draws well very(✗→very well), go to bed lately(✗→late), My dad came soon(✗ 미래니까 will come).<br>💡 영작 문제는 <b>①부사 모양 ②부사 순서 ③시제</b> 세 가지를 차례로 검사하면 함정이 다 보여요!",
+"시험지 85번": "시험지에서 「전치사+명사」 덩어리의 쓰임이 다른 것을 고르는 문제를 틀렸어요.<br>🔍 For your convenience(너의 편의를 위해), In this city(이 도시에는), With anger(화가 나서), without difficulty(어려움 없이) — 이런 덩어리는 문장이나 동사를 꾸미는 <b>부사 역할</b>. 그런데 boxes which are <b>full of stones</b>(돌로 가득 찬)은 앞의 <b>명사(boxes)를 설명하는 형용사 역할</b>이에요!<br>💡 구분법: 그 덩어리가 <b>명사를 꾸미면 형용사 역할</b>, <b>동사·문장을 꾸미면 부사 역할</b>이에요.",
+"시험지 107번": "시험지에서 어색한 문장의 개수를 세는 문제를 틀렸어요. 함정 2개를 찾아야 했어요!<br>🔍 (1) a picnic <b>besides</b> the river ✗ → 「강 옆에서」는 <b>beside</b>(~옆에). besides는 「게다가, ~외에」! (2) fell asleep <b>while</b> the lecture ✗ → while 뒤에는 「주어+동사」 문장이 와야 해요. 명사(the lecture)만 오면 <b>during</b>(~동안)!<br>💡 짝 정리: <b>beside=옆에 / besides=게다가</b>, <b>during+명사 / while+주어+동사</b>.",
+"시험지 94번": "시험지에서 that의 쓰임이 <보기>와 같은 것을 고르는 문제를 틀렸어요. 조금 어려운 심화 문제였어요!<br>🔍 <보기>의 Any tool <b>that</b> enhances communication은 that 바로 뒤에 <b>동사</b>(enhances)가 오면서 앞의 명사(tool)를 설명해요 — 이게 <b>주격 관계대명사</b> that이에요. that will start next week도 똑같은 모양이죠!<br>💡 구분법: that 뒤에 <b>동사가 바로 오면 주격 관계대명사</b>, that 뒤에 <b>주어+동사 문장이 오면</b> 접속사(~라는 것)이거나 목적격!",
+"시험지 17번": "시험지에서 글쓴이의 심경 문제를 틀렸어요. 글의 <b>마지막 반전</b>을 놓쳤어요!<br>🔍 아기 동생이 계속 안 웃어줘서 중간까지는 답답했지만, 마지막에 <b>Sally smiles happily. When Sally smiles, I smile, too.</b>(샐리가 활짝 웃고, 나도 따라 웃었다) + <b>so cute</b>(너무 귀엽다) → 심경은 <b>기쁘다</b>!<br>💡 심경 문제는 <b>마지막 2~3문장</b>이 결정해요. 중간에 힘든 내용이 나와도 끝이 웃음이면 정답은 긍정 감정!",
+"시험지 52번": "시험지에서 글의 내용과 일치하지 않는 것 고르기를 틀렸어요.<br>🔍 「해바라기는 아주 빨리 자란다」는 지문에 <b>없는 내용</b>이에요! Soon a stem will begin to grow(곧 줄기가 자라기 시작할 것)라고만 했지, 빨리 자란다고는 안 했어요.<br>💡 일치/불일치 문제는 <b>보기 하나하나를 지문에서 손가락으로 짚어 확인</b>하세요. 지문에 없는 말을 그럴듯하게 만든 보기가 항상 함정이에요!",
+"시험지 53번": "시험지에서 They가 가리키는 것을 묻는 문제를 틀렸어요.<br>🔍 These huge trees became special places <b>for some animals</b>. <b>They</b> felt that these huge trees would be <b>their</b> safe home. — 나무를 「자신들의 안전한 집」이라고 느끼는 건 누구? 바로 <b>some animals</b>(동물들)이죠! 나무가 나무를 집이라고 느낄 순 없으니까요.<br>💡 지칭 문제는 <b>바로 앞 문장의 명사들을 후보</b>로 놓고, 대명사 자리에 하나씩 넣어 해석해보세요. 뜻이 자연스러운 것이 정답!"
+};
+
+/* ══════ 1영역 · 부사의 형태 (15유형 × 2 = 30문항) ══════ */
+var QUESTIONS = [
+{ src:"시험지 55번", q:"다음 중 단어의 관계가 나머지와 <b>다른</b> 것을 고르세요.",
+  choices:["kind - kindly","safe - safely","bad - worse","quick - quickly"], answer:"bad - worse",
+  exp:"kind-kindly, safe-safely, quick-quickly는 모두 <b>「형용사→부사」</b> 짝이에요. bad-worse는 <b>「원급→비교급」</b>(나쁜→더 나쁜) 짝이라 관계가 달라요!" },
+{ src:"시험지 55번", q:"다음 중 단어의 관계가 나머지와 <b>다른</b> 것을 고르세요.",
+  choices:["nice - nicely","easy - easily","brave - bravely","big - bigger"], answer:"big - bigger",
+  exp:"nice-nicely, easy-easily(y→i+ly!), brave-bravely는 「형용사→부사」. big-bigger는 <b>비교급</b> 짝이죠. -ly가 붙었는지, 비교급(-er)인지 먼저 확인하세요!" },
+
+{ src:"시험지 63번", q:"다음 중 어법상 <b>어색한</b> 문장을 고르세요.",
+  choices:["She sings beautiful on the stage.","He was seriously hurt in the accident.","I usually read books at night.","She looked carefully at the picture."], answer:"She sings beautiful on the stage.",
+  exp:"sings(노래한다)는 동사니까 <b>부사 beautifully</b>가 꾸며야 해요! beautiful(아름다운)은 형용사라서 동사를 꾸밀 수 없어요. 나머지는 부사가 동사를 바르게 꾸미고 있어요." },
+{ src:"시험지 63번", q:"다음 중 어법상 <b>어색한</b> 문장을 고르세요.",
+  choices:["He closed the door quiet.","Many people were colorfully dressed.","She solved the problem easily.","The boy ran fast to the bus stop."], answer:"He closed the door quiet.",
+  exp:"closed(닫았다)라는 동사를 꾸미려면 부사 <b>quietly</b>(조용히)! quiet(조용한)는 형용사예요. fast는 형용사·부사 모양이 같아서 ran fast는 올바른 표현이랍니다." },
+
+{ src:"시험지 73번", q:"다음 중 단어의 관계가 나머지와 <b>다른</b> 것을 고르세요.",
+  choices:["sad - sadly","quick - quickly","friend - friendly","nice - nicely"], answer:"friend - friendly",
+  exp:"sad-sadly 등은 「형용사→부사」지만, friend(친구)-friendly(친절한)는 <b>「명사→형용사」</b>예요! 명사에 -ly가 붙으면 부사가 아니라 형용사가 됩니다." },
+{ src:"시험지 73번", q:"다음 중 -ly로 끝나지만 <b>부사가 아닌</b> 것을 고르세요.",
+  choices:["slowly","carefully","lovely","quietly"], answer:"lovely",
+  exp:"lovely는 love(사랑)라는 <b>명사</b>에 -ly가 붙은 <b>형용사</b>(사랑스러운)예요! friendly, weekly, lonely도 같은 친구들. 나머지는 모두 형용사+ly = 부사랍니다." },
+
+{ src:"시험지 106번", q:"다음 중 어법상 <b>어색한</b> 문장을 고르세요.",
+  choices:["I'm trying to get up earlily these days.","We often talk about our dreams.","He told us to speak quietly.","She works hard every day."], answer:"I'm trying to get up earlily these days.",
+  exp:"<b>earlily라는 단어는 없어요!</b> early는 형용사(이른)와 부사(일찍)의 모양이 같아서 get up <b>early</b>라고 써야 해요. hard도 「열심히」라는 부사로 그대로 쓰죠." },
+{ src:"시험지 106번", q:"빈칸에 알맞은 말을 고르세요.<br><b>I got up ______ this morning.</b> (나는 오늘 아침 일찍 일어났다.)",
+  choices:["early","earlily","earlyly","more early"], answer:"early",
+  exp:"「일찍」이라는 부사는 그냥 <b>early</b>! -ly를 또 붙이면 없는 말이 돼요. fast, hard, late, high도 똑같이 형용사 모양 그대로 부사로 써요." },
+
+{ src:"시험지 46번", q:"다음 중 어법상 <b>올바른</b> 문장을 고르세요.",
+  choices:["She can swim very fastly.","My brother is smart very.","I always drink milk in the morning.","He can very speak English well."], answer:"I always drink milk in the morning.",
+  exp:"always(빈도부사)는 일반동사 drink 앞 — 완벽한 문장! fastly는 없는 말(→fast), smart very는 very가 뒤로 간 오류(→very smart), very speak는 very가 동사 앞에 낀 오류예요." },
+{ src:"시험지 46번", q:"다음 중 어법상 <b>올바른</b> 문장을 고르세요.",
+  choices:["Tom types very fast.","She is kind very.","He drives very fastly.","I very like pizza."], answer:"Tom types very fast.",
+  exp:"fast는 부사로도 쓰이니 types very <b>fast</b>(매우 빨리 친다)가 올바라요! very는 꾸미는 말 앞에 서야 하고(kind very ✗), fastly는 존재하지 않는 단어, very like도 어순 오류예요." },
+
+{ src:"시험지 57번", q:"다음 중 어법상 <b>올바른</b> 문장을 고르세요.",
+  choices:["I heard the happily news.","He gave a correctly answer.","She suddenly cried in class.","They had a differently idea."], answer:"She suddenly cried in class.",
+  exp:"suddenly(갑자기)가 동사 cried(울었다)를 꾸미니 올바른 문장! 나머지는 <b>명사 앞에 부사</b>가 와서 틀렸어요 → happy news, correct answer, different idea로 고쳐야 해요." },
+{ src:"시험지 57번", q:"빈칸에 알맞은 말을 고르세요.<br><b>The ______ change of the plan confused everyone.</b>",
+  choices:["sudden","suddenly","suddening","so suddenly"], answer:"sudden",
+  exp:"빈칸 뒤 change(변화)는 <b>명사</b>! 명사 앞에는 형용사 <b>sudden</b>이 와요. 시험지에서 나온 the suddenly change(✗)와 똑같은 함정 — 이제는 안 속죠?" },
+
+{ src:"시험지 117번", q:"다음 중 밑줄 친 부분의 쓰임이 <b>올바른</b> 것을 고르세요.",
+  choices:["She gave me a <u>surprisingly</u> gift.","I <u>completely</u> understand your idea.","He is a <u>wisely</u> person.","We want to talk more <u>comfortable</u>."], answer:"I <u>completely</u> understand your idea.",
+  exp:"completely(완전히)가 동사 understand를 꾸미니 올바른 쓰임! 나머지는 명사 앞엔 형용사(surprising gift, wise person), 동사를 꾸밀 땐 부사(talk more comfortably)로 바꿔야 해요." },
+{ src:"시험지 117번", q:"다음 중 어법상 <b>어색한</b> 문장을 고르세요.",
+  choices:["Did you hear the surprising news?","I know a wise person.","The trip was an amazingly experience.","I totally agree with you."], answer:"The trip was an amazingly experience.",
+  exp:"experience(경험)는 명사니까 형용사 <b>amazing</b>이 꾸며야 해요! an amazing experience(놀라운 경험). 시험지에 나왔던 바로 그 함정이에요 — 명사 앞은 언제나 형용사!" },
+
+{ src:"시험지 120번", q:"다음 중 어법상 <b>올바른</b> 문장을 고르세요.",
+  choices:["He is good at singing.","This box isn't enough light.","The story sounds strangely.","She did good on the exam."], answer:"He is good at singing.",
+  exp:"be good at ~(~를 잘하다)의 good은 be동사 뒤 형용사 — 올바라요! enough light는 light enough로, sounds 뒤에는 형용사 strange로, did 뒤에는 부사 badly/well처럼 써야 해요." },
+{ src:"시험지 120번", q:"다음 중 어법상 <b>어색한</b> 문장을 고르세요.",
+  choices:["The soup tastes good.","He plays the piano well.","She was very well at drawing.","I did badly on the test."], answer:"She was very well at drawing.",
+  exp:"「그림을 잘 그린다」는 was very <b>good</b> at drawing! be동사 뒤 「잘하는」은 형용사 good이에요. well은 동사를 꾸미는 부사(plays well)로 쓰는 거예요. 시험지 함정 그대로였죠!" },
+
+{ src:"시험지 122번", q:"다음 중 단어의 관계가 나머지와 <b>다른</b> 것을 고르세요.<br><small>(힌트: -ly가 붙으면 뜻이 달라지는 짝 찾기!)</small>",
+  choices:["real - really","glad - gladly","hard - hardly","nice - nicely"], answer:"hard - hardly",
+  exp:"real→really(정말), glad→gladly(기쁘게), nice→nicely(멋지게)는 뜻이 이어지지만, <b>hard(열심히)→hardly(거의 ~않다)</b>는 뜻이 완전히 달라져요! 뜻이 변신하는 짝을 골라내는 문제예요." },
+{ src:"시험지 122번", q:"다음 중 단어의 관계가 나머지와 <b>다른</b> 것을 고르세요.",
+  choices:["quick - quickly","late - lately","kind - kindly","brave - bravely"], answer:"late - lately",
+  exp:"<b>late(늦은/늦게)→lately(최근에)</b>는 -ly가 붙으며 뜻이 확 달라지는 짝! 나머지는 뜻이 그대로 유지되는 「형용사→부사」 짝이에요. late/lately, hard/hardly, high/highly, close/closely — 4형제 꼭 기억!" },
+
+{ src:"시험지 77번", q:"다음 중 영어 문장을 <b>어색하게</b> 해석한 것을 고르세요.",
+  choices:["The bird flew high. → 새가 높이 날았다.","She is highly popular. → 그녀는 높게 인기가 있다.","I need to wake up earlier. → 나는 더 일찍 일어나야 한다.","He takes vitamins regularly. → 그는 비타민을 주기적으로 먹는다."], answer:"She is highly popular. → 그녀는 높게 인기가 있다.",
+  exp:"highly는 「높게」가 아니라 <b>「매우」</b>! → 그녀는 매우 인기가 있다. 실제 높이는 high, 정도를 강조할 땐 highly예요. 시험지의 closely(면밀히)와 같은 원리랍니다." },
+{ src:"시험지 77번", q:"다음 문장의 알맞은 해석을 고르세요.<br><b>Look closely at the picture.</b>",
+  choices:["그림을 가까이에서 봐라.","그림을 자세히 봐라.","그림을 빨리 봐라.","그림 근처로 와라."], answer:"그림을 자세히 봐라.",
+  exp:"closely는 「가까이」가 아니라 <b>「자세히, 면밀히」</b>예요! 거리가 가까운 건 close. 시험지에서 looked more closely를 「더 가까이 보았다」로 해석해서 틀렸던 것, 이제 완벽하죠?" },
+
+{ src:"시험지 100번", q:"빈칸에 들어갈 말이 순서대로 짝지어진 것을 고르세요.<br><b>I haven't seen him ______.</b> (최근에 그를 못 봤다)<br><b>He studied ______ for the exam.</b> (시험을 위해 열심히 공부했다)",
+  choices:["lately - hard","late - hard","lately - hardly","late - hardly"], answer:"lately - hard",
+  exp:"「최근에」는 <b>lately</b>, 「열심히」는 <b>hard</b>! hardly를 쓰면 「거의 공부 안 했다」는 반대 뜻이 돼버려요. 해석을 먼저 하고 단어를 고르는 습관!" },
+{ src:"시험지 100번", q:"빈칸에 들어갈 말이 순서대로 짝지어진 것을 고르세요.<br><b>Don't be ______ again.</b> (또 늦지 마)<br><b>I can ______ believe it.</b> (거의 믿을 수가 없어)",
+  choices:["late - hardly","lately - hardly","late - hard","lately - hard"], answer:"late - hardly",
+  exp:"「늦은/늦게」는 <b>late</b>, 「거의 ~않다」는 <b>hardly</b>! lately(최근에)와 hard(열심히)를 넣으면 뜻이 이상해져요. late/lately, hard/hardly 구분 완벽 마스터!" },
+
+{ src:"시험지 111번", q:"빈칸에 알맞은 말을 고르세요.<br><b>Have you talked to Amy ______?</b> (최근에 에이미랑 얘기했니?)",
+  choices:["lately","late","hardly","high"], answer:"lately",
+  exp:"「최근에」는 <b>lately</b>! late를 쓰면 「늦게 얘기했니?」가 되어 뜻이 달라져요. lately는 주로 현재완료(Have you ~?)와 친한 부사예요." },
+{ src:"시험지 111번", q:"빈칸에 알맞은 말을 고르세요.<br><b>I was so tired that I could ______ walk.</b> (너무 피곤해서 거의 걸을 수 없었다)",
+  choices:["hardly","hard","lately","fast"], answer:"hardly",
+  exp:"「거의 ~할 수 없다」는 <b>hardly</b>! hardly 자체에 부정의 뜻이 있어서 not 없이도 「거의 안 한다」가 돼요. hard(열심히)와는 완전히 다른 단어!" },
+
+{ src:"시험지 114번", q:"밑줄 친 부분과 바꿔 쓸 수 있는 말을 고르세요.<br><b>He <u>hardly</u> eats breakfast.</b>",
+  choices:["rarely","always","quickly","early"], answer:"rarely",
+  exp:"hardly(거의 ~않다) ≒ <b>rarely, seldom</b>! He rarely eats breakfast = 그는 아침을 거의 안 먹는다. 같은 뜻 부사끼리 세트로 외워두면 바꿔 쓰기 문제는 식은 죽 먹기예요." },
+{ src:"시험지 114번", q:"다음 문장의 알맞은 해석을 고르세요.<br><b>She hardly watches TV.</b>",
+  choices:["그녀는 TV를 거의 보지 않는다.","그녀는 TV를 열심히 본다.","그녀는 최근에 TV를 봤다.","그녀는 TV를 매일 본다."], answer:"그녀는 TV를 거의 보지 않는다.",
+  exp:"hardly = <b>거의 ~않다</b>! hard(열심히)와 헷갈리면 정반대 해석이 되니 조심하세요. hardly가 보이면 자동으로 「거의 안」이라고 번역하기!" },
+
+{ src:"시험지 118번", q:"빈칸에 알맞은 말을 고르세요.<br><b>The bank is very ______ to my house.</b> (은행은 우리 집에서 아주 가깝다)",
+  choices:["close","closely","closed","closing"], answer:"close",
+  exp:"거리가 「가까운/가까이」는 <b>close</b>! closely(면밀히)는 거리와 상관없는 말이에요. 시험지의 He lives so close to me와 똑같은 패턴이죠. closed는 「닫힌」이라는 뜻!" },
+{ src:"시험지 118번", q:"빈칸에 알맞은 말을 고르세요.<br><b>The teacher looked ______ at my essay to find mistakes.</b> (실수를 찾으려고 자세히 살펴보았다)",
+  choices:["closely","close","closer","closed"], answer:"closely",
+  exp:"「자세히, 면밀히」 살펴보는 것은 <b>closely</b>! 거리가 가까울 땐 close, 꼼꼼히 볼 땐 closely — 이제 두 단어를 완벽하게 구분할 수 있죠?" },
+
+{ src:"시험지 81번", q:"다음 중 어법상 <b>어색한</b> 문장을 고르세요.",
+  choices:["He came to school late.","I haven't exercised lately.","Some guests arrived at the party lately.","She works hard every night."], answer:"Some guests arrived at the party lately.",
+  exp:"「파티에 <b>늦게</b> 도착했다」니까 late를 써야 해요! lately는 「최근에」라는 뜻이라 어색해요. ①은 「학교에 늦게 왔다」로 올바른 late, ②는 「최근에 운동을 못 했다」로 올바른 lately예요." },
+{ src:"시험지 81번", q:"다음 중 어법상 <b>어색한</b> 문장을 고르세요.",
+  choices:["The police examined the room close.","Please stand close to me.","We are close friends.","The scientist watched the ants closely."], answer:"The police examined the room close.",
+  exp:"방을 「<b>면밀히</b> 조사했다」니까 <b>closely</b>! 시험지의 investigated the problem close(✗)와 같은 함정이에요. stand close(가까이 서다), close friends(친한 친구)는 올바른 close예요." }
+];
+
+/* ══════ 2영역 · 부사의 위치와 어순 (16유형 × 2 = 32문항) ══════ */
+var QUESTIONS2 = [
+{ src:"시험지 24번", q:"다음 중 밑줄 친 부사가 <b>동사를 수식하는</b> 것을 고르세요.",
+  choices:["She sings <u>well</u>.","It is <u>very</u> cold today.","This is a <u>really</u> nice bag.","He is <u>quite</u> tall."], answer:"She sings <u>well</u>.",
+  exp:"well(잘)은 「어떻게 노래해?」의 대답이니 동사 <b>sings</b>를 꾸며요! 나머지 very·really·quite는 전부 뒤의 <b>형용사</b>(cold, nice, tall)를 꾸미는 부사예요." },
+{ src:"시험지 24번", q:"다음 문장에서 <b>fast가 꾸미는 말</b>을 고르세요.<br><b>The white dog runs fast.</b>",
+  choices:["runs","The white dog","white","dog"], answer:"runs",
+  exp:"「어떻게 달려? → 빨리!」 fast는 동사 <b>runs</b>를 꾸며요. 부사는 절대 명사(dog)를 꾸미지 않아요 — 명사를 꾸미는 건 형용사(white)의 일이랍니다!" },
+
+{ src:"시험지 51번", q:"다음 중 밑줄 친 부분이 수식하는 대상이 나머지와 <b>다른</b> 것을 고르세요.",
+  choices:["This cake is <u>very</u> sweet.","The quiz was <u>really</u> easy.","I didn't practice <u>enough</u>.","The test was <u>quite</u> hard."], answer:"I didn't practice <u>enough</u>.",
+  exp:"very·really·quite는 뒤의 <b>형용사</b>(sweet, easy, hard)를 꾸미지만, enough는 <b>동사 practice</b>(연습하다)를 뒤에서 꾸며요 — 충분히 연습하지 않았다!" },
+{ src:"시험지 51번", q:"「그는 충분히 잤다」를 바르게 영작한 것을 고르세요.",
+  choices:["He slept enough.","He enough slept.","Enough he slept.","He slept enoughly."], answer:"He slept enough.",
+  exp:"enough는 꾸미는 말 <b>뒤</b>에 서는 청개구리 부사! 동사를 꾸밀 때도 뒤에서 → slept <b>enough</b>. enoughly라는 단어는 없어요!" },
+
+{ src:"시험지 86번", q:"다음 중 어법상 <b>올바른</b> 문장을 고르세요.",
+  choices:["You are absolutely right.","You are right absolutely.","You absolutely are right.","Absolutely you right are."], answer:"You are absolutely right.",
+  exp:"absolutely(완전히)는 형용사 right(옳은) <b>바로 앞</b>! 시험지에서 (absolutely right / right absolutely) 중에 골랐던 그 문제예요. 강조 부사는 꾸미는 말 앞이 정위치!" },
+{ src:"시험지 86번", q:"빈칸에 알맞은 말을 고르세요.<br><b>The tower is ______ to see the whole city.</b>",
+  choices:["high enough","enough high","highly enough","enough highly"], answer:"high enough",
+  exp:"enough만은 반대로 형용사 <b>뒤</b>! → high <b>enough</b>(충분히 높은). 그리고 실제 높이니까 highly(매우)가 아니라 high예요. 두 가지 개념이 한 번에 들어간 문제!" },
+
+{ src:"시험지 70번", q:"빈칸에 알맞은 말을 고르세요.<br><b>We were all ______ after the long journey.</b>",
+  choices:["quite tired","tired quite","quitely tired","tired of quite"], answer:"quite tired",
+  exp:"quite(꽤)는 형용사 tired 앞에! → <b>quite tired</b>(꽤 피곤한). 시험지에서 나온 바로 그 문장이에요. very, quite, really, so, too는 모두 꾸미는 말 앞!" },
+{ src:"시험지 70번", q:"주어진 단어를 바르게 배열한 문장을 고르세요.<br><b>(was / quite / the movie / interesting)</b>",
+  choices:["The movie was quite interesting.","The movie was interesting quite.","The movie quite was interesting.","Quite the movie was interesting."], answer:"The movie was quite interesting.",
+  exp:"「주어 + be동사 + <b>quite + 형용사</b>」 순서! quite는 interesting 바로 앞에서 「꽤 재미있는」을 만들어요." },
+
+{ src:"시험지 104번", q:"주어진 단어를 바르게 배열한 문장을 고르세요.<br><b>(a / saw / cat / surprisingly / fat / I)</b>",
+  choices:["I saw a surprisingly fat cat.","I saw a fat cat surprisingly.","I saw surprisingly a fat cat.","I surprisingly saw a cat fat."], answer:"I saw a surprisingly fat cat.",
+  exp:"surprisingly(놀랄 만큼)는 형용사 fat을 꾸미니 <b>fat 바로 앞</b>! 「a + 부사 + 형용사 + 명사」 순서예요. 시험지의 a surprisingly huge building과 똑같은 구조!" },
+{ src:"시험지 104번", q:"다음 중 어법상 <b>올바른</b> 문장을 고르세요.",
+  choices:["She bought a really expensive bag.","She bought a expensive really bag.","She bought really a expensive bag.","She bought a expensive bag really."], answer:"She bought a really expensive bag.",
+  exp:"really(정말)가 expensive(비싼)를 꾸미니 형용사 바로 앞 → a <b>really expensive</b> bag! 부사가 관사(a)와 형용사 사이에 쏙 들어가는 모양을 기억하세요." },
+
+{ src:"시험지 123번", q:"quietly를 넣어 문장을 바르게 다시 쓴 것을 고르세요.<br><b>Tom plays the piano.</b>",
+  choices:["Tom plays the piano quietly.","Tom plays quietly the piano.","Tom plays the quietly piano.","Tom plays the piano on quietly."], answer:"Tom plays the piano quietly.",
+  exp:"방법 부사(quietly)는 <b>「동사+목적어」 덩어리 뒤</b>, 즉 문장 끝! 동사와 목적어 사이(plays quietly the piano)에 끼우는 게 시험지에서 걸렸던 함정이에요." },
+{ src:"시험지 123번", q:"다음 중 어법상 <b>어색한</b> 문장을 고르세요.",
+  choices:["He speaks fluently English.","He speaks English fluently.","Mike studies math and English silently.","She reads books quietly at night."], answer:"He speaks fluently English.",
+  exp:"speaks(동사)와 English(목적어) 사이에 부사가 끼면 안 돼요! → speaks English <b>fluently</b>. 「동사+목적어는 한 덩어리, 부사는 그 뒤」 — 꼭 기억!" },
+
+{ src:"시험지 102번", q:"「내 숙제가 거의 끝났다」를 바르게 영작한 것을 고르세요.",
+  choices:["My homework is almost done.","My homework almost is done.","My homework is done almost.","Almost my homework done is."], answer:"My homework is almost done.",
+  exp:"almost(거의)는 꾸미는 말 done(끝난) <b>바로 앞</b>! is almost done. 시험지의 The summer vacation is almost over와 완전히 같은 모양이에요." },
+{ src:"시험지 102번", q:"빈칸에 알맞은 말을 고르세요.<br><b>Hurry up! It's ______ nine o'clock.</b> (서둘러! 거의 9시야.)",
+  choices:["almost","most","mostly","almostly"], answer:"almost",
+  exp:"「거의」는 <b>almost</b>! most는 「대부분의」, mostly는 「주로」, almostly는 없는 말이에요. almost nine o'clock = 거의 9시." },
+
+{ src:"시험지 103번", q:"다음 문장에서 <b>brightly가 꾸미는 말</b>을 고르세요.<br><b>The stars shine brightly.</b>",
+  choices:["shine","The stars","stars","The"], answer:"shine",
+  exp:"「어떻게 빛나? → 밝게!」 brightly는 동사 <b>shine</b>을 꾸며요. 시험지에서 The moon이라고 답했던 문제 — 부사는 명사를 꾸밀 수 없다는 것, 이제 확실하죠?" },
+{ src:"시험지 103번", q:"다음 문장에서 <b>sweetly가 꾸미는 말</b>을 고르세요.<br><b>Birds sing sweetly in the morning.</b>",
+  choices:["sing","Birds","the morning","in"], answer:"sing",
+  exp:"sweetly(달콤하게)는 「어떻게 노래하는지」를 설명하니 동사 <b>sing</b>을 꾸며요! -ly 부사를 보면 「이 문장의 동사가 뭐지?」부터 찾으세요." },
+
+{ src:"시험지 101번", q:"빈칸에 알맞은 말을 고르세요.<br><b>Please write your name ______.</b>",
+  choices:["carefully","careful","care","carefulness"], answer:"carefully",
+  exp:"동사 write(쓰다)를 꾸미니 부사 <b>carefully</b>(주의 깊게)! careful은 형용사, care는 동사/명사라서 이 자리에 못 와요." },
+{ src:"시험지 101번", q:"빈칸에 알맞은 말을 고르세요.<br><b>Cross the street ______.</b> (길을 안전하게 건너라)",
+  choices:["safely","safe","safety","more safe"], answer:"safely",
+  exp:"동사 cross(건너다)를 꾸미는 부사 <b>safely</b>(안전하게)! safe(안전한)는 형용사, safety(안전)는 명사예요. 동사를 꾸밀 땐 언제나 -ly 부사!" },
+
+{ src:"시험지 108번", q:"다음 중 밑줄 친 부사의 <b>위치가 어색한</b> 것을 고르세요.",
+  choices:["He eats <u>never</u> carrots.","I <u>often</u> go swimming.","She is <u>always</u> kind to us.","We <u>usually</u> have lunch at noon."], answer:"He eats <u>never</u> carrots.",
+  exp:"빈도부사 never는 <b>일반동사 앞</b>! → He <b>never eats</b> carrots. 동사와 목적어 사이에 끼면 안 돼요. 「일반동사 앞, be동사·조동사 뒤」 규칙!" },
+{ src:"시험지 108번", q:"주어진 단어를 바르게 배열한 문장을 고르세요.<br><b>(late / is / never / she)</b>",
+  choices:["She is never late.","She never is late.","She is late never.","Never she is late."], answer:"She is never late.",
+  exp:"be동사(is)가 있으면 빈도부사는 <b>be동사 뒤</b>! → She is <b>never</b> late(그녀는 절대 늦지 않는다). 일반동사 앞·be동사 뒤, 헷갈리지 않기!" },
+
+{ src:"시험지 48번", q:"다음 중 어법상 <b>올바른</b> 문장을 고르세요.",
+  choices:["I often visit my grandma.","I visit often my grandma.","I visit my often grandma.","I often my visit grandma."], answer:"I often visit my grandma.",
+  exp:"often(자주)은 빈도부사니까 <b>일반동사 visit 앞</b>! 시험지의 I visit often that restaurant(✗)과 같은 함정이에요. 동사·목적어 사이 금지!" },
+{ src:"시험지 48번", q:"다음 중 빈도부사의 위치가 <b>올바른</b> 문장을 고르세요.",
+  choices:["He is always happy.","He always is happy.","Always he is happy.","He is happily always."], answer:"He is always happy.",
+  exp:"be동사(is)가 있으니 always는 <b>is 뒤</b>! → He is <b>always</b> happy. be동사보다 앞에 서면(always is) 어색한 문장이 돼요." },
+
+{ src:"시험지 31번", q:"「우리는 어제 조용히 거기에 도착했다」를 바르게 영작한 것을 고르세요.",
+  choices:["We arrived there quietly yesterday.","We arrived yesterday quietly there.","We arrived quietly yesterday there.","We arrived yesterday there quietly."], answer:"We arrived there quietly yesterday.",
+  exp:"부사 여러 개는 <b>「장소 → 방법 → 시간」</b>! there(장소) → quietly(방법) → yesterday(시간). 시험지의 landed there safely yesterday와 똑같은 공식이에요. 「장·방·시」!" },
+{ src:"시험지 31번", q:"「그는 오늘 아침 여기에 일찍 왔다」를 바르게 영작한 것을 고르세요.",
+  choices:["He came here early this morning.","He came early here this morning.","He came this morning here early.","He came this morning early here."], answer:"He came here early this morning.",
+  exp:"here(장소) → early(방법/때) → this morning(시간) 순서! 장소가 제일 먼저, 큰 시간 표현은 맨 뒤 — 「장·방·시」 공식 그대로예요." },
+
+{ src:"시험지 84번", q:"다음 중 어법상 <b>어색한</b> 문장을 고르세요.",
+  choices:["He exercised at seven there.","I'll meet you there at three.","She stayed at home all day.","We ate lunch here at noon."], answer:"He exercised at seven there.",
+  exp:"장소(there)가 시간(at seven)보다 <b>먼저</b>! → He exercised <b>there at seven</b>. 시험지의 I studied at six there(✗)와 같은 함정 — 장소 먼저, 시간은 뒤!" },
+{ src:"시험지 84번", q:"주어진 단어를 바르게 배열한 문장을 고르세요.<br><b>(yesterday / went / she / there)</b>",
+  choices:["She went there yesterday.","She went yesterday there.","She yesterday went there.","There she went yesterday."], answer:"She went there yesterday.",
+  exp:"went(동사) 뒤에 <b>there(장소) → yesterday(시간)</b> 순서! 시간 부사는 문장 맨 끝이 가장 자연스러운 자리예요." },
+
+{ src:"시험지 105번", q:"다음 중 밑줄 친 there의 쓰임이 나머지와 <b>다른</b> 것을 고르세요.",
+  choices:["<u>There</u> are many books on the desk.","Sit <u>there</u>, please.","I went <u>there</u> last week.","Put your bag <u>there</u>."], answer:"<u>There</u> are many books on the desk.",
+  exp:"There are ~(~가 있다)의 There는 해석되지 않는 <b>유도부사</b>! 나머지는 전부 「거기에」라고 해석되는 <b>장소 부사</b>예요. 해석되면 장소 부사, 해석 안 되면 유도부사!" },
+{ src:"시험지 105번", q:"다음 <보기>의 There와 쓰임이 <b>같은</b> 것을 고르세요.<br><span class='passage'><보기> There is a cat under the table.</span>",
+  choices:["There were many people at the park.","Look over there!","Go there right now.","She lives there."], answer:"There were many people at the park.",
+  exp:"<보기>의 There is ~는 「~가 있다」의 <b>유도부사</b>! There were many people(사람들이 많이 있었다)도 똑같은 유도부사예요. 나머지는 「거기」라고 해석되는 장소 부사죠." },
+
+{ src:"시험지 44번", q:"빈칸에 알맞은 말을 고르세요.<br><b>The kite flew ______ in the sky.</b> (연이 하늘 높이 날았다)",
+  choices:["high","highly","height","more highly"], answer:"high",
+  exp:"실제로 높이 나는 것은 <b>high</b>(높이)! highly는 「매우」라는 뜻이라 하늘을 나는 데는 못 써요. The plane flew high도 같은 표현이에요." },
+{ src:"시험지 44번", q:"빈칸에 알맞은 말을 고르세요.<br><b>Her paintings are ______ praised by many people.</b> (그녀의 그림은 높이 평가받는다)",
+  choices:["highly","high","height","higher"], answer:"highly",
+  exp:"「높이 평가받다」의 「높이」는 실제 높이가 아니라 「매우, 크게」라는 뜻이니 <b>highly</b>! highly praised(높이 평가받는), highly respected(매우 존경받는) — 세트로 암기!" },
+
+{ src:"시험지 40번", q:"주어진 단어를 바르게 배열한 문장을 고르세요.<br><b>My sister is (enough / good / is) to help me.</b>",
+  choices:["My sister is good enough to help me.","My sister is enough good to help me.","My sister enough is good to help me.","My sister is good to help me enough."], answer:"My sister is good enough to help me.",
+  exp:"「<b>형용사 + enough + to동사</b>」 공식! good enough to help(도와줄 만큼 충분히 착한). 시험지에서 is enough good이라고 썼던 그 문제 — enough는 언제나 형용사 뒤!" },
+{ src:"시험지 40번", q:"빈칸에 알맞은 말을 고르세요.<br><b>The water is warm ______ to swim in.</b> (수영할 만큼 충분히 따뜻하다)",
+  choices:["enough","very","much","more"], answer:"enough",
+  exp:"「~할 만큼 충분히」는 「형용사 + <b>enough</b> + to동사」! warm enough to swim. very나 much는 이 공식에 들어갈 수 없어요." }
+];
+
+/* ══════ 3영역 · 시제·문장·독해 (12유형 × 2 = 24문항) ══════ */
+var QUESTIONS3 = [
+{ src:"시험지 43번", q:"빈칸에 알맞은 말을 고르세요.<br><b>Fred ______ cookies two hours ago.</b>",
+  choices:["made","makes","make","is making"], answer:"made",
+  exp:"two hours ago(2시간 전)는 <b>과거</b> 신호! → make의 과거형 <b>made</b>. 시험지에서 makes를 골랐던 문제예요 — ago가 보이면 무조건 과거형!" },
+{ src:"시험지 43번", q:"빈칸에 알맞은 말을 고르세요.<br><b>She ______ her homework last night.</b>",
+  choices:["did","does","do","is doing"], answer:"did",
+  exp:"last night(어젯밤)이니까 과거형 <b>did</b>! does는 현재형이에요. yesterday, last ~, ago — 과거 3형제 신호를 보면 바로 과거형을 고르세요." },
+
+{ src:"시험지 49번", q:"대화의 빈칸에 알맞은 말이 순서대로 짝지어진 것을 고르세요.<br><span class='passage'>A: Where ______ you last Sunday?<br>B: I ______ at the library. I ______ books there.</span>",
+  choices:["were - was - read","are - am - read","were - am - reads","are - was - reading"], answer:"were - was - read",
+  exp:"last Sunday(지난 일요일)니까 전부 <b>과거형</b>으로 통일! Where <b>were</b> you / I <b>was</b> / I <b>read</b>(read의 과거형은 모양이 같아요). 질문도 대답도 모두 과거!" },
+{ src:"시험지 49번", q:"대화의 빈칸에 알맞은 말이 순서대로 짝지어진 것을 고르세요.<br><span class='passage'>A: ______ you at home yesterday?<br>B: Yes, I ______. I watched a movie.</span>",
+  choices:["Were - was","Are - am","Was - were","Do - did"], answer:"Were - was",
+  exp:"yesterday니까 과거! 주어가 you면 <b>Were</b> you ~?, 대답하는 I는 <b>was</b>예요. watched(과거형)가 힌트가 되어주죠. 시제 통일, 잊지 마세요!" },
+
+{ src:"시험지 54번", q:"빈칸에 알맞은 말을 고르세요.<br><b>Don't worry. Mom ______ back soon.</b>",
+  choices:["will come","came","comes to","coming"], answer:"will come",
+  exp:"soon(곧)은 앞으로의 일이니 미래 <b>will come</b>! 시험지의 My father comes back soon을 will come back으로 고치는 문제와 똑같아요. will + 동사원형!" },
+{ src:"시험지 54번", q:"빈칸에 알맞은 말을 고르세요.<br><b>I ______ you tomorrow.</b>",
+  choices:["will call","called","calls","calling"], answer:"will call",
+  exp:"tomorrow(내일)는 미래 신호! → <b>will call</b>(전화할게). called는 과거, calls는 현재. 시간 표현과 시제를 짝지어 확인하는 습관이 최고예요!" },
+
+{ src:"시험지 87번", q:"빈칸에 알맞은 말을 고르세요.<br><b>I ______ my key under the sofa yesterday.</b>",
+  choices:["found","finded","find","founded"], answer:"found",
+  exp:"find(찾다)의 과거형은 <b>found</b>! finded는 없는 말이에요. 시험지에서 finded라고 썼던 그 문제 — 불규칙 동사는 만날 때마다 외워버리기!" },
+{ src:"시험지 87번", q:"다음 중 동사의 과거형이 <b>잘못</b> 짝지어진 것을 고르세요.",
+  choices:["buy - buyed","go - went","eat - ate","see - saw"], answer:"buy - buyed",
+  exp:"buy의 과거형은 buyed가 아니라 <b>bought</b>! find-found, make-made, buy-bought — 불규칙 동사는 -ed를 붙이면 무조건 틀려요." },
+
+{ src:"시험지 88번", q:"대화의 빈칸에 알맞은 말을 고르세요.<br><span class='passage'>A: This movie is really fun!<br>B: I think ______, too.</span>",
+  choices:["so","it","that","too"], answer:"so",
+  exp:"「나도 <b>그렇게</b> 생각해」의 「그렇게」가 바로 부사 <b>so</b>! I think so, too. 시험지에서 틀렸던 표현이에요 — 통째로 외워서 대화에서 바로 쓸 수 있게!" },
+{ src:"시험지 88번", q:"「나도 그렇게 생각해」를 바르게 영작한 것을 고르세요.",
+  choices:["I think so, too.","I think it, too.","I so think, too.","I think too so."], answer:"I think so, too.",
+  exp:"<b>I think so, too.</b>가 정답! so는 앞 사람이 말한 내용 전체를 받아주는 부사예요. 어순도 think 뒤에 so가 오는 것까지 기억하세요." },
+
+{ src:"시험지 98번", q:"다음 중 우리말을 영어로 <b>바르게</b> 옮긴 것을 고르세요.",
+  choices:["그는 노래를 매우 잘한다. → He sings very well.","그녀는 영어를 유창하게 말한다. → She speaks English fluent.","나는 대개 늦게 잠자리에 든다. → I usually go to bed lately.","그는 열심히 일한다. → He works hardly."], answer:"그는 노래를 매우 잘한다. → He sings very well.",
+  exp:"sings very well — 부사 well을 very가 강조하는 완벽한 문장! 나머지 함정: fluent→<b>fluently</b>(동사 수식은 부사), lately(최근에)→<b>late</b>(늦게), hardly(거의~않다)→<b>hard</b>(열심히)." },
+{ src:"시험지 98번", q:"「그는 매우 열심히 일한다」를 바르게 영작한 것을 고르세요.",
+  choices:["He works so hard.","He works so hardly.","He so works hard.","He works hard so."], answer:"He works so hard.",
+  exp:"「열심히」는 <b>hard</b>, 「매우」는 so가 hard 앞에서 강조 → works <b>so hard</b>! hardly를 쓰면 「거의 일 안 한다」는 정반대 뜻이 되니 조심 또 조심!" },
+
+{ src:"시험지 85번", q:"다음 중 밑줄 친 부분의 쓰임이 나머지와 <b>다른</b> 것을 고르세요.",
+  choices:["The book <u>on the desk</u> is mine.","<u>In the morning</u>, I jog with my dad.","<u>With a smile</u>, she said hello.","We can't live <u>without water</u>."], answer:"The book <u>on the desk</u> is mine.",
+  exp:"on the desk는 앞의 <b>명사 The book을 꾸미는 형용사 역할</b>(책상 위의 책)! 나머지는 문장 전체나 동사를 꾸미는 <b>부사 역할</b>이에요. 명사를 꾸미면 형용사 역할, 기억!" },
+{ src:"시험지 85번", q:"다음 중 밑줄 친 부분의 쓰임이 나머지와 <b>다른</b> 것을 고르세요.",
+  choices:["The cup <u>on the table</u> is new.","He runs <u>in the park</u>.","I study English <u>at night</u>.","We went to school <u>by bus</u>."], answer:"The cup <u>on the table</u> is new.",
+  exp:"on the table은 명사 The cup을 꾸미는 <b>형용사 역할</b>(탁자 위의 컵)! in the park·at night·by bus는 동사를 꾸미는 <b>부사 역할</b>(어디서·언제·어떻게)이에요." },
+
+{ src:"시험지 107번", q:"다음 중 어법상 <b>어색한</b> 문장을 고르세요.",
+  choices:["He fell asleep while the class.","We had a picnic beside the river.","I slept during the movie.","She sat beside me on the bus."], answer:"He fell asleep while the class.",
+  exp:"while 뒤에는 「주어+동사」가 와야 해요! 명사(the class)만 올 때는 <b>during</b> → during the class. 「during+명사 / while+주어+동사」 공식!" },
+{ src:"시험지 107번", q:"빈칸에 알맞은 말을 고르세요.<br><b>My house is ______ the school.</b> (우리 집은 학교 옆에 있다)",
+  choices:["beside","besides","during","while"], answer:"beside",
+  exp:"「~옆에」는 <b>beside</b>! besides는 「게다가, ~외에」라는 전혀 다른 뜻이에요. 시험지의 picnic besides the river(✗)와 같은 함정 — s 하나로 뜻이 바뀌니 조심!" },
+
+{ src:"시험지 94번", q:"다음 <보기>의 that과 쓰임이 <b>같은</b> 것을 고르세요.<br><span class='passage'><보기> I have a dog that runs very fast.</span>",
+  choices:["She likes the song that makes her happy.","I know that he is kind.","That is my new bag.","He said that he was tired."], answer:"She likes the song that makes her happy.",
+  exp:"<보기>의 that은 뒤에 <b>동사(runs)</b>가 바로 오면서 앞의 명사(a dog)를 설명하는 <b>주격 관계대명사</b>! the song that makes her happy도 똑같아요. that 뒤에 「주어+동사」가 오면 접속사(~라는 것)예요." },
+{ src:"시험지 94번", q:"다음 중 밑줄 친 that의 쓰임이 나머지와 <b>다른</b> 것을 고르세요.",
+  choices:["He said <u>that</u> he was hungry.","The app <u>that</u> helps students is popular.","I have a friend <u>that</u> lives in Busan.","Look at the bird <u>that</u> sings loudly."], answer:"He said <u>that</u> he was hungry.",
+  exp:"said that he was hungry의 that은 뒤에 「주어+동사」 문장이 오는 <b>접속사</b>(~라는 것)! 나머지는 that 뒤에 동사가 바로 오는 <b>주격 관계대명사</b>예요. that 뒤를 보면 바로 구분 끝!" },
+
+{ src:"시험지 17번", q:"다음 글의 내용상 필자의 심경으로 가장 알맞은 것을 고르세요.<br><span class='passage'>My little brother had his first taekwondo match today. I was so nervous that I couldn't watch. He fell down two times, but he didn't give up. In the end, he won the match! I ran to him and hugged him. I am so proud of my brother.</span>",
+  choices:["자랑스럽다","슬프다","지루하다","화난다"], answer:"자랑스럽다",
+  exp:"중간에 nervous(긴장), fell down(넘어짐)이 나오지만 <b>마지막</b>에 he won! + I am so <b>proud</b>(자랑스럽다)로 끝나요! 심경 문제는 마지막 2~3문장이 결정한다는 것, 기억하죠?" },
+{ src:"시험지 17번", q:"다음 글의 내용상 필자의 심경으로 가장 알맞은 것을 고르세요.<br><span class='passage'>I lost my puppy, Coco, this morning. I looked for her everywhere, but I couldn't find her. I almost cried. Then I heard a small sound from the closet. It was Coco! She was sleeping there. I hugged her and smiled.</span>",
+  choices:["안심되고 기쁘다","여전히 슬프다","짜증난다","무섭다"], answer:"안심되고 기쁘다",
+  exp:"강아지를 잃어버려 almost cried(울 뻔)했지만, <b>마지막</b>에 It was Coco! → hugged her and <b>smiled</b>(안아주고 웃었다)! 반전이 있는 글은 끝부분의 감정이 정답이에요." },
+
+{ src:"시험지 52번", q:"다음 글의 내용과 일치하지 <b>않는</b> 것을 고르세요.<br><span class='passage'>Growing tomatoes is fun and easy. You need a pot, tomato seeds, and a sunny place. First, put the seeds in the pot. Next, water them every morning. After about two months, you will see small red tomatoes.</span>",
+  choices:["토마토는 심은 지 일주일 만에 열린다.","토마토를 기르려면 화분이 필요하다.","씨앗에 매일 아침 물을 줘야 한다.","해가 잘 드는 장소가 필요하다."], answer:"토마토는 심은 지 일주일 만에 열린다.",
+  exp:"지문에는 After about <b>two months</b>(약 두 달 후)라고 했으니 「일주일 만에」는 지문과 달라요! 보기 하나하나를 지문에서 손가락으로 짚어 확인하는 것, 시험지에서 배운 그 방법이에요." },
+{ src:"시험지 52번", q:"다음 글의 내용과 일치하지 <b>않는</b> 것을 고르세요.<br><span class='passage'>Taking care of a dog is not easy. You should walk your dog every day. You should give it fresh water and food. Also, you should brush its hair once a week. But don't give chocolate to your dog. It is very dangerous for dogs.</span>",
+  choices:["개는 초콜릿을 조금씩 먹어도 된다.","개를 매일 산책시켜야 한다.","신선한 물과 음식을 줘야 한다.","일주일에 한 번 털을 빗겨줘야 한다."], answer:"개는 초콜릿을 조금씩 먹어도 된다.",
+  exp:"지문은 <b>don't give chocolate</b>(초콜릿을 주지 마라) + very dangerous(매우 위험)라고 했어요! 「조금씩은 된다」는 지문에 없는 반대 내용 — 그럴듯해 보여도 지문과 대조하면 바로 들통나요." },
+
+{ src:"시험지 53번", q:"다음 글의 밑줄 친 <b>They</b>가 가리키는 것을 고르세요.<br><span class='passage'>Ants are amazing insects. They live together in big groups. Every day, worker ants go out to find food. <u>They</u> carry food that is much heavier than their bodies.</span>",
+  choices:["worker ants","amazing insects","big groups","food"], answer:"worker ants",
+  exp:"바로 앞 문장의 <b>worker ants</b>(일개미)가 먹이를 찾으러 나가고, <u>They</u>가 먹이를 나르죠! 대명사 자리에 후보를 하나씩 넣어보면 — 먹이를 나르는 건 일개미가 자연스러워요." },
+{ src:"시험지 53번", q:"다음 글의 밑줄 친 <b>They</b>가 가리키는 것을 고르세요.<br><span class='passage'>My grandma grows many flowers in her garden. Bees often visit the garden. <u>They</u> fly from flower to flower to collect honey.</span>",
+  choices:["Bees","many flowers","My grandma and I","gardens"], answer:"Bees",
+  exp:"꽃에서 꽃으로 날아다니며(fly) 꿀을 모으는(collect honey) 건 <b>Bees</b>(벌들)! 꽃은 날 수 없으니까요. 바로 앞 문장의 명사들을 후보로 놓고 해석해보는 방법, 완벽하게 익혔어요!" }
+];
+
+var ALL = QUESTIONS.concat(QUESTIONS2, QUESTIONS3);
+
+/* ══════ 3개 영역 구성 ══════ */
+var SECTIONS = [
+  { name: "1영역 · 부사의 형태",        start: 0,  end: 30 },
+  { name: "2영역 · 부사의 위치와 어순", start: 30, end: 62 },
+  { name: "3영역 · 시제·문장·독해",     start: 62, end: 86 }
+];
+function secIndex(i) { return i < 30 ? 0 : (i < 62 ? 1 : 2); }
+
+/* ══════ 진행 상태 ══════ */
+var studentName = "";
+var current = 0;
+var answersLog = [];
+var elapsed = [0, 0, 0];
+var sent = [false, false, false];
+var lastTick = 0;
+var shuffledChoices = null;
+
+/* ══════ 진행 자동 저장 (튕김 대비) ══════ */
+var SAVE_KEY = "clinic-chajungmin-0723";
+function saveState() {
+  try {
+    localStorage.setItem(SAVE_KEY, JSON.stringify({
+      v: 1, name: studentName, current: current, log: answersLog, elapsed: elapsed, sent: sent
+    }));
+  } catch (e) {}
+}
+function loadState() {
+  try {
+    var s = JSON.parse(localStorage.getItem(SAVE_KEY));
+    return (s && s.v === 1 && s.name && s.log) ? s : null;
+  } catch (e) { return null; }
+}
+function clearState() { try { localStorage.removeItem(SAVE_KEY); } catch (e) {} }
+
+/* ══════ 화면 전환 도우미 ══════ */
+function show(id) {
+  ["start-card", "resume-card", "quiz-card", "sec-result-card"].forEach(function (c) {
+    document.getElementById(c).classList.toggle("hidden", c !== id);
+  });
+  window.scrollTo(0, 0);
+}
+
+/* ══════ 시작 / 이어하기 ══════ */
+var nameInput = document.getElementById("name-input");
+var startBtn = document.getElementById("start-btn");
+
+nameInput.addEventListener("input", function () {
+  startBtn.disabled = nameInput.value.trim().length === 0;
+});
+nameInput.addEventListener("keydown", function (e) {
+  if (e.key === "Enter" && !startBtn.disabled) startBtn.click();
+});
+startBtn.addEventListener("click", function () {
+  studentName = nameInput.value.trim();
+  if (!studentName) return;
+  clearState();
+  current = 0; answersLog = []; elapsed = [0, 0, 0]; sent = [false, false, false];
+  lastTick = Date.now();
+  saveState();
+  show("quiz-card");
+  showQuestion();
+});
+
+var savedState = loadState();
+if (savedState && savedState.current < ALL.length && savedState.log.length > 0) {
+  document.getElementById("resume-info").textContent =
+    savedState.name + " · " + savedState.log.length + "문제까지 푼 기록이 있어요. 이어서 풀까요?";
+  show("resume-card");
+}
+document.getElementById("resume-btn").addEventListener("click", function () {
+  studentName = savedState.name;
+  current = savedState.current;
+  answersLog = savedState.log;
+  elapsed = savedState.elapsed || [0, 0, 0];
+  sent = savedState.sent || [false, false, false];
+  lastTick = Date.now();
+  var si = secIndex(Math.max(0, current - 1));
+  if (current === SECTIONS[si].end && answersLog.length === current) {
+    showSectionResult(si);
+  } else {
+    show("quiz-card");
+    showQuestion();
+  }
+});
+document.getElementById("restart-btn").addEventListener("click", function () {
+  clearState();
+  show("start-card");
+});
+
+/* ══════ 문제 표시 ══════ */
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+
+var CIRCLED = ["①", "②", "③", "④", "⑤"];
+
+function showQuestion() {
+  var q = ALL[current];
+  var si = secIndex(current);
+  var sec = SECTIONS[si];
+  document.getElementById("prog-num").textContent =
+    sec.name + "  ·  " + (current - sec.start + 1) + " / " + (sec.end - sec.start);
+  document.getElementById("prog-pct").textContent = "전체 " + Math.round(current / ALL.length * 100) + "%";
+  document.getElementById("bar-fill").style.width = ((current - sec.start) / (sec.end - sec.start) * 100) + "%";
+  document.getElementById("srctag").textContent = q.src + " 클리닉";
+  document.getElementById("tipbox").innerHTML = '<span class="tip-label">🔍 왜 틀렸을까? + 개념 카드 (먼저 읽기!)</span>' + (TIPS[q.src] || "");
+  document.getElementById("qtext").innerHTML = "Q" + (current + 1) + ". " + q.q;
+  var box = document.getElementById("choices");
+  box.innerHTML = "";
+  shuffledChoices = shuffle(q.choices);
+  shuffledChoices.forEach(function (c, i) {
+    var b = document.createElement("button");
+    b.className = "choice";
+    b.innerHTML = '<span class="num">' + CIRCLED[i] + "</span>" + c;
+    b.addEventListener("click", function () { pick(c); });
+    box.appendChild(b);
+  });
+  lastTick = Date.now();
+  window.scrollTo(0, 0);
+}
+
+/* 숫자키 1~4로도 선택 가능 */
+document.addEventListener("keydown", function (e) {
+  if (document.getElementById("quiz-card").classList.contains("hidden")) return;
+  var n = parseInt(e.key, 10);
+  if (n >= 1 && n <= shuffledChoices.length) pick(shuffledChoices[n - 1]);
+});
+
+var locked = false;
+function pick(choice) {
+  if (locked) return; locked = true;
+  var q = ALL[current];
+  var si = secIndex(current);
+  var ok = choice === q.answer;
+  answersLog.push({ no: current + 1, ok: ok, chosen: choice, answer: q.answer });
+  elapsed[si] += Math.min(120, Math.round((Date.now() - lastTick) / 1000));
+  current++;
+  saveState();
+  setTimeout(function () {
+    locked = false;
+    if (current === SECTIONS[si].end) showSectionResult(si);
+    else showQuestion();
+  }, 250);
+}
+
+/* ══════ 영역 결과 ══════ */
+function secStats(si) {
+  var sec = SECTIONS[si];
+  var slice = answersLog.slice(sec.start, sec.end);
+  var score = slice.filter(function (l) { return l.ok; }).length;
+  var wrong = slice.filter(function (l) { return !l.ok; }).map(function (l) { return l.no; });
+  return { slice: slice, score: score, total: sec.end - sec.start, wrong: wrong };
+}
+
+function stripTags(s) { return s.replace(/<[^>]*>/g, ""); }
+
+function sectionMsg(si) {
+  var st = secStats(si);
+  return "[영핏 오답 클리닉 " + (si + 1) + "/3 결과]\n학생: " + studentName +
+         "\n영역: " + SECTIONS[si].name +
+         "\n점수: " + st.score + "/" + st.total +
+         "\n풀이 시간: " + Math.max(1, Math.round(elapsed[si] / 60)) + "분" +
+         "\n틀린 문항: " + (st.wrong.length ? st.wrong.join(", ") : "없음") +
+         "\n- 영핏 지나티처";
+}
+
+function totalMsg() {
+  var parts = [0, 1, 2].map(function (si) {
+    var st = secStats(si);
+    return (si + 1) + "영역 " + st.score + "/" + st.total;
+  });
+  var totalScore = answersLog.filter(function (l) { return l.ok; }).length;
+  var allWrong = answersLog.filter(function (l) { return !l.ok; }).map(function (l) { return l.no; });
+  return "[영핏 오답 클리닉 최종 결과]\n학생: " + studentName +
+         "\n퀴즈: 부사 마스터 오답 클리닉 (86문항)" +
+         "\n" + parts.join(" / ") +
+         "\n총점: " + totalScore + "/" + ALL.length +
+         "\n틀린 문항: " + (allWrong.length ? allWrong.join(", ") : "없음") +
+         "\n- 영핏 지나티처";
+}
+
+function copyText(btn, text, doneLabel) {
+  navigator.clipboard.writeText(text).then(function () {
+    btn.textContent = doneLabel;
+  }).catch(function () {
+    prompt("아래 내용을 길게 눌러 복사하세요", text);
+  });
+}
+
+function showSectionResult(si) {
+  var st = secStats(si);
+  var isLast = si === SECTIONS.length - 1;
+  document.getElementById("sec-result-title").textContent =
+    isLast ? "모든 영역 완료! 정말 수고했어요 🎉" : (si + 1) + "영역 완료! 잘했어요 👏";
+  document.getElementById("sec-score").textContent = st.score + " / " + st.total;
+  document.getElementById("sec-wrong").textContent =
+    st.wrong.length ? "틀린 문항: " + st.wrong.join(", ") : "이 영역 전부 정답! 최고예요! 🏆";
+
+  var copyBtn = document.getElementById("sec-copy-btn");
+  copyBtn.textContent = (si + 1) + "영역 결과 복사 (카톡용)";
+  copyBtn.onclick = function () { copyText(copyBtn, sectionMsg(si), "복사 완료! 카톡에 붙여넣기 하세요 ✓"); };
+
+  var nextBtn = document.getElementById("next-sec-btn");
+  if (isLast) {
+    nextBtn.classList.add("hidden");
+    var totalScore = answersLog.filter(function (l) { return l.ok; }).length;
+    document.getElementById("total-block").classList.remove("hidden");
+    document.getElementById("total-score").textContent = totalScore + " / " + ALL.length;
+    document.getElementById("total-detail").textContent =
+      [0, 1, 2].map(function (s) { var t = secStats(s); return (s + 1) + "영역 " + t.score + "/" + t.total; }).join("  ·  ");
+    var totalBtn = document.getElementById("total-copy-btn");
+    totalBtn.onclick = function () { copyText(totalBtn, totalMsg(), "복사 완료! 카톡에 붙여넣기 하세요 ✓"); };
+  } else {
+    nextBtn.classList.remove("hidden");
+    document.getElementById("total-block").classList.add("hidden");
+    nextBtn.textContent = "쉬었다가 " + (si + 2) + "영역 시작하기 →";
+    nextBtn.onclick = function () {
+      show("quiz-card");
+      showQuestion();
+    };
+  }
+
+  var expBox = document.getElementById("sec-explanations");
+  expBox.innerHTML = "";
+  st.slice.forEach(function (log) {
+    var q = ALL[log.no - 1];
+    var d = document.createElement("div");
+    d.className = "exp" + (log.ok ? "" : " wrong");
+    d.innerHTML = '<div class="exp-head"><b>Q' + log.no + " (" + q.src + " 클리닉) " +
+      (log.ok ? "정답! ✓" : "오답 (내 답: " + stripTags(log.chosen) + " → 정답: " + stripTags(q.answer) + ")") +
+      "</b></div>" + q.exp;
+    expBox.appendChild(d);
+  });
+
+  if (!sent[si]) {
+    sent[si] = true;
+    saveState();
+    engfitSubmit({
+      quizId: "clinic-chajungmin-0723-p" + (si + 1),
+      quizTitle: "차정민 부사 마스터 오답 클리닉 " + (si + 1) + "영역 (" + SECTIONS[si].name + ")",
+      student: studentName,
+      score: st.score,
+      total: st.total,
+      wrong: st.wrong,
+      durationSec: elapsed[si],
+      detail: st.slice.map(function (l) { return { no: l.no, ok: l.ok, chosen: stripTags(l.chosen), answer: stripTags(l.answer) }; })
+    });
+  }
+  show("sec-result-card");
+}
+</script>
+</body>
+</html>
