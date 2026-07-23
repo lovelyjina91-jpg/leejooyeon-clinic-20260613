@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>예찬이의 오답 클리닉 — 시제 &amp; 3인칭 단수</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; background: #f0f4f4; color: #2d3436; min-height: 100vh; display: flex; justify-content: center; padding: 20px 14px; }
+  .wrap { width: 100%; max-width: 560px; }
+  .card { background: #fff; border-radius: 16px; padding: 26px 22px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 14px; }
+  h1 { font-size: 1.3rem; color: #2e7d6e; margin-bottom: 6px; }
+  h2 { font-size: 1.1rem; color: #2e7d6e; margin-bottom: 12px; }
+  .sub { font-size: 0.88rem; color: #778; margin-bottom: 18px; line-height: 1.5; }
+  .provider { font-size: 0.8rem; color: #9ab; text-align: center; margin-top: 10px; }
+  input[type=text] { width: 100%; padding: 13px; font-size: 1.05rem; border: 1.5px solid #cdd; border-radius: 10px; }
+  .btn { display: block; width: 100%; margin-top: 14px; padding: 14px; font-size: 1.05rem; font-weight: bold; color: #fff; background: #2e7d6e; border: none; border-radius: 10px; cursor: pointer; }
+  .btn:disabled { background: #b8c4c2; cursor: default; }
+  .progress { font-size: 0.85rem; color: #789; margin-bottom: 10px; }
+  .qtext { font-size: 1.05rem; line-height: 1.65; margin-bottom: 16px; font-weight: bold; }
+  .choice { display: block; width: 100%; text-align: left; padding: 13px 14px; margin-bottom: 9px; font-size: 1rem; line-height: 1.5; background: #f6f9f8; border: 1.5px solid #dde5e3; border-radius: 10px; cursor: pointer; font-family: inherit; }
+  .choice:active { background: #e2efec; }
+  .num { color: #2e7d6e; font-weight: bold; margin-right: 6px; }
+  .score-big { font-size: 2rem; font-weight: bold; color: #2e7d6e; text-align: center; margin: 10px 0; }
+  .cheer { text-align: center; font-size: 0.95rem; color: #556; line-height: 1.6; margin-bottom: 14px; }
+  .exp { background: #f6f9f8; border-left: 4px solid #2e7d6e; border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; font-size: 0.92rem; line-height: 1.6; }
+  .exp.wrong { border-left-color: #c0392b; }
+  .exp b { color: #2e7d6e; }
+  .exp.wrong .head { color: #c0392b; }
+  .hidden { display: none; }
+  .concept { background: #f2f8f6; border: 1.5px solid #cfe3de; border-radius: 12px; padding: 16px 16px; margin-bottom: 12px; font-size: 0.95rem; line-height: 1.75; }
+  .concept h3 { color: #2e7d6e; font-size: 1rem; margin-bottom: 8px; }
+  .concept .pill { display: inline-block; background: #2e7d6e; color: #fff; border-radius: 999px; padding: 1px 10px; font-size: 0.82rem; margin-right: 6px; }
+  .concept table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 0.9rem; }
+  .concept td, .concept th { border: 1px solid #cfe3de; padding: 6px 8px; text-align: center; background: #fff; }
+  .concept th { background: #e6f2ee; color: #2e7d6e; }
+  .tip { background: #fff8e8; border-left: 4px solid #e0b23c; border-radius: 8px; padding: 10px 12px; margin-top: 10px; font-size: 0.9rem; line-height: 1.6; }
+  .keyhint { font-size: 0.78rem; color: #9ab; text-align: center; margin-top: 8px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- 시작 화면 -->
+  <div class="card" id="start-card">
+    <h1>예찬이의 오답 클리닉 🌱</h1>
+    <p class="sub">시제 구분 &amp; 3인칭 단수 s 완전 정복!<br>
+    개념 카드 2장을 읽고 나서 문제 30개를 풀어요.<br>
+    이름을 입력하면 시작 버튼이 켜져요.</p>
+    <input type="text" id="name-input" placeholder="이름을 입력하세요" maxlength="20" autocomplete="off">
+    <button class="btn" id="start-btn" disabled>시작하기</button>
+    <p class="provider">제공: 영핏 지나티처 💚</p>
+  </div>
+
+  <!-- 개념 카드 1 -->
+  <div class="card hidden" id="concept1-card">
+    <h2>📗 개념 카드 1 — 시제 신호등 🚦</h2>
+    <div class="concept">
+      <h3>1. 시간 표현이 시제를 정해요!</h3>
+      문장 속 시간 표현부터 찾는 게 1순위예요.<br>
+      <span class="pill">과거 신호</span> yesterday, last week, last night, ~ ago, in 2020<br>
+      <span class="pill">현재(습관) 신호</span> every day, these days, always, on Sundays
+    </div>
+    <div class="concept">
+      <h3>2. 과거의 부정문 · 의문문</h3>
+      부정: <b>didn't + 동사원형</b> → Glenn <b>didn't play</b> tennis yesterday.<br>
+      의문: <b>Did + 주어 + 동사원형?</b> → <b>Did</b> he <b>make</b> this pasta?
+      <div class="tip">💡 didn't / Did 가 이미 "과거"라고 말해줬으니, 뒤의 동사는 꼭 <b>원형</b>! (didn't played ❌)</div>
+    </div>
+    <div class="concept">
+      <h3>3. 자주 나오는 불규칙 과거형</h3>
+      <table>
+        <tr><th>원형</th><th>과거형</th><th>원형</th><th>과거형</th></tr>
+        <tr><td>wear</td><td><b>wore</b></td><td>buy</td><td><b>bought</b></td></tr>
+        <tr><td>see</td><td><b>saw</b></td><td>eat</td><td><b>ate</b></td></tr>
+        <tr><td>drink</td><td><b>drank</b></td><td>make</td><td><b>made</b></td></tr>
+        <tr><td>meet</td><td><b>met</b></td><td>go</td><td><b>went</b></td></tr>
+        <tr><td>have</td><td><b>had</b></td><td>do</td><td><b>did</b></td></tr>
+      </table>
+    </div>
+    <button class="btn" id="concept1-btn">다음 개념 카드 보기 →</button>
+  </div>
+
+  <!-- 개념 카드 2 -->
+  <div class="card hidden" id="concept2-card">
+    <h2>📘 개념 카드 2 — 3인칭 단수의 s ✨</h2>
+    <div class="concept">
+      <h3>1. 언제 동사에 s를 붙일까?</h3>
+      주어가 <b>he, she, it, 한 사람·하나</b>(3인칭 단수)이고 <b>현재</b>일 때!<br>
+      Jennifer <b>goes</b> jogging. / My brother <b>plays</b> the piano.
+      <div class="tip">💡 주어가 둘 이상(they, Tom and Jerry, We)이면 s 없이 그냥 원형!</div>
+    </div>
+    <div class="concept">
+      <h3>2. s 붙이는 규칙</h3>
+      <table>
+        <tr><th>동사 모양</th><th>규칙</th><th>예시</th></tr>
+        <tr><td>대부분</td><td>+ s</td><td>play → <b>plays</b></td></tr>
+        <tr><td>-ch, -sh, -s, -x, -o</td><td>+ es</td><td>teach → <b>teaches</b><br>watch → <b>watches</b>, go → <b>goes</b></td></tr>
+        <tr><td>자음 + y</td><td>y → i + es</td><td>study → <b>studies</b></td></tr>
+      </table>
+    </div>
+    <div class="concept">
+      <h3>3. have는 특별 대우!</h3>
+      have는 s를 붙이지 않고 모양이 통째로 변해요: <b>have → has</b><br>
+      Henry <b>has</b> lunch at noon. (haves ❌ — 이런 단어는 없어요!)
+      <div class="tip">💡 부정문·의문문에서는 doesn't / Does 뒤에 <b>동사원형</b>: He <b>doesn't have</b> lunch. / <b>Does</b> he <b>have</b> lunch?</div>
+    </div>
+    <button class="btn" id="concept2-btn">이제 문제 풀기 시작! 💪</button>
+  </div>
+
+  <!-- 문제 화면 -->
+  <div class="card hidden" id="quiz-card">
+    <div class="progress" id="progress"></div>
+    <div class="qtext" id="qtext"></div>
+    <div id="choices"></div>
+    <p class="keyhint">키보드 1~4 숫자키로도 답을 고를 수 있어요</p>
+  </div>
+
+  <!-- 결과 화면 -->
+  <div class="card hidden" id="result-card">
+    <h1>수고했어요, 예찬! 🎉</h1>
+    <div class="score-big" id="score-line"></div>
+    <div class="cheer" id="cheer-line"></div>
+    <button class="btn" id="kakao-btn">📋 결과 복사하기 (지나티처에게 카톡으로 보내주세요!)</button>
+    <div style="margin-top:22px">
+      <p class="sub" style="margin-bottom:10px">📝 전체 해설 — 틀린 문제는 꼭 다시 읽어보세요!</p>
+      <div id="explanations"></div>
+    </div>
+    <p class="provider">제공: 영핏 지나티처 💚</p>
+  </div>
+
+</div>
+<script>
+"use strict";
+
+/* ══════ 결과 자동 전송 (영핏 공통) ══════ */
+var ENGFIT_SUBMIT_URL = "https://script.google.com/macros/s/AKfycbz5IC3cEtaBGW10qZhrjwtjdtGugmcmYb4ZTHS4k-1LOqTRYzW-LfoAPyFB_ShjAqNp/exec";
+
+async function engfitSubmit(r) {
+  var body = JSON.stringify(r);
+  try {
+    var res = await fetch(ENGFIT_SUBMIT_URL, { method: "POST", body: body });
+    var j = await res.json();
+    return j.ok === true;
+  } catch (e) {
+    try {
+      await fetch(ENGFIT_SUBMIT_URL, { method: "POST", mode: "no-cors", body: body });
+      return true;
+    } catch (e2) { return false; }
+  }
+}
+var _engfitSent = false;
+
+/* ══════ 문제 데이터 (6개 오답 × 유사 5문항 = 30) ══════ */
+var QUESTIONS = [
+  /* ── 1그룹: 과거 부정문 didn't + 동사원형 ── */
+  { q: "Tom ______ watch TV yesterday. He read a book instead.",
+    choices: ["didn't", "doesn't", "don't", "wasn't"], answer: "didn't",
+    exp: "<b>yesterday(어제)</b>가 보이면 과거! 과거의 부정은 주어가 누구든 <b>didn't + 동사원형</b>이에요. doesn't는 '현재' 이야기를 할 때만 쓰니까, 시간 표현부터 확인하는 습관을 들이면 절대 안 헷갈려요." },
+  { q: "We ______ our rooms last Sunday.",
+    choices: ["didn't clean", "don't clean", "didn't cleaned", "doesn't clean"], answer: "didn't clean",
+    exp: "<b>last Sunday(지난 일요일)</b> → 과거 신호! 그래서 didn't를 골라요. 그리고 didn't 뒤에는 반드시 <b>동사원형</b>이 와요. didn't cleaned처럼 과거를 두 번 표시하면 안 돼요 — didn't가 이미 과거라고 말해줬거든요." },
+  { q: "My sister didn't ______ breakfast this morning.",
+    choices: ["eat", "ate", "eats", "eating"], answer: "eat",
+    exp: "didn't 뒤는 언제나 <b>동사원형(eat)</b>! didn't가 이미 '과거'라는 뜻을 다 담고 있어서, 뒤의 동사는 아무 표시 없는 원형으로 써요. didn't ate(❌)는 과거 표시를 두 번 한 셈이라 틀려요." },
+  { q: "다음 중 어법상 <u>올바른</u> 문장을 고르세요.",
+    choices: ["Sam didn't play soccer last week.", "Sam doesn't play soccer yesterday.", "Sam didn't played the piano last night.", "Sam don't play soccer last week."], answer: "Sam didn't play soccer last week.",
+    exp: "정답 문장은 last week(과거) + didn't + 동사원형(play)으로 완벽해요! 나머지는요 — doesn't...yesterday는 현재 부정에 과거 시간 표현을 섞어서 ❌, didn't played는 동사원형이 아니라서 ❌, don't는 과거 시간 표현(last week)과 안 맞아서 ❌." },
+  { q: "Glenn ______ tennis yesterday. He played soccer.",
+    choices: ["didn't play", "doesn't play", "don't play", "didn't plays"], answer: "didn't play",
+    exp: "시험에 나왔던 바로 그 문제예요! 뒤에 <b>yesterday</b>가 있으니 현재(doesn't)가 아니라 과거 부정 <b>didn't play</b>를 써야 해요. 뒷문장의 played(과거형)도 힌트가 돼요. 이번엔 시간 표현을 먼저 찾았죠? 완벽!" },
+
+  /* ── 2그룹: 과거 의문문 Did + 주어 + 동사원형 ── */
+  { q: "He made this pasta. → 의문문으로 바꾸면?<br>______ he ______ this pasta?",
+    choices: ["Did – make", "Does – make", "Did – made", "Does – makes"], answer: "Did – make",
+    exp: "시험에 나왔던 문제! 원래 문장의 <b>made</b>는 make의 '과거형'이에요. 그래서 의문문도 과거로: <b>Did + 주어 + 동사원형</b> → Did he make ~? Does는 현재일 때만 써요. 동사가 과거형인지 먼저 확인하는 게 포인트!" },
+  { q: "______ you go to the museum last weekend?",
+    choices: ["Did", "Do", "Does", "Are"], answer: "Did",
+    exp: "<b>last weekend(지난 주말)</b> → 과거 신호! 과거의 의문문은 <b>Did</b>로 시작해요. Do/Does는 현재, Are는 be동사 문장에서만 쓰니까 여기선 Did가 정답이에요." },
+  { q: "Did she ______ her friends last Friday?",
+    choices: ["meet", "met", "meets", "meeting"], answer: "meet",
+    exp: "Did가 이미 앞에서 '과거'를 표시했으니, 뒤의 동사는 <b>원형(meet)</b>으로! Did she met(❌)처럼 과거형을 또 쓰면 과거 표시가 두 번이라 틀려요. didn't와 똑같은 규칙이에요." },
+  { q: "A: ______ they enjoy the jazz festival yesterday?<br>B: Yes, they did.",
+    choices: ["Did", "Do", "Does", "Were"], answer: "Did",
+    exp: "힌트가 두 개나 있어요! ① <b>yesterday</b> → 과거 ② 대답이 <b>Yes, they did.</b> → did로 물었으니 did로 답한 거예요. 질문과 대답은 항상 같은 시제로 짝을 맞춰요." },
+  { q: "다음 중 어법상 <u>올바른</u> 문장을 고르세요.",
+    choices: ["Did Jenny buy a new bag last week?", "Did Jenny bought a new bag last week?", "Does Jenny bought a new bag?", "Do Jenny buy a new bag last week?"], answer: "Did Jenny buy a new bag last week?",
+    exp: "Did + 주어 + <b>동사원형(buy)</b> 완벽한 조합! Did ~ bought(❌)는 과거 표시 중복, Does ~ bought(❌)는 현재와 과거가 뒤섞임, Do Jenny(❌)는 Jenny가 3인칭 단수라서 현재라면 Does를 써야 해요." },
+
+  /* ── 3그룹: 3인칭 단수 현재 -s ── */
+  { q: "These days, Jennifer ______ jogging every morning.",
+    choices: ["goes", "go", "went", "going"], answer: "goes",
+    exp: "시험에 나왔던 문제! <b>These days(요즘)</b>는 '현재' 신호라서 went(과거)는 ❌. 그리고 Jennifer는 한 명(3인칭 단수)이니까 go가 아니라 <b>goes</b>! '요즘'이라는 말을 보자마자 현재구나~ 하고 알아채면 돼요." },
+  { q: "My brother ______ the piano every day.",
+    choices: ["plays", "play", "playing", "played"], answer: "plays",
+    exp: "<b>every day(매일)</b> → 현재 습관! 주어 My brother는 한 명(3인칭 단수)이니까 동사에 s를 붙여 <b>plays</b>. played는 과거라서 every day와 안 어울려요." },
+  { q: "Mr. Lee ______ the newspaper every morning.",
+    choices: ["reads", "read", "reading", "is read"], answer: "reads",
+    exp: "every morning(매일 아침) → 현재 습관, Mr. Lee는 한 명 → <b>reads</b>! 참고로 is read처럼 be동사와 일반동사를 겹쳐 쓰면 안 돼요. 일반동사 문장에는 be동사가 필요 없어요." },
+  { q: "다음 중 어법상 <u>올바른</u> 문장을 고르세요.",
+    choices: ["She drinks milk every morning.", "She drink milk every morning.", "He like apples very much.", "Tom play soccer every day."], answer: "She drinks milk every morning.",
+    exp: "She(3인칭 단수) + <b>drinks</b> — s가 제대로 붙은 문장은 이것뿐! 나머지는 전부 주어가 he/she/한 명인데 동사에 s가 없어서 틀렸어요. 3인칭 단수 + 현재 = 동사에 s, 잊지 말기!" },
+  { q: "Every Sunday, Mina ______ her grandparents.",
+    choices: ["visits", "visit", "visited", "visiting"], answer: "visits",
+    exp: "<b>Every Sunday(일요일마다)</b> → 반복되는 현재 습관이에요. visited(과거)를 고르면 '단 한 번 방문했다'는 뜻이 되어 버려요. Mina는 한 명이니까 <b>visits</b>가 정답!" },
+
+  /* ── 4그룹: have → has ── */
+  { q: "Henry ______ lunch at noon every day.",
+    choices: ["has", "have", "haves", "is have"], answer: "has",
+    exp: "시험에 나왔던 문제! have는 3인칭 단수 현재에서 s를 붙이는 게 아니라 모양이 통째로 바뀌어요: <b>have → has</b>. haves라는 단어는 영어에 아예 없답니다. 이것만 기억하면 다시는 안 틀려요!" },
+  { q: "My cat ______ big blue eyes.",
+    choices: ["has", "have", "haves", "is has"], answer: "has",
+    exp: "My cat은 한 마리(3인칭 단수) + 지금의 사실(현재) → <b>has</b>! 동물 한 마리, 물건 하나도 모두 3인칭 단수예요. haves(❌)는 없는 단어, is has(❌)는 be동사가 끼어들어서 틀려요." },
+  { q: "Tom and Jerry ______ a big house.",
+    choices: ["have", "has", "haves", "having"], answer: "have",
+    exp: "함정 조심! 주어가 <b>Tom and Jerry — 둘(복수)</b>이에요. s나 has는 주어가 '한 명'일 때만 쓰니까, 복수 주어에는 그냥 <b>have</b>! and로 묶인 주어를 보면 꼭 몇 명인지 세어 보세요." },
+  { q: "Sora ______ a bad cold last week, so she stayed home.",
+    choices: ["had", "has", "have", "haved"], answer: "had",
+    exp: "<b>last week</b> → 과거 신호! 그러니까 has(현재)가 아니라 과거형 <b>had</b>를 써요. have의 변신 3형제를 정리하면: 현재(3인칭 단수) has, 과거 had, 그리고 haved는 세상에 없는 단어예요. 뒤의 stayed(과거형)도 힌트!" },
+  { q: "다음 중 어법상 <u>올바른</u> 문장을 고르세요.",
+    choices: ["Jake has a soccer ball.", "Jake haves a soccer ball.", "Jake have a soccer ball.", "Jake is have a soccer ball."], answer: "Jake has a soccer ball.",
+    exp: "Jake(한 명, 3인칭 단수) + 현재 → <b>has</b>가 정답! haves(❌)는 없는 단어, have(❌)는 s 규칙 위반, is have(❌)는 be동사와 일반동사를 겹쳐 써서 틀려요." },
+
+  /* ── 5그룹: -es / -ies 붙이기 ── */
+  { q: "Mr. Kim ______ English to children on Sundays.",
+    choices: ["teaches", "teachs", "teach", "teached"], answer: "teaches",
+    exp: "시험 Peter 문제와 똑같은 유형! <b>-ch로 끝나는 동사는 -es</b>를 붙여요: teach → <b>teaches</b>. teachs(❌)는 es 규칙을 놓친 것, on Sundays(일요일마다)는 현재 습관이니 과거형도 ❌예요." },
+  { q: "My mom ______ TV after dinner every day.",
+    choices: ["watches", "watchs", "watch", "watching"], answer: "watches",
+    exp: "watch도 <b>-ch로 끝나니까 -es</b>! watch → <b>watches</b>. teach → teaches와 같은 가족이에요. -ch, -sh, -s, -x, -o로 끝나면 es를 붙인다는 것, 이제 확실하죠?" },
+  { q: "Ben ______ math very hard every night.",
+    choices: ["studies", "studys", "study", "studying"], answer: "studies",
+    exp: "study는 <b>자음(d) + y</b>로 끝나요. 이럴 땐 <b>y를 i로 바꾸고 -es</b>: study → <b>studies</b>. studys(❌)는 y를 그대로 둬서 틀려요. (참고: play는 모음 a+y라서 그냥 plays!)" },
+  { q: "She ______ to school at 8:30 every morning.",
+    choices: ["goes", "gos", "go", "going"], answer: "goes",
+    exp: "go는 <b>-o로 끝나서 -es</b>를 붙여요: go → <b>goes</b>. gos(❌)처럼 s만 붙이면 안 돼요. do → does도 같은 규칙이에요. every morning은 현재 습관 신호!" },
+  { q: "다음 중 어법상 <u>올바른</u> 문장을 고르세요.",
+    choices: ["He washes his hands before lunch.", "He washs his hands before lunch.", "He wash his hands before lunch.", "He washies his hands before lunch."], answer: "He washes his hands before lunch.",
+    exp: "wash는 <b>-sh로 끝나니까 -es</b>: wash → <b>washes</b>! washs(❌)는 es 규칙 놓침, wash(❌)는 3인칭 단수인데 s가 없음, washies(❌)는 y로 끝나는 동사가 아닌데 ies를 붙여서 틀려요." },
+
+  /* ── 6그룹: 불규칙 과거형 ── */
+  { q: "Brian ______ his brother's pants yesterday. They didn't fit him.",
+    choices: ["wore", "wear", "weared", "wears"], answer: "wore",
+    exp: "시험에 나왔던 문제! yesterday → 과거인데, wear는 -ed를 붙이지 않는 <b>불규칙 동사</b>예요: wear → <b>wore</b>. weared(❌)라는 단어는 없어요. 불규칙 동사는 표로 외워두는 게 최고!" },
+  { q: "I ______ kangaroos in Australia last year.",
+    choices: ["saw", "see", "seed", "sees"], answer: "saw",
+    exp: "last year → 과거! see의 과거형은 <b>saw</b>예요 (불규칙). seed(❌)는 '씨앗'이라는 명사지 동사 과거형이 아니에요. 시험에서 맞혔던 문제죠 — 한 번 더 확인 완료!" },
+  { q: "He ______ a pair of sneakers yesterday.",
+    choices: ["bought", "buyed", "buy", "buys"], answer: "bought",
+    exp: "yesterday → 과거! buy의 과거형은 <b>bought</b> (불규칙). buyed(❌)라고 -ed를 붙이면 안 돼요. bring → brought, think → thought도 같은 -ought 가족이에요." },
+  { q: "We ______ pizza for dinner last night.",
+    choices: ["ate", "eated", "eat", "eats"], answer: "ate",
+    exp: "last night → 과거! eat의 과거형은 <b>ate</b> (불규칙). eated(❌)는 없는 단어예요. eat(먹다) → ate(먹었다), 소리 내서 세 번 읽어보면 기억에 오래 남아요!" },
+  { q: "다음 중 어법상 <u>올바른</u> 문장을 고르세요.",
+    choices: ["She drank orange juice this morning.", "She drinked orange juice this morning.", "She drink orange juice yesterday.", "She drinks orange juice last night."], answer: "She drank orange juice this morning.",
+    exp: "drink의 과거형은 <b>drank</b> (불규칙)! drinked(❌)는 없는 단어, drink/drinks(❌)는 현재형인데 yesterday·last night(과거 신호)과 함께 써서 틀려요. 시간 표현과 동사 시제가 꼭 짝이 맞아야 해요." }
+];
+
+/* ══════ 보기 셔플 — 정답 위치 균등 분산 ══════ */
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+
+function shuffleChoices() {
+  var n = QUESTIONS.length, k = 4;
+  var pool = [];
+  var base = Math.floor(n / k), rem = n % k;
+  for (var p = 0; p < k; p++) for (var c = 0; c < base; c++) pool.push(p);
+  shuffle([0, 1, 2, 3]).slice(0, rem).forEach(function (p) { pool.push(p); });
+  pool = shuffle(pool);
+  QUESTIONS.forEach(function (q, i) {
+    var target = pool[i];
+    var ch = shuffle(q.choices);
+    var ai = ch.indexOf(q.answer);
+    var t = ch[target]; ch[target] = ch[ai]; ch[ai] = t;
+    q.shuffled = ch;
+  });
+}
+
+/* ══════ 진행 로직 ══════ */
+var studentName = "";
+var current = 0;
+var correctCount = 0;
+var wrongNumbers = [];
+var answersLog = [];
+var startTime = 0;
+var CIRCLED = ["①", "②", "③", "④"];
+
+var nameInput = document.getElementById("name-input");
+var startBtn = document.getElementById("start-btn");
+
+nameInput.addEventListener("input", function () {
+  startBtn.disabled = nameInput.value.trim().length === 0;
+});
+
+startBtn.addEventListener("click", function () {
+  studentName = nameInput.value.trim();
+  if (!studentName) return;
+  startTime = Date.now();
+  shuffleChoices();
+  document.getElementById("start-card").classList.add("hidden");
+  document.getElementById("concept1-card").classList.remove("hidden");
+  window.scrollTo(0, 0);
+});
+
+document.getElementById("concept1-btn").addEventListener("click", function () {
+  document.getElementById("concept1-card").classList.add("hidden");
+  document.getElementById("concept2-card").classList.remove("hidden");
+  window.scrollTo(0, 0);
+});
+
+document.getElementById("concept2-btn").addEventListener("click", function () {
+  document.getElementById("concept2-card").classList.add("hidden");
+  document.getElementById("quiz-card").classList.remove("hidden");
+  window.scrollTo(0, 0);
+  showQuestion();
+});
+
+function showQuestion() {
+  var q = QUESTIONS[current];
+  document.getElementById("progress").textContent = (current + 1) + " / " + QUESTIONS.length;
+  document.getElementById("qtext").innerHTML = "Q" + (current + 1) + ". " + q.q;
+  var box = document.getElementById("choices");
+  box.innerHTML = "";
+  q.shuffled.forEach(function (c, i) {
+    var b = document.createElement("button");
+    b.className = "choice";
+    b.innerHTML = '<span class="num">' + CIRCLED[i] + "</span>" + c;
+    b.addEventListener("click", function () { pick(c, CIRCLED[i]); });
+    box.appendChild(b);
+  });
+  window.scrollTo(0, 0);
+}
+
+var locked = false;
+function pick(choice, mark) {
+  if (locked) return; locked = true;
+  var q = QUESTIONS[current];
+  var ok = choice === q.answer;
+  if (ok) correctCount++;
+  else wrongNumbers.push(current + 1);
+  answersLog.push({ no: current + 1, ok: ok, chosen: choice, answer: q.answer });
+  setTimeout(function () {
+    locked = false;
+    current++;
+    if (current < QUESTIONS.length) showQuestion();
+    else showResult();
+  }, 250);
+}
+
+document.addEventListener("keydown", function (e) {
+  if (document.getElementById("quiz-card").classList.contains("hidden")) return;
+  var idx = ["1", "2", "3", "4"].indexOf(e.key);
+  if (idx === -1 || idx >= QUESTIONS[current].shuffled.length) return;
+  pick(QUESTIONS[current].shuffled[idx], CIRCLED[idx]);
+});
+
+function cheerText(score, total) {
+  var r = score / total;
+  if (r === 1) return "만점!! 시제와 3인칭 단수를 완전히 정복했어요 👑";
+  if (r >= 0.9) return "거의 만점이에요! 틀린 문제 해설만 다시 읽으면 완벽해요 ✨";
+  if (r >= 0.7) return "잘하고 있어요! 해설을 읽고 나면 실력이 쑥 올라갈 거예요 💪";
+  return "끝까지 다 푼 것만으로도 최고예요! 해설을 천천히 읽고, 개념 카드를 한 번 더 보면 다음엔 훨씬 잘 풀 수 있어요 🌱";
+}
+
+function showResult() {
+  document.getElementById("quiz-card").classList.add("hidden");
+  document.getElementById("result-card").classList.remove("hidden");
+  document.getElementById("score-line").textContent = correctCount + " / " + QUESTIONS.length;
+  document.getElementById("cheer-line").textContent = cheerText(correctCount, QUESTIONS.length);
+  window.scrollTo(0, 0);
+
+  var expBox = document.getElementById("explanations");
+  expBox.innerHTML = "";
+  QUESTIONS.forEach(function (q, i) {
+    var log = answersLog[i];
+    var d = document.createElement("div");
+    d.className = "exp" + (log.ok ? "" : " wrong");
+    d.innerHTML = "<b class=\"head\">Q" + (i + 1) + ". " + (log.ok ? "정답! ⭕" : "다시 보기 (내 답: " + log.chosen + " → 정답: " + q.answer + ")") + "</b><br>" + q.exp;
+    expBox.appendChild(d);
+  });
+
+  if (!_engfitSent) {
+    _engfitSent = true;
+    engfitSubmit({
+      quizId: "clinic-kimyechan-0723",
+      quizTitle: "김예찬 오답 클리닉 7/23 (시제·3인칭 단수)",
+      student: studentName,
+      score: correctCount,
+      total: QUESTIONS.length,
+      wrong: wrongNumbers,
+      durationSec: Math.round((Date.now() - startTime) / 1000),
+      detail: answersLog
+    });
+  }
+}
+
+document.getElementById("kakao-btn").addEventListener("click", function () {
+  var mins = Math.round((Date.now() - startTime) / 60000);
+  var msg = "[영핏 오답 클리닉 결과]\n학생: " + studentName +
+            "\n클리닉: 시제·3인칭 단수 (7/23)" +
+            "\n점수: " + correctCount + "/" + QUESTIONS.length +
+            "\n틀린 문항: " + (wrongNumbers.length ? wrongNumbers.join(", ") : "없음") +
+            "\n풀이 시간: 약 " + mins + "분";
+  navigator.clipboard.writeText(msg).then(function () {
+    document.getElementById("kakao-btn").textContent = "복사 완료! 카톡에 붙여넣어 지나티처에게 보내주세요 ✓";
+  }).catch(function () {
+    prompt("아래 내용을 길게 눌러 복사한 뒤 카톡으로 보내주세요", msg);
+  });
+});
+</script>
+</body>
+</html>
