@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>한승주의 주어 개념 클리닉 — 영핏 지나티처</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; background: #f0f4f4; color: #2d3436; min-height: 100vh; display: flex; justify-content: center; padding: 20px 14px; }
+  .wrap { width: 100%; max-width: 560px; }
+  .card { background: #fff; border-radius: 16px; padding: 26px 22px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 14px; }
+  h1 { font-size: 1.25rem; color: #2e7d6e; margin-bottom: 6px; }
+  .sub { font-size: 0.88rem; color: #778; margin-bottom: 18px; line-height: 1.5; }
+  .badge { display: inline-block; background: #e4efec; color: #2e7d6e; font-size: 0.78rem; font-weight: bold; padding: 4px 10px; border-radius: 20px; margin-bottom: 12px; }
+  input[type=text] { width: 100%; padding: 13px; font-size: 1.05rem; border: 1.5px solid #cdd; border-radius: 10px; }
+  .btn { display: block; width: 100%; margin-top: 14px; padding: 14px; font-size: 1.05rem; font-weight: bold; color: #fff; background: #2e7d6e; border: none; border-radius: 10px; cursor: pointer; }
+  .btn:disabled { background: #b8c4c2; cursor: default; }
+  .progress { font-size: 0.85rem; color: #789; margin-bottom: 4px; display: flex; justify-content: space-between; }
+  .srctag { display: inline-block; font-size: 0.75rem; color: #2e7d6e; background: #e8f3f1; border-radius: 6px; padding: 2px 8px; margin-bottom: 10px; }
+  .bar { height: 6px; background: #e3ecea; border-radius: 3px; margin-bottom: 14px; overflow: hidden; }
+  .bar > div { height: 100%; background: #2e7d6e; border-radius: 3px; width: 0; transition: width .25s; }
+  .tip { background: #fff8e6; border: 1px solid #f2e2b3; border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; font-size: 0.88rem; line-height: 1.65; color: #6b5a1e; }
+  .tip .tip-label { font-weight: bold; color: #a07800; display: block; margin-bottom: 4px; }
+  .qtext { font-size: 1.03rem; line-height: 1.65; margin-bottom: 16px; }
+  .choice { display: block; width: 100%; text-align: left; padding: 13px 14px; margin-bottom: 9px; font-size: 0.98rem; background: #f6f9f8; border: 1.5px solid #dde5e3; border-radius: 10px; cursor: pointer; line-height: 1.45; }
+  .choice:active { background: #e2efec; }
+  .num { color: #2e7d6e; font-weight: bold; margin-right: 6px; }
+  .score-big { font-size: 2rem; font-weight: bold; color: #2e7d6e; text-align: center; margin: 10px 0; }
+  .exp { background: #f6f9f8; border-left: 4px solid #2e7d6e; border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; font-size: 0.9rem; line-height: 1.6; }
+  .exp.wrong { border-left-color: #c0392b; }
+  .exp b { color: #2e7d6e; }
+  .exp.wrong .exp-head b { color: #c0392b; }
+  .ans-line { display: block; margin: 3px 0 6px; font-size: 0.85rem; color: #667; }
+  .footer { text-align: center; font-size: 0.8rem; color: #9ab; margin: 8px 0 20px; }
+  .hidden { display: none; }
+  .keyhint { text-align: center; font-size: 0.78rem; color: #9aa; margin-top: 4px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- 시작 화면 -->
+  <div class="card" id="start-card">
+    <div class="badge">영핏 지나티처 · 오답 클리닉</div>
+    <h1>한승주의 주어 개념 클리닉 🌱</h1>
+    <p class="sub">Unit 01 주어의 이해 — 주어 찾기 &amp; 동명사 주어, 총 60문항<br>
+    <b>3개 영역</b>: 1영역 개념 확인(20) · 2영역 개념 확인(20) · 3영역 집중 훈련(20)<br>
+    1·2영역에서 개념을 확실히 다지고, 3영역에서 아쉬웠던 유형을 집중 훈련해요!<br>
+    영역이 끝날 때마다 결과를 복사해서 지나티처에게 카톡으로 보내주세요!<br>
+    💡 문제마다 위에 <b>개념 설명 카드</b>가 있으니 먼저 읽고 풀면 훨씬 쉬워요!<br>
+    풀던 기록은 자동 저장되니 중간에 꺼져도 이어서 할 수 있어요 😊<br>
+    상위권 도전, 승주 화이팅!! 이름을 입력하고 시작하세요.</p>
+    <input type="text" id="name-input" placeholder="이름을 입력하세요" maxlength="20" autocomplete="off">
+    <button class="btn" id="start-btn" disabled>시작하기</button>
+  </div>
+
+  <!-- 이어하기 화면 -->
+  <div class="card hidden" id="resume-card">
+    <h1>이어서 풀 수 있어요! 🔄</h1>
+    <p class="sub" id="resume-info"></p>
+    <button class="btn" id="resume-btn">이어서 하기</button>
+    <button class="btn" id="restart-btn" style="background:#b8c4c2">처음부터 다시 하기</button>
+  </div>
+
+  <!-- 문제 화면 -->
+  <div class="card hidden" id="quiz-card">
+    <div class="progress"><span id="prog-num"></span><span id="prog-pct"></span></div>
+    <div class="bar"><div id="bar-fill"></div></div>
+    <span class="srctag" id="srctag"></span>
+    <div class="tip" id="tipbox"></div>
+    <div class="qtext" id="qtext"></div>
+    <div id="choices"></div>
+    <p class="keyhint">숫자키 1~4로도 선택할 수 있어요</p>
+  </div>
+
+  <!-- 영역별 결과 화면 -->
+  <div class="card hidden" id="sec-result-card">
+    <h1 id="sec-result-title"></h1>
+    <div class="score-big" id="sec-score"></div>
+    <p class="sub" id="sec-wrong" style="text-align:center"></p>
+    <button class="btn" id="sec-copy-btn"></button>
+    <button class="btn" id="next-sec-btn" style="background:#38699e"></button>
+    <div id="total-block" class="hidden" style="margin-top:22px; border-top:2px dashed #dde5e3; padding-top:18px">
+      <p class="sub" style="text-align:center; margin-bottom:4px">🏆 전체 최종 결과</p>
+      <div class="score-big" id="total-score"></div>
+      <p class="sub" id="total-detail" style="text-align:center"></p>
+      <button class="btn" id="total-copy-btn">전체 결과 복사 (카톡용)</button>
+    </div>
+    <div style="margin-top:20px">
+      <p class="sub" style="margin-bottom:10px">📝 이 영역 해설 — 틀린 문제 위주로 꼭 읽어보세요!</p>
+      <div id="sec-explanations"></div>
+    </div>
+  </div>
+
+  <div class="footer">영핏 지나티처 · 상위권 도전!! 한승주 화이팅 💪</div>
+</div>
+
+<script>
+"use strict";
+
+/* ══════ 결과 자동 전송 (영핏 공통, 학생 화면엔 표시 안 함) ══════ */
+var ENGFIT_SUBMIT_URL = "https://script.google.com/macros/s/AKfycbz5IC3cEtaBGW10qZhrjwtjdtGugmcmYb4ZTHS4k-1LOqTRYzW-LfoAPyFB_ShjAqNp/exec";
+async function engfitSubmit(r) {
+  var body = JSON.stringify(r);
+  try {
+    var res = await fetch(ENGFIT_SUBMIT_URL, { method: "POST", body: body });
+    var j = await res.json();
+    return j.ok === true;
+  } catch (e) {
+    try {
+      await fetch(ENGFIT_SUBMIT_URL, { method: "POST", mode: "no-cors", body: body });
+      return true;
+    } catch (e2) { return false; }
+  }
+}
+
+/* ══════ 개념 카드 (문제 위에 표시) ══════ */
+var TIPS = {
+"1. 주어란 무엇일까?": "주어는 문장에서 <b>'누가/무엇이'</b>에 해당하는 말이에요. 보통 문장 <b>맨 앞</b>에 나오고, 우리말로 <b>'…은/는/이/가'</b>로 해석돼요.<br>주어가 될 수 있는 것: <b>명사(구)</b>(The dog), <b>대명사</b>(She), <b>동명사</b>(Swimming) 등 '명사 역할을 하는 말'! 길이는 한 단어부터 열 단어 이상까지 다양해요.",
+"2. 의문문·명령문의 주어": "<b>의문문</b>은 (의문사) + <b>동사 + 주어</b> 순서라서 주어가 동사 <b>뒤</b>에 숨어 있어요. Do <b>you</b> like him? / What is <b>his homepage address</b>?<br><b>명령문</b>은 듣는 사람(You)이 뻔하니까 주어 You를 <b>생략</b>해요. (You) Don't be shy!",
+"3. 비인칭 주어 it": "<b>날씨·시간·거리·가격·계절·명암</b>을 말할 때는 특별한 주어 <b>it</b>을 써요. 이 it은 <b>'그것'이라고 해석하지 않아요!</b><br>It's sunny. [날씨] / It's about 2 km. [거리] / How much does it cost? [가격]<br>단, 앞에 나온 물건을 가리키는 it은 '그것'이라고 해석해요.",
+"4. There is/are 문장의 진짜 주어": "There is[are] ~ 문장에서 <b>There는 주어가 아니에요!</b> 문장을 시작해 주는 말일 뿐이고, 해석도 '거기'가 아니라 <b>'~가 있다'</b>로 해요.<br>진짜 주어는 <b>be동사 뒤의 명사</b>! There is <b>a big difference</b>. → 주어는 a big difference.<br>주어가 단수면 is/was, 복수면 are/were를 써요.",
+"5. 동명사 주어란?": "<b>동명사 = 동사원형 + ing</b>. 동사에 ing를 붙여 <b>명사처럼</b> 쓰는 말이에요. 명사 역할을 하니까 문장의 <b>주어</b>가 될 수 있어요!<br>Swimming is fun. (수영하는 것은)<br>주의: be동사 + ing(진행형)와는 달라요. He <b>is drinking</b>.(마시는 중) vs <b>Drinking</b> green tea is good.(마시는 것은)",
+"6. 동명사 주어의 해석": "동명사 주어는 <b>'…하는 것은'</b>이라고 해석해요.<br>Singing is fun. → 노래하는 <b>것은</b> 재미있다.<br>'…하는 중이다'(진행형)나 '…해라'(명령문)와 헷갈리지 않게 조심하세요!",
+"7. 주어는 어디까지?": "동명사 하나만 주어인 경우도 있지만, 동명사 뒤에 <b>목적어·보어·수식어</b>가 붙어서 주어가 길어지는 경우가 많아요.<br>Making <b>a real friend</b> / takes a long time. → 주어는 Making a real friend <b>전체</b>!<br>동사(is, takes, costs...) 바로 <b>앞까지</b>가 주어라고 생각하면 쉬워요.",
+"8. 동명사 주어 + 동사는 단수": "동명사 주어는 아무리 길어도 <b>'…하는 것'이라는 하나의 덩어리</b>라서 <b>단수 취급</b>해요!<br>Eating late at night <b>is</b> bad. (are ✗)<br>일반동사가 오면 -s를 붙여요: Studying abroad <b>costs</b> a lot of money.",
+"9. 오답 클리닉 ① There 문장의 진짜 주어": "🔍 <b>지난 시험에서 이렇게 틀렸어요</b>: \"There was a lot of traffic on that bridge.\"에서 주어로 <b>There</b>에 밑줄을 그었어요.<br>There는 문장 맨 앞에 있어서 주어처럼 보이지만, <b>자리만 잡아주는 말</b>이에요. 진짜 주어는 be동사 뒤의 <b>a lot of traffic</b>!<br>👉 There 문장을 보면 <b>be동사 뒤</b>를 보세요. 거기 있는 명사가 주어이고, '~가 있다/있었다'로 해석해요.",
+"10. 오답 클리닉 ② 동명사 주어 범위·해석": "🔍 <b>지난 시험에서 이렇게 아쉬웠어요</b>: 주어 뒤에 / 표시할 때 <b>동명사 바로 뒤</b>에 표시했어요. (예: Becoming / a lawyer ✗)<br>동명사 주어는 뒤에 붙는 말까지 <b>전부 한 덩어리</b>예요 → <b>Becoming a lawyer</b> / is difficult. (○)<br>👉 동사(is, takes, costs...) <b>바로 앞까지</b>가 주어! 해석은 '…하는 것은'으로 또박또박."
+};
+
+/* ══════ 문제 데이터 (개념 40 + 유사 20 = 60문항) ══════ */
+var ALL = [
+/* ─── 1영역: 개념 확인 ① 주어 찾기 (1~20) ─── */
+{"src":"1. 주어란 무엇일까?","q":"<b>주어</b>에 대한 설명으로 알맞은 것을 고르세요.","choices":["문장에서 '누가/무엇이'에 해당하고, '…은/는/이/가'로 해석된다","항상 문장 맨 끝에 나온다","동작이나 상태를 나타내는 말이다","우리말 '…을/를'에 해당하는 말이다"],"answer":"문장에서 '누가/무엇이'에 해당하고, '…은/는/이/가'로 해석된다","exp":"주어는 문장의 주인공! <b>'누가/무엇이'</b>에 해당하고 <b>'…은/는/이/가'</b>로 해석돼요. 동작을 나타내는 말은 동사, '…을/를'로 해석되는 말은 목적어예요."},
+{"src":"1. 주어란 무엇일까?","q":"다음 중 문장의 주어가 <b>될 수 없는</b> 것은?","choices":["형용사 하나만 (예: happy)","명사(구) (예: The dog)","대명사 (예: She)","동명사 (예: Swimming)"],"answer":"형용사 하나만 (예: happy)","exp":"주어 자리에는 <b>명사 역할을 하는 말</b>만 올 수 있어요 — 명사(구), 대명사, 동명사, to부정사 등. happy 같은 형용사 하나만으로는 주어가 될 수 없어요."},
+{"src":"1. 주어란 무엇일까?","q":"다음 문장의 주어를 고르세요.<br><b>My little sister likes strawberries.</b>","choices":["My little sister","likes","strawberries","likes strawberries"],"answer":"My little sister","exp":"'누가' 딸기를 좋아하나요? <b>My little sister(내 여동생)</b>가 주어예요. likes는 동사, strawberries는 목적어('…을')예요."},
+{"src":"1. 주어란 무엇일까?","q":"다음 문장의 주어 부분을 고르세요.<br><b>The boy on the bench is my cousin.</b>","choices":["The boy on the bench","on the bench","my cousin","is"],"answer":"The boy on the bench","exp":"주어는 꾸며주는 말까지 포함하면 길어질 수 있어요. '벤치에 앉은 그 소년은' → <b>The boy on the bench</b> 전체가 주어 부분이에요. 동사 is 바로 앞까지!"},
+{"src":"1. 주어란 무엇일까?","q":"다음 문장의 <b>주어</b>를 우리말로 바르게 해석한 것은?<br><b>Her new bike is very expensive.</b>","choices":["그녀의 새 자전거는","그녀의 새 자전거를","매우 비싸다","그녀는"],"answer":"그녀의 새 자전거는","exp":"주어 Her new bike는 <b>'그녀의 새 자전거는'</b>('은/는')으로 해석해요. '…를'로 해석하면 목적어처럼 되어버려요. 주어는 her(그녀의)가 아니라 bike(자전거)가 중심이에요."},
+{"src":"2. 의문문·명령문의 주어","q":"<b>의문문</b>에서 주어의 위치로 알맞은 것은?","choices":["(의문사)+동사 뒤에 주어가 온다","항상 문장 맨 앞에 온다","의문문에는 주어가 없다","항상 문장 맨 끝에 온다"],"answer":"(의문사)+동사 뒤에 주어가 온다","exp":"의문문은 <b>(의문사) + 동사 + 주어</b> 순서! 그래서 주어가 동사 뒤에 숨어 있어요. Do <b>you</b> like him?에서 주어는 you예요."},
+{"src":"2. 의문문·명령문의 주어","q":"다음 문장의 주어를 고르세요.<br><b>Do you have any questions?</b>","choices":["you","Do","any questions","have"],"answer":"you","exp":"의문문은 동사(Do) 뒤에 주어가 와요. '<b>너는</b> 질문이 있니?' → 주어는 <b>you</b>! any questions는 목적어예요."},
+{"src":"2. 의문문·명령문의 주어","q":"다음 문장의 주어를 고르세요.<br><b>What is his favorite subject?</b>","choices":["his favorite subject","What","is","he"],"answer":"his favorite subject","exp":"의문사(What) + 동사(is) + <b>주어</b> 순서예요. '<b>그가 가장 좋아하는 과목은</b> 무엇이니?' → 주어는 <b>his favorite subject</b>. 교재의 What is his homepage address?와 같은 구조!"},
+{"src":"2. 의문문·명령문의 주어","q":"명령문 <b>Don't be late.</b>에 주어가 안 보이는 이유는?","choices":["듣는 사람인 You가 생략되어 있어서","주어 it이 생략되어 있어서","Don't가 주어라서","late가 주어라서"],"answer":"듣는 사람인 You가 생략되어 있어서","exp":"명령문은 눈앞의 상대(You)에게 하는 말이라 주어 <b>You를 생략</b>해요. (You) Don't be late! — Don't는 '~하지 마'라는 부정 명령이에요."},
+{"src":"2. 의문문·명령문의 주어","q":"다음 명령문에 <b>생략된 주어</b>는?<br><b>Be quiet, please.</b>","choices":["You","I","We","They"],"answer":"You","exp":"명령문의 숨은 주어는 항상 <b>You</b>! '(너) 조용히 해 줘.'라는 뜻이니까요."},
+{"src":"3. 비인칭 주어 it","q":"<b>비인칭 주어 it</b>에 대한 설명으로 알맞은 것은?","choices":["날씨·시간·거리 등을 말할 때 쓰고, '그것'이라고 해석하지 않는다","항상 '그것'이라고 해석해야 한다","사람을 가리킬 때 쓰는 주어이다","문장 맨 끝에서만 쓰인다"],"answer":"날씨·시간·거리 등을 말할 때 쓰고, '그것'이라고 해석하지 않는다","exp":"<b>날씨·시간·거리·가격·계절·명암</b>을 말할 때 주어 자리를 채워 주는 특별한 it이에요. 뜻이 없어서 <b>'그것'이라고 해석하지 않는</b> 게 포인트!"},
+{"src":"3. 비인칭 주어 it","q":"다음 중 it을 <b>'그것'이라고 해석해야 하는</b> 문장은?","choices":["I bought a pen. It is red.","It is sunny today.","It is about 3 km to the park.","It is winter now."],"answer":"I bought a pen. It is red.","exp":"첫 문장의 It은 앞에 나온 <b>a pen(펜)</b>을 가리키니까 '그것'이라고 해석해요. 나머지는 날씨·거리·계절을 말하는 <b>비인칭 주어</b>라서 해석하지 않아요."},
+{"src":"3. 비인칭 주어 it","q":"다음 문장의 it은 무엇을 나타낼까요?<br><b>It's about 2 km to the station.</b>","choices":["거리","날씨","가격","계절"],"answer":"거리","exp":"'역까지 약 2km야.' — km가 나오니 <b>거리</b>를 말하는 비인칭 주어 it이에요. 교재 예문 그대로죠?"},
+{"src":"3. 비인칭 주어 it","q":"다음 문장의 it은 무엇을 나타낼까요?<br><b>How much does it cost for a trip to Jeju?</b>","choices":["가격","거리","날씨","시간"],"answer":"가격","exp":"How much(얼마)와 cost(비용이 들다)가 나오니 <b>가격</b>을 말하는 비인칭 주어예요. '제주 여행은 비용이 얼마나 드나요?'"},
+{"src":"4. There is/are 문장의 진짜 주어","q":"<b>There is[are] ~</b> 문장에 대한 설명으로 알맞은 것은?","choices":["There는 주어가 아니고, be동사 뒤의 명사가 진짜 주어이다","There가 문장의 주어이다","There는 항상 '거기'라고 해석한다","There 문장에는 주어가 없다"],"answer":"There는 주어가 아니고, be동사 뒤의 명사가 진짜 주어이다","exp":"이게 이번 클리닉의 핵심! There는 자리만 잡아주는 말이고, <b>진짜 주어는 be동사 뒤의 명사</b>예요. 해석도 '거기'가 아니라 '<b>~가 있다</b>'로 해요."},
+{"src":"4. There is/are 문장의 진짜 주어","q":"다음 문장의 주어를 고르세요.<br><b>There is a big park near my house.</b>","choices":["a big park","There","my house","is"],"answer":"a big park","exp":"be동사(is) 뒤를 보세요! <b>a big park(큰 공원)</b>가 주어예요. '우리 집 근처에 큰 공원이 있다.' There는 주어가 아니에요!"},
+{"src":"4. There is/are 문장의 진짜 주어","q":"다음 문장의 주어를 고르세요.<br><b>There are two dogs on the street.</b>","choices":["two dogs","There","the street","are"],"answer":"two dogs","exp":"교재 예문! be동사(are) 뒤의 <b>two dogs</b>가 주어예요. 주어가 복수(two dogs)라서 be동사도 are를 쓴 거예요."},
+{"src":"4. There is/are 문장의 진짜 주어","q":"다음 문장의 주어를 고르세요.<br><b>There was a lot of traffic on that bridge.</b>","choices":["a lot of traffic","There","that bridge","was"],"answer":"a lot of traffic","exp":"지난 시험에 나온 바로 그 문장! 주어는 There가 아니라 be동사(was) 뒤의 <b>a lot of traffic</b>이에요. '그 다리 위에는 교통량이 많았다(차가 많았다).' 이번엔 확실하게!"},
+{"src":"4. There is/are 문장의 진짜 주어","q":"다음 빈칸에 들어갈 말로 알맞은 것은?<br><b>There ___ many books on the desk.</b>","choices":["are","is","am","be"],"answer":"are","exp":"진짜 주어는 be동사 뒤의 <b>many books(복수)</b>! 주어가 복수니까 <b>are</b>를 써요. There만 보고 is를 고르면 안 돼요 — 항상 뒤의 명사를 확인!"},
+{"src":"4. There is/are 문장의 진짜 주어","q":"다음 문장의 해석으로 자연스러운 것은?<br><b>There is a big difference between TV and radio.</b>","choices":["TV와 라디오 사이에는 큰 차이가 있다","거기는 TV와 라디오 사이의 큰 차이이다","TV와 라디오는 거기에 있다","큰 차이가 TV와 라디오를 만들었다"],"answer":"TV와 라디오 사이에는 큰 차이가 있다","exp":"교재 예문! There is ~는 '<b>~가 있다</b>'로 해석해요. There를 '거기'라고 해석하면 어색해져요. 주어는 a big difference(큰 차이)!"},
+/* ─── 2영역: 개념 확인 ② 동명사 주어 (21~40) ─── */
+{"src":"5. 동명사 주어란?","q":"<b>동명사</b>의 형태로 알맞은 것은?","choices":["동사원형 + ing","동사원형 + ed","동사원형 + s","will + 동사원형"],"answer":"동사원형 + ing","exp":"동명사는 <b>동사원형 + ing</b>! 동사에 ing를 붙여 명사처럼 쓰는 말이에요. Swim → Swim<b>ming</b>(수영하는 것)처럼요."},
+{"src":"5. 동명사 주어란?","q":"동명사는 문장에서 어떤 역할을 할 수 있을까요?","choices":["명사처럼 쓰여서 주어가 될 수 있다","동사를 꾸며 준다","형용사처럼 명사를 꾸민다","항상 be동사와 함께 진행형만 만든다"],"answer":"명사처럼 쓰여서 주어가 될 수 있다","exp":"동명사는 <b>명사와 같은 역할</b>을 해요. 그래서 주어 자리에 올 수 있어요! be동사와 붙으면 진행형이 되지만, 혼자 문장 맨 앞에 오면 '…하는 것은'이라는 주어가 돼요."},
+{"src":"5. 동명사 주어란?","q":"다음 중 동명사가 <b>주어</b>로 쓰인 문장은?","choices":["Swimming is my favorite exercise.","She is swimming in the pool.","I like the swimming pool.","They swim every morning."],"answer":"Swimming is my favorite exercise.","exp":"첫 문장의 Swimming은 '수영하는 것은'이라는 <b>주어</b>예요. She is swimming은 be동사+ing라서 <b>진행형</b>(수영하는 중), the swimming pool의 swimming은 pool을 꾸며주는 말이에요. 같은 -ing라도 역할이 달라요!"},
+{"src":"5. 동명사 주어란?","q":"다음 문장에서 주어로 쓰인 동명사 <b>두 개</b>는?<br><b>Knowing is simple, but doing is difficult.</b>","choices":["Knowing과 doing","is와 is","simple과 difficult","Knowing과 simple"],"answer":"Knowing과 doing","exp":"교재 첫 예문! '아는 것은 쉽지만, 행동하는 것은 어렵다.' 두 문장이 but으로 이어져 있고, 각각의 주어가 <b>Knowing</b>(아는 것은)과 <b>doing</b>(행동하는 것은)이에요."},
+{"src":"5. 동명사 주어란?","q":"두 문장의 밑줄 친 부분에 대한 설명으로 알맞은 것은?<br>㉠ <b>Drinking</b> green tea is good for your health.<br>㉡ He is <b>drinking</b> green tea now.","choices":["㉠은 주어(마시는 것은), ㉡은 현재진행형(마시는 중)","㉠은 현재진행형, ㉡은 주어","둘 다 주어이다","둘 다 현재진행형이다"],"answer":"㉠은 주어(마시는 것은), ㉡은 현재진행형(마시는 중)","exp":"㉠의 Drinking은 문장 맨 앞에서 <b>주어</b> 역할('녹차를 마시는 것은 건강에 좋다'), ㉡의 drinking은 is와 함께 <b>현재진행형</b>('지금 마시는 중')이에요. 같은 모양이라도 역할이 완전히 달라요!"},
+{"src":"6. 동명사 주어의 해석","q":"동명사 주어를 우리말로 해석하는 방법으로 알맞은 것은?","choices":["…하는 것은","…하는 중이다","…해라","…했다"],"answer":"…하는 것은","exp":"동명사 주어는 <b>'…하는 것은'</b>! Singing is fun. → '노래하는 <b>것은</b> 재미있다.' '…하는 중'은 진행형(be+ing)의 해석이에요."},
+{"src":"6. 동명사 주어의 해석","q":"다음 문장의 해석으로 알맞은 것은?<br><b>Singing is fun.</b>","choices":["노래하는 것은 재미있다","노래를 불러라","노래하는 중이어서 재미있다","재미있는 노래를 부른다"],"answer":"노래하는 것은 재미있다","exp":"주어 Singing = '노래하는 것은'. 그래서 '<b>노래하는 것은 재미있다</b>'가 돼요. be동사 없이 -ing가 문장 맨 앞에 있으면 주어일 가능성이 커요!"},
+{"src":"6. 동명사 주어의 해석","q":"다음 문장의 해석으로 알맞은 것은?<br><b>Shopping on the Internet is very easy.</b>","choices":["인터넷에서 쇼핑하는 것은 아주 쉽다","인터넷은 쇼핑이 아주 쉽다","지금 인터넷에서 쇼핑하는 중이다","쉬운 쇼핑을 인터넷에서 해라"],"answer":"인터넷에서 쇼핑하는 것은 아주 쉽다","exp":"교재 예문! 주어는 Shopping on the Internet(인터넷에서 쇼핑하는 것은) 전체예요. '<b>인터넷에서 쇼핑하는 것은</b> 아주 쉽다'로 해석해요."},
+{"src":"6. 동명사 주어의 해석","q":"다음 문장의 해석으로 알맞은 것은?<br><b>Being different is cool.</b>","choices":["(남들과) 다른 것은 멋지다","다르게 되어라, 멋지게","그는 남들과 달라서 멋있다","멋진 사람은 다르게 행동한다"],"answer":"(남들과) 다른 것은 멋지다","exp":"교재 예문! Being different = '(남들과) 다른 것은'. be동사도 Being으로 바꾸면 동명사 주어가 될 수 있어요. '<b>다른 것은 멋지다</b>'."},
+{"src":"6. 동명사 주어의 해석","q":"다음 문장의 해석으로 알맞은 것은?<br><b>Keeping secrets is important.</b>","choices":["비밀을 지키는 것은 중요하다","비밀은 중요하게 지켜라","중요한 비밀을 지키는 중이다","비밀이 중요함을 지킨다"],"answer":"비밀을 지키는 것은 중요하다","exp":"지난 시험 Sentence Reading 2번 문장! 주어는 Keeping secrets(비밀을 지키는 것은) 전체이고, '<b>비밀을 지키는 것은 중요하다</b>'로 해석해요."},
+{"src":"7. 주어는 어디까지?","q":"동명사 주어의 <b>범위</b>에 대한 설명으로 알맞은 것은?","choices":["동명사 뒤에 붙는 목적어·수식어까지 모두 주어에 포함된다","항상 동명사 한 단어만 주어이다","문장 전체가 주어이다","동사 뒤의 말까지 전부 주어이다"],"answer":"동명사 뒤에 붙는 목적어·수식어까지 모두 주어에 포함된다","exp":"이번 클리닉의 두 번째 핵심! 동명사 뒤에 목적어, 보어, 수식어가 붙으면 <b>그 말까지 전부 주어</b>예요. 동사(is, takes...) <b>바로 앞까지</b>가 주어라고 기억하세요."},
+{"src":"7. 주어는 어디까지?","q":"다음 문장의 주어 부분을 고르세요.<br><b>Making a real friend takes a long time.</b>","choices":["Making a real friend","Making","a real friend","a long time"],"answer":"Making a real friend","exp":"교재 예문! Making 하나가 아니라 <b>Making a real friend</b>(진짜 친구를 사귀는 것은) 전체가 주어예요. 동사 takes 바로 앞까지!"},
+{"src":"7. 주어는 어디까지?","q":"다음 문장의 주어 부분을 고르세요.<br><b>Eating late at night is bad for your health.</b>","choices":["Eating late at night","Eating","late at night","your health"],"answer":"Eating late at night","exp":"교재 예문! <b>Eating late at night</b>(밤 늦게 먹는 것은) 전체가 주어예요. late at night(밤 늦게)라는 수식어까지 주어에 포함! 동사 is 앞까지예요."},
+{"src":"7. 주어는 어디까지?","q":"주어 뒤에 / 표시를 한다면 어디에 해야 할까요?<br><b>Becoming a lawyer is difficult.</b>","choices":["Becoming a lawyer / is difficult.","Becoming / a lawyer is difficult.","Becoming a lawyer is / difficult.","Becoming a / lawyer is difficult."],"answer":"Becoming a lawyer / is difficult.","exp":"지난 시험 Sentence Reading 1번 문장! 주어는 <b>Becoming a lawyer</b>(변호사가 되는 것은) 전체라서 / 는 is 바로 앞에 와요. Becoming 바로 뒤에 표시하면 주어가 반쪽만 남아요!"},
+{"src":"7. 주어는 어디까지?","q":"다음 문장의 주어 부분을 고르세요.<br><b>Being a vegetarian is popular among teenagers in America.</b>","choices":["Being a vegetarian","Being","a vegetarian","teenagers in America"],"answer":"Being a vegetarian","exp":"교재 예문! <b>Being a vegetarian</b>(채식주의자가 되는 것은/채식하는 것은) 전체가 주어예요. 동사 is 앞까지가 주어!"},
+{"src":"7. 주어는 어디까지?","q":"다음 문장의 주어 부분을 고르세요.<br><b>Remembering people's names is difficult for me.</b>","choices":["Remembering people's names","Remembering","people's names","for me"],"answer":"Remembering people's names","exp":"지난 시험 Sentence Reading 5번 문장! <b>Remembering people's names</b>(사람들의 이름을 기억하는 것은) 전체가 주어예요. is 바로 앞까지!"},
+{"src":"8. 동명사 주어 + 동사는 단수","q":"동명사 주어에 대한 설명으로 알맞은 것은?","choices":["'…하는 것' 하나의 덩어리라서 단수 취급한다","여러 단어면 복수 취급한다","be동사를 쓸 수 없다","동사에 -s를 붙이면 안 된다"],"answer":"'…하는 것' 하나의 덩어리라서 단수 취급한다","exp":"동명사 주어가 아무리 길어도 <b>'…하는 것'이라는 한 덩어리</b>예요. 그래서 <b>단수 취급</b> → be동사는 is, 일반동사에는 -s!"},
+{"src":"8. 동명사 주어 + 동사는 단수","q":"다음 빈칸에 들어갈 말로 알맞은 것은?<br><b>Watching movies ___ my hobby.</b>","choices":["is","are","am","were"],"answer":"is","exp":"movies가 복수라고 are를 고르면 함정에 빠진 거예요! 주어는 movies가 아니라 <b>Watching movies</b>(영화를 보는 것) 한 덩어리 → 단수 취급 → <b>is</b>."},
+{"src":"8. 동명사 주어 + 동사는 단수","q":"다음 빈칸에 들어갈 말로 알맞은 것은?<br><b>Studying abroad ___ a lot of money.</b>","choices":["costs","cost","costing","are costing"],"answer":"costs","exp":"지난 시험 Sentence Reading 3번 문장! 주어 Studying abroad(외국에서 공부하는 것은)는 단수 취급이라 동사에 -s를 붙여 <b>costs</b>. '유학하는 것은 많은 돈이 든다.'"},
+{"src":"8. 동명사 주어 + 동사는 단수","q":"다음 중 <b>어법상 올바른</b> 문장은?","choices":["Keeping secrets is important.","Keeping secrets are important.","Keep secrets is important.","Keeping secrets am important."],"answer":"Keeping secrets is important.","exp":"주어는 Keeping secrets(비밀을 지키는 것) 한 덩어리 → 단수 취급 → <b>is</b>! secrets가 복수라고 are를 쓰면 안 돼요. 그리고 주어 자리엔 동사원형 Keep이 아니라 동명사 Keeping을 써야 해요."},
+/* ─── 3영역: 오답 유형 집중 훈련 (41~60) ─── */
+{"src":"9. 오답 클리닉 ① There 문장의 진짜 주어","q":"다음 문장의 주어를 고르세요.<br><b>There is a new bakery on Main Street.</b>","choices":["a new bakery","There","Main Street","is"],"answer":"a new bakery","exp":"be동사(is) 뒤를 보면 <b>a new bakery</b>(새 빵집)! '메인 스트리트에 새 빵집이 있다.' There는 자리만 잡아주는 말이에요."},
+{"src":"9. 오답 클리닉 ① There 문장의 진짜 주어","q":"다음 문장의 주어를 고르세요.<br><b>There are many stars in the night sky.</b>","choices":["many stars","There","the night sky","are"],"answer":"many stars","exp":"are 뒤의 <b>many stars</b>(많은 별들)가 주어! 주어가 복수라서 be동사도 are를 썼어요. '밤하늘에 많은 별들이 있다.'"},
+{"src":"9. 오답 클리닉 ① There 문장의 진짜 주어","q":"다음 문장의 주어를 고르세요.<br><b>There was a big tree in front of my school.</b>","choices":["a big tree","There","my school","was"],"answer":"a big tree","exp":"was 뒤의 <b>a big tree</b>(큰 나무)가 주어예요. '우리 학교 앞에 큰 나무가 있었다.' 과거의 일이라 was를 썼어요."},
+{"src":"9. 오답 클리닉 ① There 문장의 진짜 주어","q":"다음 문장의 주어를 고르세요.<br><b>There were some children in the playground.</b>","choices":["some children","There","the playground","were"],"answer":"some children","exp":"were 뒤의 <b>some children</b>(몇몇 아이들)이 주어! 복수 + 과거라서 were를 썼어요. '놀이터에 아이들이 몇 명 있었다.'"},
+{"src":"9. 오답 클리닉 ① There 문장의 진짜 주어","q":"다음 문장의 주어를 고르세요.<br><b>There is a lot of homework today.</b>","choices":["a lot of homework","There","today","is"],"answer":"a lot of homework","exp":"is 뒤의 <b>a lot of homework</b>(많은 숙제)가 주어! '오늘은 숙제가 많다.' homework는 셀 수 없는 명사라 단수 취급 → is."},
+{"src":"9. 오답 클리닉 ① There 문장의 진짜 주어","q":"다음 문장의 주어를 고르세요.<br><b>There was a lot of snow on the road last winter.</b>","choices":["a lot of snow","There","the road","last winter"],"answer":"a lot of snow","exp":"틀렸던 문장(a lot of traffic)과 똑같은 구조예요! was 뒤의 <b>a lot of snow</b>(많은 눈)가 주어. '지난겨울 도로에 눈이 많이 있었다(많이 쌓였다).'"},
+{"src":"9. 오답 클리닉 ① There 문장의 진짜 주어","q":"다음 빈칸에 들어갈 말로 알맞은 것은?<br><b>There ___ a lot of people at the concert yesterday.</b>","choices":["were","was","is","be"],"answer":"were","exp":"진짜 주어는 <b>a lot of people</b>! people(사람들)은 복수이고, yesterday(어제)니까 과거 → <b>were</b>. a lot of가 붙어도 뒤의 명사가 단수인지 복수인지 보고 be동사를 골라요."},
+{"src":"9. 오답 클리닉 ① There 문장의 진짜 주어","q":"다음 빈칸에 들어갈 말로 알맞은 것은?<br><b>There ___ some milk in the glass.</b>","choices":["is","are","am","be"],"answer":"is","exp":"진짜 주어는 <b>some milk</b>. milk(우유)는 셀 수 없는 명사라 <b>단수 취급</b> → is! some이 붙었다고 무조건 복수가 아니에요."},
+{"src":"9. 오답 클리닉 ① There 문장의 진짜 주어","q":"다음 문장의 해석으로 자연스러운 것은?<br><b>There was heavy traffic on the highway.</b>","choices":["고속도로에 교통량이 많았다 (차가 많이 막혔다)","거기는 고속도로 위였다","고속도로가 거기에 있었다","교통이 고속도로를 무겁게 했다"],"answer":"고속도로에 교통량이 많았다 (차가 많이 막혔다)","exp":"There was ~ = '~가 있었다'. heavy traffic은 '많은 교통량(교통 체증)'이라는 뜻이라 자연스럽게 '<b>고속도로에 차가 많았다/막혔다</b>'로 해석해요. There를 '거기'라고 해석하지 않기!"},
+{"src":"9. 오답 클리닉 ① There 문장의 진짜 주어","q":"다음 중 주어를 <b>바르게</b> 찾은 것은?","choices":["There is a cat on the roof. → 주어: a cat","There is a cat on the roof. → 주어: There","There are two birds. → 주어: There are","There was a book. → 주어: was"],"answer":"There is a cat on the roof. → 주어: a cat","exp":"There 문장의 주어는 언제나 <b>be동사 뒤의 명사</b>! There는 주어가 아니고, be동사(is/was)도 당연히 주어가 아니에요. 이제 There 문장은 완전 정복!"},
+{"src":"10. 오답 클리닉 ② 동명사 주어 범위·해석","q":"다음 문장의 주어 부분을 고르세요.<br><b>Learning a new language takes time.</b>","choices":["Learning a new language","Learning","a new language","time"],"answer":"Learning a new language","exp":"동사 takes 바로 앞까지! <b>Learning a new language</b>(새 언어를 배우는 것은) 전체가 주어예요. '새 언어를 배우는 것은 시간이 걸린다.'"},
+{"src":"10. 오답 클리닉 ② 동명사 주어 범위·해석","q":"다음 문장의 주어 부분을 고르세요.<br><b>Playing computer games is fun.</b>","choices":["Playing computer games","Playing","computer games","fun"],"answer":"Playing computer games","exp":"<b>Playing computer games</b>(컴퓨터 게임을 하는 것은) 전체가 주어! Playing 뒤의 목적어 computer games까지 포함해요. is 바로 앞까지!"},
+{"src":"10. 오답 클리닉 ② 동명사 주어 범위·해석","q":"다음 문장의 주어 부분을 고르세요.<br><b>Getting up early is not easy for me.</b>","choices":["Getting up early","Getting","up early","for me"],"answer":"Getting up early","exp":"<b>Getting up early</b>(일찍 일어나는 것은)가 주어예요. early(일찍)라는 수식어까지 주어에 포함! '일찍 일어나는 것은 나에게 쉽지 않다.'"},
+{"src":"10. 오답 클리닉 ② 동명사 주어 범위·해석","q":"다음 문장의 주어 부분을 고르세요.<br><b>Riding a bike in the park is exciting.</b>","choices":["Riding a bike in the park","Riding","a bike","the park"],"answer":"Riding a bike in the park","exp":"<b>Riding a bike in the park</b>(공원에서 자전거를 타는 것은) 전체가 주어! in the park 같은 장소 수식어까지 다 포함돼요. 동사 is 앞까지 전부!"},
+{"src":"10. 오답 클리닉 ② 동명사 주어 범위·해석","q":"다음 문장의 주어 부분을 고르세요.<br><b>Drinking too much soda is bad for your teeth.</b>","choices":["Drinking too much soda","Drinking","too much soda","your teeth"],"answer":"Drinking too much soda","exp":"<b>Drinking too much soda</b>(탄산음료를 너무 많이 마시는 것은)가 주어예요. is 바로 앞까지! '탄산음료를 너무 많이 마시는 것은 치아에 나쁘다.'"},
+{"src":"10. 오답 클리닉 ② 동명사 주어 범위·해석","q":"다음 문장의 해석으로 알맞은 것은?<br><b>Studying abroad costs a lot of money.</b>","choices":["외국에서 공부하는 것은 많은 돈이 든다","외국이 공부에 많은 돈을 쓴다","공부하러 외국에 가는 중이다","많은 돈이 외국 공부보다 중요하다"],"answer":"외국에서 공부하는 것은 많은 돈이 든다","exp":"지난 시험 Sentence Reading 3번! 주어 Studying abroad = '<b>외국에서 공부하는 것은(유학하는 것은)</b>'. cost는 '(돈이) 들다'라는 뜻이에요."},
+{"src":"10. 오답 클리닉 ② 동명사 주어 범위·해석","q":"다음 문장의 해석으로 알맞은 것은?<br><b>Watching TV is sometimes very useful.</b>","choices":["TV를 보는 것은 때때로 매우 유용하다","TV가 가끔 우리를 지켜본다","TV를 보는 중이라서 유용하다","유용한 TV를 가끔 봐라"],"answer":"TV를 보는 것은 때때로 매우 유용하다","exp":"지난 시험 Sentence Reading 4번! 주어 Watching TV = '<b>TV를 보는 것은</b>'. sometimes(때때로)를 빼먹지 말고 해석에 넣어 주세요."},
+{"src":"10. 오답 클리닉 ② 동명사 주어 범위·해석","q":"다음 문장의 해석으로 알맞은 것은?<br><b>Remembering people's names is difficult for me.</b>","choices":["사람들의 이름을 기억하는 것은 나에게 어렵다","사람들이 내 이름을 기억하기 어렵다","나는 사람들의 이름을 기억하는 중이다","어려운 이름은 기억하지 마라"],"answer":"사람들의 이름을 기억하는 것은 나에게 어렵다","exp":"지난 시험 Sentence Reading 5번! 주어는 Remembering people's names(사람들의 이름을 기억하는 것은), for me는 '나에게'예요. 누가 누구를 기억하는지 방향을 헷갈리지 않기!"},
+{"src":"10. 오답 클리닉 ② 동명사 주어 범위·해석","q":"다음 빈칸에 들어갈 말로 알맞은 것은?<br><b>___ a lawyer is difficult.</b> (변호사가 되는 것은 어렵다)","choices":["Becoming","Become","Becomes","Became"],"answer":"Becoming","exp":"주어 자리에 '되는 것은'이라는 뜻을 만들려면 <b>동명사(동사원형+ing)</b>가 필요해요 → <b>Becoming</b>. 동사원형(Become)을 그냥 쓰면 명령문처럼 되어버려요."},
+{"src":"10. 오답 클리닉 ② 동명사 주어 범위·해석","q":"주어 뒤 / 표시가 <b>바르게</b> 된 문장은?","choices":["Keeping secrets / is important.","Keeping / secrets is important.","Keeping secrets is / important.","Keep / ing secrets is important."],"answer":"Keeping secrets / is important.","exp":"주어는 <b>Keeping secrets</b>(비밀을 지키는 것은) 전체 → / 는 동사 is 바로 앞! 동명사 바로 뒤에 / 를 하면 주어가 반쪽이 돼요. 이제 / 표시 완전 정복! 🎉"}];
+
+/* ══════ 3개 영역 구성 ══════ */
+var SECTIONS = [
+  { name: "1영역 · 개념 확인 ① 주어 찾기 · There is/are", start: 0,  end: 20 },
+  { name: "2영역 · 개념 확인 ② 동명사 주어", start: 20, end: 40 },
+  { name: "3영역 · 오답 유형 집중 훈련", start: 40, end: 60 }
+];
+function secIndex(i) { return i < 20 ? 0 : (i < 40 ? 1 : 2); }
+
+/* ══════ 정답 위치 균등 분산 셔플 (매 회차 1~4번에 고르게 배치) ══════ */
+function shuffleArr(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+/* n개 문항의 정답 위치를 k개 자리(0~k-1)에 최대한 고르게 분산 배치.
+   나머지(n%k)는 서로 다른 자리에 +1씩 배분해 한 자리에 몰리지 않게 함. */
+function balancedAssign(n, k) {
+  var pool = [];
+  var base = Math.floor(n / k);
+  for (var p = 0; p < k; p++) { for (var c = 0; c < base; c++) pool.push(p); }
+  var remainder = n - pool.length;
+  var extraPositions = shuffleArr([0, 1, 2, 3]).slice(0, remainder);
+  extraPositions.forEach(function (p) { pool.push(p); });
+  return shuffleArr(pool);
+}
+(function prepareShuffledChoices() {
+  /* 영역(SECTIONS)별로 따로 균등 분산시켜, 한 영역 안에서 정답 위치가 쏠리지 않게 함 */
+  SECTIONS.forEach(function (sec) {
+    var targetPositions = balancedAssign(sec.end - sec.start, 4);
+    for (var idx = sec.start; idx < sec.end; idx++) {
+      var q = ALL[idx];
+      var shuffled = shuffleArr(q.choices);
+      var curPos = shuffled.indexOf(q.answer);
+      var target = targetPositions[idx - sec.start];
+      var tmp = shuffled[target]; shuffled[target] = shuffled[curPos]; shuffled[curPos] = tmp;
+      q.shuffled = shuffled;
+    }
+  });
+})();
+
+/* ══════ 진행 상태 ══════ */
+var studentName = "";
+var current = 0;
+var answersLog = [];
+var elapsed = [0, 0, 0];
+var sent = [false, false, false];
+var lastTick = 0;
+
+/* ══════ 진행 자동 저장 ══════ */
+var SAVE_KEY = "clinic-hsj-0724";
+function saveState() {
+  try {
+    localStorage.setItem(SAVE_KEY, JSON.stringify({
+      v: 1, name: studentName, current: current, log: answersLog, elapsed: elapsed, sent: sent,
+      choices: ALL.map(function (q) { return q.shuffled; })
+    }));
+  } catch (e) {}
+}
+function loadState() {
+  try {
+    var s = JSON.parse(localStorage.getItem(SAVE_KEY));
+    return (s && s.v === 1 && s.name && s.log) ? s : null;
+  } catch (e) { return null; }
+}
+function clearState() { try { localStorage.removeItem(SAVE_KEY); } catch (e) {} }
+
+function show(id) {
+  ["start-card", "resume-card", "quiz-card", "sec-result-card"].forEach(function (c) {
+    document.getElementById(c).classList.toggle("hidden", c !== id);
+  });
+  window.scrollTo(0, 0);
+}
+
+/* ══════ 시작 / 이어하기 ══════ */
+var nameInput = document.getElementById("name-input");
+var startBtn = document.getElementById("start-btn");
+nameInput.addEventListener("input", function () {
+  startBtn.disabled = nameInput.value.trim().length === 0;
+});
+nameInput.addEventListener("keydown", function (e) {
+  if (e.key === "Enter" && !startBtn.disabled) startBtn.click();
+});
+startBtn.addEventListener("click", function () {
+  studentName = nameInput.value.trim();
+  if (!studentName) return;
+  clearState();
+  current = 0; answersLog = []; elapsed = [0, 0, 0]; sent = [false, false, false];
+  lastTick = Date.now();
+  saveState();
+  show("quiz-card");
+  showQuestion();
+});
+
+var savedState = loadState();
+if (savedState && savedState.current < ALL.length && savedState.log.length > 0) {
+  document.getElementById("resume-info").textContent =
+    savedState.name + " · " + savedState.log.length + "문제까지 푼 기록이 있어요. 이어서 풀까요?";
+  show("resume-card");
+}
+document.getElementById("resume-btn").addEventListener("click", function () {
+  studentName = savedState.name;
+  current = savedState.current;
+  answersLog = savedState.log;
+  elapsed = savedState.elapsed || [0, 0, 0];
+  sent = savedState.sent || [false, false, false];
+  if (savedState.choices) {
+    ALL.forEach(function (q, i) { if (savedState.choices[i]) q.shuffled = savedState.choices[i]; });
+  }
+  lastTick = Date.now();
+  var si = secIndex(Math.max(0, current - 1));
+  if (current === SECTIONS[si].end && answersLog.length === current) {
+    showSectionResult(si);
+  } else {
+    show("quiz-card");
+    showQuestion();
+  }
+});
+document.getElementById("restart-btn").addEventListener("click", function () {
+  clearState();
+  show("start-card");
+});
+
+/* ══════ 문제 표시 ══════ */
+var CIRCLED = ["①", "②", "③", "④"];
+function showQuestion() {
+  var q = ALL[current];
+  var si = secIndex(current);
+  var sec = SECTIONS[si];
+  document.getElementById("prog-num").textContent =
+    sec.name + "  ·  " + (current - sec.start + 1) + " / " + (sec.end - sec.start);
+  document.getElementById("prog-pct").textContent = "전체 " + Math.round(current / ALL.length * 100) + "%";
+  document.getElementById("bar-fill").style.width = ((current - sec.start) / (sec.end - sec.start) * 100) + "%";
+  document.getElementById("srctag").textContent = q.src;
+  document.getElementById("tipbox").innerHTML = '<span class="tip-label">💡 개념 먼저 읽어보기</span>' + (TIPS[q.src] || "");
+  document.getElementById("qtext").innerHTML = "Q" + (current + 1) + ". " + q.q;
+  var box = document.getElementById("choices");
+  box.innerHTML = "";
+  q.shuffled.forEach(function (c, i) {
+    var b = document.createElement("button");
+    b.className = "choice";
+    b.innerHTML = '<span class="num">' + CIRCLED[i] + "</span>" + c;
+    b.addEventListener("click", function () { pick(c); });
+    box.appendChild(b);
+  });
+  lastTick = Date.now();
+  window.scrollTo(0, 0);
+}
+
+document.addEventListener("keydown", function (e) {
+  if (document.getElementById("quiz-card").classList.contains("hidden")) return;
+  var n = parseInt(e.key, 10);
+  var q = ALL[current];
+  if (n >= 1 && n <= q.shuffled.length) pick(q.shuffled[n - 1]);
+});
+
+var locked = false;
+function pick(choice) {
+  if (locked) return; locked = true;
+  var q = ALL[current];
+  var si = secIndex(current);
+  var ok = choice === q.answer;
+  answersLog.push({ no: current + 1, ok: ok, chosen: choice, answer: q.answer });
+  elapsed[si] += Math.min(120, Math.round((Date.now() - lastTick) / 1000));
+  current++;
+  saveState();
+  setTimeout(function () {
+    locked = false;
+    if (current === SECTIONS[si].end) showSectionResult(si);
+    else showQuestion();
+  }, 250);
+}
+
+/* ══════ 영역 결과 ══════ */
+function secStats(si) {
+  var sec = SECTIONS[si];
+  var slice = answersLog.slice(sec.start, sec.end);
+  var score = slice.filter(function (l) { return l.ok; }).length;
+  var wrong = slice.filter(function (l) { return !l.ok; }).map(function (l) { return l.no; });
+  return { slice: slice, score: score, total: sec.end - sec.start, wrong: wrong };
+}
+
+function sectionMsg(si) {
+  var st = secStats(si);
+  return "[영핏 오답 클리닉 " + (si + 1) + "/3 결과]\n학생: " + studentName +
+         "\n영역: " + SECTIONS[si].name +
+         "\n점수: " + st.score + "/" + st.total +
+         "\n풀이 시간: " + Math.max(1, Math.round(elapsed[si] / 60)) + "분" +
+         "\n틀린 문항: " + (st.wrong.length ? st.wrong.join(", ") : "없음 👏") +
+         "\n- 영핏 지나티처";
+}
+function totalMsg() {
+  var parts = [0, 1, 2].map(function (si) {
+    var st = secStats(si);
+    return (si + 1) + "영역 " + st.score + "/" + st.total;
+  });
+  var totalScore = answersLog.filter(function (l) { return l.ok; }).length;
+  var allWrong = answersLog.filter(function (l) { return !l.ok; }).map(function (l) { return l.no; });
+  return "[영핏 오답 클리닉 최종 결과]\n학생: " + studentName +
+         "\n퀴즈: 한승주 주어의 이해 개념 클리닉 (60문항)" +
+         "\n" + parts.join(" / ") +
+         "\n총점: " + totalScore + "/" + ALL.length +
+         "\n틀린 문항: " + (allWrong.length ? allWrong.join(", ") : "없음 👏") +
+         "\n- 영핏 지나티처";
+}
+function copyText(btn, text, doneLabel) {
+  navigator.clipboard.writeText(text).then(function () {
+    btn.textContent = doneLabel;
+  }).catch(function () {
+    prompt("아래 내용을 길게 눌러 복사하세요", text);
+  });
+}
+
+function showSectionResult(si) {
+  var st = secStats(si);
+  var isLast = si === SECTIONS.length - 1;
+  document.getElementById("sec-result-title").textContent =
+    isLast ? "모든 영역 완료! 정말 수고했어요 🎉" : (si + 1) + "영역 완료! 잘했어요 👏";
+  document.getElementById("sec-score").textContent = st.score + " / " + st.total;
+  document.getElementById("sec-wrong").textContent =
+    st.wrong.length ? "틀린 문항: " + st.wrong.join(", ") : "이 영역 전부 정답! 최고예요! 🏆";
+
+  var copyBtn = document.getElementById("sec-copy-btn");
+  copyBtn.textContent = (si + 1) + "영역 결과 복사 (카톡용)";
+  copyBtn.onclick = function () { copyText(copyBtn, sectionMsg(si), "복사 완료! 카톡에 붙여넣기 하세요 ✓"); };
+
+  var nextBtn = document.getElementById("next-sec-btn");
+  if (isLast) {
+    nextBtn.classList.add("hidden");
+    var totalScore = answersLog.filter(function (l) { return l.ok; }).length;
+    document.getElementById("total-block").classList.remove("hidden");
+    document.getElementById("total-score").textContent = totalScore + " / " + ALL.length;
+    document.getElementById("total-detail").textContent =
+      [0, 1, 2].map(function (s) { var t = secStats(s); return (s + 1) + "영역 " + t.score + "/" + t.total; }).join("  ·  ");
+    var totalBtn = document.getElementById("total-copy-btn");
+    totalBtn.onclick = function () { copyText(totalBtn, totalMsg(), "복사 완료! 카톡에 붙여넣기 하세요 ✓"); };
+  } else {
+    nextBtn.classList.remove("hidden");
+    document.getElementById("total-block").classList.add("hidden");
+    nextBtn.textContent = "쉬었다가 " + (si + 2) + "영역 시작하기 →";
+    nextBtn.onclick = function () {
+      show("quiz-card");
+      showQuestion();
+    };
+  }
+
+  var expBox = document.getElementById("sec-explanations");
+  expBox.innerHTML = "";
+  st.slice.forEach(function (log) {
+    var q = ALL[log.no - 1];
+    var d = document.createElement("div");
+    d.className = "exp" + (log.ok ? "" : " wrong");
+    var ansLine = log.ok ? "" : '<span class="ans-line">내가 고른 답: ' + log.chosen + " → 정답: " + log.answer + "</span>";
+    d.innerHTML = '<div class="exp-head"><b>Q' + log.no + " (" + q.src + ") " +
+      (log.ok ? "정답! ✓" : "오답 - 다시 보기") + "</b></div>" + ansLine + q.exp;
+    expBox.appendChild(d);
+  });
+
+  if (!sent[si]) {
+    sent[si] = true;
+    saveState();
+    engfitSubmit({
+      quizId: "clinic-hsj-0724-p" + (si + 1),
+      quizTitle: "한승주 주어의 이해 개념 클리닉 " + (si + 1) + "영역 (" + SECTIONS[si].name + ")",
+      student: studentName,
+      score: st.score,
+      total: st.total,
+      wrong: st.wrong,
+      durationSec: elapsed[si],
+      detail: st.slice
+    });
+  }
+  show("sec-result-card");
+}
+</script>
+</body>
+</html>
