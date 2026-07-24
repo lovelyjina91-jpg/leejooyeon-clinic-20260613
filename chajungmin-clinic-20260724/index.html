@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>정민이의 오답 클리닉 — A Peaceful Lake</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; background: #f0f4f4; color: #2d3436; min-height: 100vh; display: flex; justify-content: center; padding: 20px 14px; }
+  .wrap { width: 100%; max-width: 560px; }
+  .card { background: #fff; border-radius: 16px; padding: 26px 22px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 14px; }
+  h1 { font-size: 1.28rem; color: #2e7d6e; margin-bottom: 6px; }
+  .sub { font-size: 0.88rem; color: #778; margin-bottom: 18px; line-height: 1.5; }
+  input[type=text] { width: 100%; padding: 13px; font-size: 1.05rem; border: 1.5px solid #cdd; border-radius: 10px; }
+  .btn { display: block; width: 100%; margin-top: 14px; padding: 14px; font-size: 1.05rem; font-weight: bold; color: #fff; background: #2e7d6e; border: none; border-radius: 10px; cursor: pointer; }
+  .btn:disabled { background: #b8c4c2; cursor: default; }
+  .progress { font-size: 0.85rem; color: #789; margin-bottom: 10px; }
+  .concept { background: #eef7f4; border: 1.5px solid #bfe0d6; border-radius: 12px; padding: 16px 15px; margin-bottom: 16px; font-size: 0.93rem; line-height: 1.65; }
+  .concept .ctitle { font-weight: bold; color: #1f6d5c; margin-bottom: 8px; font-size: 0.98rem; }
+  .concept .orig { background: #fff; border-radius: 8px; padding: 10px 12px; margin: 8px 0; border: 1px dashed #bcd6cd; }
+  .concept b { color: #1f6d5c; }
+  .concept .why { color: #a75; }
+  .qtext { font-size: 1.05rem; line-height: 1.65; margin-bottom: 16px; font-weight: bold; }
+  .qtext .en { font-family: Georgia, 'Times New Roman', serif; }
+  .choice { display: block; width: 100%; text-align: left; padding: 13px 14px; margin-bottom: 9px; font-size: 1rem; background: #f6f9f8; border: 1.5px solid #dde5e3; border-radius: 10px; cursor: pointer; line-height: 1.5; }
+  .choice:active { background: #e2efec; }
+  .num { color: #2e7d6e; font-weight: bold; margin-right: 6px; }
+  .keyhint { font-size: 0.78rem; color: #9ab; margin-top: 6px; text-align: center; }
+  .score-big { font-size: 2rem; font-weight: bold; color: #2e7d6e; text-align: center; margin: 10px 0; }
+  .cheer { text-align: center; font-size: 0.95rem; color: #556; margin-bottom: 14px; line-height: 1.6; }
+  .exp { background: #f6f9f8; border-left: 4px solid #2e7d6e; border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; font-size: 0.92rem; line-height: 1.6; }
+  .exp.wrong { border-left-color: #c0392b; }
+  .exp b { color: #2e7d6e; }
+  .exp.wrong .head { color: #c0392b; }
+  .exp .head { font-weight: bold; }
+  .footer { text-align: center; font-size: 0.8rem; color: #9ab; padding: 8px 0 20px; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- 시작 화면 -->
+  <div class="card" id="start-card">
+    <h1>정민이의 오답 클리닉 🌋</h1>
+    <p class="sub">A Peaceful Lake (Unit 16) · 14문항<br>
+    초등 최상위권 도전! 지난 시험에서 아쉬웠던 문제들을 개념 카드와 함께 다시 잡아보자 💪<br>
+    개념 카드를 먼저 읽고, 바로 아래 문제 2개를 연달아 풀면 돼요.</p>
+    <input type="text" id="name-input" placeholder="이름을 입력하세요" maxlength="20" autocomplete="off">
+    <button class="btn" id="start-btn" disabled>시작하기</button>
+  </div>
+
+  <!-- 문제 화면 -->
+  <div class="card hidden" id="quiz-card">
+    <div class="progress" id="progress"></div>
+    <div id="concept-box"></div>
+    <div class="qtext" id="qtext"></div>
+    <div id="choices"></div>
+    <div class="keyhint">키보드 1~4로도 고를 수 있어요</div>
+  </div>
+
+  <!-- 결과 화면 -->
+  <div class="card hidden" id="result-card">
+    <h1>수고했어요! 🎉</h1>
+    <div class="score-big" id="score-line"></div>
+    <div class="cheer" id="cheer-line"></div>
+    <button class="btn" id="kakao-btn">결과 복사해서 지나티처에게 카톡 보내기</button>
+    <div style="margin-top:20px">
+      <p class="sub" style="margin-bottom:10px">📝 전체 해설 (꼼꼼히 읽어보세요!)</p>
+      <div id="explanations"></div>
+    </div>
+  </div>
+
+  <div class="footer">영핏 지나티처 · 정민이 화이팅! 🌱</div>
+</div>
+
+<script>
+"use strict";
+
+/* ══════ 결과 자동 전송 (영핏 공통) ══════ */
+var ENGFIT_SUBMIT_URL = "https://script.google.com/macros/s/AKfycbz5IC3cEtaBGW10qZhrjwtjdtGugmcmYb4ZTHS4k-1LOqTRYzW-LfoAPyFB_ShjAqNp/exec";
+
+async function engfitSubmit(r) {
+  var body = JSON.stringify(r);
+  try {
+    var res = await fetch(ENGFIT_SUBMIT_URL, { method: "POST", body: body });
+    var j = await res.json();
+    return j.ok === true;
+  } catch (e) {
+    try {
+      await fetch(ENGFIT_SUBMIT_URL, { method: "POST", mode: "no-cors", body: body });
+      return true;
+    } catch (e2) { return false; }
+  }
+}
+var _engfitSent = false;
+
+/* ══════ 개념(오답이유) 카드 ══════ */
+var CARDS = {
+  fill: {
+    title: "🚗 오답이유 카드 1 — fill(채우다) vs fix(고치다)",
+    html: '<div class="orig">지난 문제: 주유소 사진 — What is the woman doing?<br><span class="en">She is f______ ______ the tank.</span><br>정민이 답: <span class="why">fixxing car\'s</span> → 정답: <b>filling up</b></div>' +
+      '사진 속 여자는 차를 <b>고치는</b> 게 아니라 기름 탱크를 <b>채우고</b> 있어요.<br>' +
+      '<b>fill</b> = 채우다 / <b>fix</b> = 고치다 — 완전히 다른 단어!<br>' +
+      '<b>fill up</b> = 가득 채우다. 현재진행형은 be + 동사ing → fill + ing = <b>filling</b> (l이 두 개!)<br>' +
+      '→ <span class="en">She is <b>filling up</b> the tank.</span> (그녀는 탱크를 가득 채우고 있다)'
+  },
+  its: {
+    title: "🔎 오답이유 카드 2 — Its가 가리키는 것 찾기",
+    html: '<div class="orig">지난 문제: What does the word <u>Its</u> refer to?<br>정민이 답: <span class="why">Crater Lake</span> → 정답: <b>the volcano</b></div>' +
+      '<b>its(그것의)</b> 같은 지칭어가 나오면 <b>바로 앞 문장</b>을 다시 읽어보세요.<br>' +
+      '<span class="en">"But <b>the volcano</b> was still active. <u>Its</u> smaller eruptions created Wizard Island."</span><br>' +
+      '앞 문장의 주인공은 the volcano! 그러니까 Its = <b>the volcano의(그 화산의)</b>.<br>' +
+      '이때 Crater Lake는 아직 생기지도 않았어요. 호수는 나중에 물이 차서 만들어졌죠.'
+  },
+  selection: {
+    title: "👯 오답이유 카드 3 — selection(선택) vs election(선거)",
+    html: '<div class="orig">지난 문제: <span class="en">Sam took a long time to make his ( election / selection ).</span><br>정민이 답: <span class="why">election</span> → 정답: <b>selection</b></div>' +
+      '생김새가 쌍둥이처럼 닮은 두 단어, 앞 글자만 달라요!<br>' +
+      '<b>select</b>(고르다) → <b>selection</b>(선택) / <b>elect</b>(투표로 뽑다) → <b>election</b>(선거)<br>' +
+      '샘이 오랜 시간이 걸려서 한 것은 투표가 아니라 <b>선택</b> → make his <b>selection</b>.'
+  },
+  afterward: {
+    title: "⏰ 오답이유 카드 4 — afterward(그 후에) vs nearly(거의)",
+    html: '<div class="orig">지난 문제: <span class="en">( Afterward / Nearly ), he became a famous actor.</span><br>정민이 답: <span class="why">Nearly</span> → 정답: <b>Afterward</b></div>' +
+      'Nearly를 넣으면 "그는 <b>거의</b> 유명한 배우가 되었다(= 결국 못 됐다?)"가 되어 어색해요.<br>' +
+      '<b>afterward</b> = 그 후에, 나중에 (시간 순서) / <b>nearly</b> = 거의 (= almost)<br>' +
+      '→ "<b>그 후에</b>, 그는 유명한 배우가 되었다"가 자연스러운 문장!'
+  },
+  melted: {
+    title: "🍫 오답이유 카드 5 — melted(녹은)",
+    html: '<div class="orig">지난 문제: <span class="en">Drizzle ______ chocolate over the bananas.</span> (빈칸으로 남겼어요)<br>정답: <b>melted</b></div>' +
+      '<b>melt</b> = 녹다, 녹이다 → <b>melted</b> = 녹은<br>' +
+      '<b>melted chocolate</b> = 녹은 초콜릿, <b>melted snow</b> = 녹은 눈 (본문에도 나왔죠!)<br>' +
+      '→ "녹은 초콜릿을 바나나 위에 뿌리세요." 빈칸은 절대 비워두지 말고 아는 단어라도 꼭 써보기!'
+  },
+  eruption: {
+    title: "🌋 오답이유 카드 6 — eruption(분화, 폭발)",
+    html: '<div class="orig">지난 문제: <span class="en">The ______ of Mount Pinatubo happened in 1991.</span> (빈칸으로 남겼어요)<br>정답: <b>eruption</b></div>' +
+      '<b>erupt</b>(동사: 분화하다, 폭발하다) → <b>eruption</b>(명사: 분화, 폭발)<br>' +
+      '<span class="en">The ______ of</span> 처럼 <b>The와 of 사이는 명사 자리</b>예요.<br>' +
+      '→ "피나투보 화산의 <b>분화</b>는 1991년에 일어났다."'
+  },
+  period: {
+    title: "✏️ 오답이유 카드 7 — 문장 끝에는 꼭 마침표!",
+    html: '<div class="orig">지난 문제: <span class="en">Crater Lake looks so peaceful</span> ← 문장은 완벽했는데 <span class="why">마침표(.)가 빠졌어요!</span></div>' +
+      '영어 문장은 <b>끝 부호까지 써야 한 문장</b>이 완성돼요.<br>' +
+      '설명하는 문장(평서문) → <b>마침표(.)</b> / 물어보는 문장(의문문) → <b>물음표(?)</b><br>' +
+      '시험에서는 부호가 빠지면 감점! 문장을 다 쓰고 나서 끝 부호를 확인하는 습관을 들이면 완벽 👍'
+  }
+};
+
+/* ══════ 문제 데이터 ══════ */
+var QUESTIONS = [
+  { card: "fill",
+    q: '주유소에서 한 여자가 차에 기름을 넣고 있어요.<br><span class="en">She is ______ the tank.</span>',
+    choices: ["filling up", "fixing", "washing", "turning off"], answer: "filling up",
+    exp: "기름을 넣는 것 = 탱크를 가득 <b>채우는</b> 것 → <b>filling up</b>. fixing은 '고치는', washing은 '씻는', turning off는 '끄는'이에요." },
+  { card: "fill",
+    q: '다음 중 철자와 쓰임이 모두 바른 문장은?',
+    choices: ["She is filling up the tank.", "She is fixxing up the tank.", "She is filing up the tank.", "She is fill up the tank."], answer: "She is filling up the tank.",
+    exp: "fill의 -ing형은 <b>filling</b>(l 두 개)! fixxing은 세상에 없는 철자(fix→fixing), filing은 다른 단어 file의 -ing형이고, be동사 뒤에 동사원형 fill만 쓰면 진행형이 안 돼요." },
+  { card: "its",
+    q: '다음 글에서 밑줄 친 <u>Its</u>가 가리키는 것은?<br><span class="en">"But the volcano was still active. <u>Its</u> smaller eruptions created Wizard Island."</span>',
+    choices: ["the volcano", "Wizard Island", "Crater Lake", "the air"], answer: "the volcano",
+    exp: "지칭어는 <b>바로 앞 문장</b>에서 찾기! 앞 문장의 주인공이 the volcano죠. '<b>그 화산의</b>' 작은 분화들이 위저드 섬을 만들었다는 뜻이에요." },
+  { card: "its",
+    q: '다음 글에서 밑줄 친 <u>Its</u>가 가리키는 것은?<br><span class="en">"Mina has a cute cat. <u>Its</u> tail is very long. Mina loves the cat very much."</span>',
+    choices: ["the cat", "Mina", "the tail", "Mina's school"], answer: "the cat",
+    exp: "its(그것의)는 사람이 아니라 <b>동물이나 사물</b>에 써요. 바로 앞 문장에 나온 a cute cat! '<b>그 고양이의</b>' 꼬리가 아주 길다는 뜻이에요. (미나 것이라면 Her를 썼겠죠?)" },
+  { card: "selection",
+    q: '<span class="en">Sam took a long time to make his ______.</span><br>(샘은 고르느라 시간이 오래 걸렸어요)',
+    choices: ["selection", "election", "eruption", "examination"], answer: "selection",
+    exp: "select(고르다)의 명사형 <b>selection</b>(선택)! make a selection = 선택하다. election은 '선거'라서 어울리지 않아요." },
+  { card: "selection",
+    q: '<span class="en">We will choose our class president in the class ______.</span>',
+    choices: ["election", "selection", "eruption", "vacation"], answer: "election",
+    exp: "반장을 <b>투표로 뽑는 것</b> → <b>election</b>(선거)! elect = 투표로 뽑다. 이번엔 반대로 election이 정답 — 두 단어의 차이를 확실히 잡았죠?" },
+  { card: "afterward",
+    q: '<span class="en">He practiced singing every day for ten years. ______, he became a famous singer.</span>',
+    choices: ["Afterward", "Nearly", "Early", "Instead"], answer: "Afterward",
+    exp: "10년 동안 연습했고 → '<b>그 후에</b>' 유명한 가수가 되었다는 시간 순서! <b>afterward</b> = 그 후에. nearly(거의)를 넣으면 뜻이 이상해져요." },
+  { card: "afterward",
+    q: '<span class="en">The glass is ______ empty. There is only a little juice left.</span>',
+    choices: ["nearly", "afterward", "lately", "loudly"], answer: "nearly",
+    exp: "주스가 조금밖에 안 남았으니 컵이 '<b>거의</b>' 비었다 → <b>nearly</b>(= almost). afterward(그 후에)는 시간을 나타내서 여기엔 안 맞아요." },
+  { card: "melted",
+    q: '<span class="en">Drizzle ______ chocolate over the bananas.</span>',
+    choices: ["melted", "deep", "blew", "peaceful"], answer: "melted",
+    exp: "<b>melted chocolate</b> = <b>녹은</b> 초콜릿. '녹은 초콜릿을 바나나 위에 뿌리세요.' 지난번에 비워 둔 그 문제, 이제 자신 있게!" },
+  { card: "melted",
+    q: '<span class="en">The ice cream ______ quickly in the hot sun.</span>',
+    choices: ["melted", "filled", "collapsed", "erupted"], answer: "melted",
+    exp: "뜨거운 햇볕에 아이스크림이 빨리 '<b>녹았다</b>' → melt의 과거형 <b>melted</b>. filled는 '채웠다', collapsed는 '무너졌다', erupted는 '분화했다'." },
+  { card: "eruption",
+    q: '<span class="en">The ______ of Mount Pinatubo happened in 1991.</span>',
+    choices: ["eruption", "election", "selection", "instruction"], answer: "eruption",
+    exp: "The와 of 사이는 <b>명사 자리</b> → 화산의 '<b>분화</b>' = <b>eruption</b>. '피나투보 화산의 분화는 1991년에 일어났다.'" },
+  { card: "eruption",
+    q: '<span class="en">An active volcano can ______ at any time.</span>',
+    choices: ["erupt", "eruption", "eruptions", "eruptly"], answer: "erupt",
+    exp: "can 뒤에는 <b>동사원형</b>! → <b>erupt</b>(분화하다). eruption은 명사라서 can 뒤에 올 수 없어요. eruptly는 없는 단어예요." },
+  { card: "period",
+    q: '다음 중 바르게 쓴 문장은?',
+    choices: ["Crater Lake looks so peaceful.", "Crater Lake looks so peaceful", "crater lake looks so peaceful.", "Crater Lake looks so peaceful,"], answer: "Crater Lake looks so peaceful.",
+    exp: "문장은 <b>대문자로 시작</b>해서 <b>마침표(.)로 끝</b>! 지명 Crater Lake는 항상 대문자로 써요. 쉼표(,)로 끝나면 문장이 완성되지 않아요." },
+  { card: "period",
+    q: '다음 문장의 끝 ( ) 안에 들어갈 문장부호는?<br><span class="en">Why not see it for yourself in the United States( )</span>',
+    choices: ["? (물음표)", ". (마침표)", ", (쉼표)", "! 와 . 둘 다 안 씀"], answer: "? (물음표)",
+    exp: "<span class=\"en\">Why not ~?</span>은 '~하는 게 어때?'라고 <b>물어보는 문장(의문문)</b> → 끝에 <b>물음표(?)</b>! 평서문이었다면 마침표를 썼겠죠." }
+];
+
+/* ══════ 보기 셔플 (정답 위치 균등 분산) ══════ */
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+
+function shuffleChoices() {
+  var k = 4, n = QUESTIONS.length;
+  var pool = [];
+  var per = Math.floor(n / k);
+  for (var p = 0; p < k; p++) for (var c = 0; c < per; c++) pool.push(p);
+  var extras = shuffle([0, 1, 2, 3]).slice(0, n % k);
+  extras.forEach(function (p) { pool.push(p); });
+  pool = shuffle(pool);
+  QUESTIONS.forEach(function (q, i) {
+    var target = pool[i];
+    var mixed = shuffle(q.choices);
+    var ai = mixed.indexOf(q.answer);
+    var t = mixed[target]; mixed[target] = mixed[ai]; mixed[ai] = t;
+    q.shuffled = mixed;
+  });
+}
+
+/* ══════ 진행 로직 ══════ */
+var studentName = "";
+var current = 0;
+var correctCount = 0;
+var wrongNumbers = [];
+var answersLog = [];
+var startTime = 0;
+var locked = false;
+
+var nameInput = document.getElementById("name-input");
+var startBtn = document.getElementById("start-btn");
+
+nameInput.addEventListener("input", function () {
+  startBtn.disabled = nameInput.value.trim().length === 0;
+});
+nameInput.addEventListener("keydown", function (e) {
+  if (e.key === "Enter" && nameInput.value.trim()) startBtn.click();
+});
+
+startBtn.addEventListener("click", function () {
+  studentName = nameInput.value.trim();
+  if (!studentName) return;
+  startTime = Date.now();
+  shuffleChoices();
+  document.getElementById("start-card").classList.add("hidden");
+  document.getElementById("quiz-card").classList.remove("hidden");
+  showQuestion();
+});
+
+var CIRCLED = ["①", "②", "③", "④"];
+
+function showQuestion() {
+  var q = QUESTIONS[current];
+  document.getElementById("progress").textContent = (current + 1) + " / " + QUESTIONS.length;
+  var cbox = document.getElementById("concept-box");
+  if (q.card && CARDS[q.card]) {
+    var cd = CARDS[q.card];
+    cbox.innerHTML = '<div class="concept"><div class="ctitle">' + cd.title + '</div>' + cd.html + '</div>';
+  } else {
+    cbox.innerHTML = "";
+  }
+  document.getElementById("qtext").innerHTML = "Q" + (current + 1) + ". " + q.q;
+  var box = document.getElementById("choices");
+  box.innerHTML = "";
+  q.shuffled.forEach(function (c, i) {
+    var b = document.createElement("button");
+    b.className = "choice";
+    b.innerHTML = '<span class="num">' + CIRCLED[i] + "</span>" + c;
+    b.addEventListener("click", function () { pick(c); });
+    box.appendChild(b);
+  });
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function pick(choice) {
+  if (locked) return; locked = true;
+  var q = QUESTIONS[current];
+  var ok = choice === q.answer;
+  if (ok) correctCount++;
+  else wrongNumbers.push(current + 1);
+  answersLog.push({ no: current + 1, ok: ok, chosen: choice, answer: q.answer });
+  setTimeout(function () {
+    locked = false;
+    current++;
+    if (current < QUESTIONS.length) showQuestion();
+    else showResult();
+  }, 250);
+}
+
+document.addEventListener("keydown", function (e) {
+  if (document.getElementById("quiz-card").classList.contains("hidden")) return;
+  var n = parseInt(e.key, 10);
+  if (n >= 1 && n <= 4 && !locked) {
+    var q = QUESTIONS[current];
+    if (q.shuffled && q.shuffled[n - 1] !== undefined) pick(q.shuffled[n - 1]);
+  }
+});
+
+function cheerMessage() {
+  var r = correctCount / QUESTIONS.length;
+  if (r === 1) return "전부 다 맞았어요! 최상위권 도전, 이 기세 그대로 가자 🔥";
+  if (r >= 0.8) return "훌륭해요! 개념이 거의 다 잡혔어요. 틀린 문제 해설만 한 번 더 읽어보면 완벽 💪";
+  if (r >= 0.5) return "좋아요! 해설을 꼼꼼히 읽고 한 번 더 도전하면 훨씬 좋아질 거예요 🌱";
+  return "도전한 것만으로도 멋져요! 아래 해설을 천천히 읽고 다시 한 번 풀어보자 😊";
+}
+
+function showResult() {
+  document.getElementById("quiz-card").classList.add("hidden");
+  document.getElementById("result-card").classList.remove("hidden");
+  document.getElementById("score-line").textContent = correctCount + " / " + QUESTIONS.length;
+  document.getElementById("cheer-line").innerHTML = cheerMessage() + "<br>결과를 <b>복사해서 지나티처에게 카톡으로 꼭</b> 보내주세요!";
+
+  var expBox = document.getElementById("explanations");
+  QUESTIONS.forEach(function (q, i) {
+    var log = answersLog[i];
+    var d = document.createElement("div");
+    d.className = "exp" + (log.ok ? "" : " wrong");
+    d.innerHTML = '<span class="head">Q' + (i + 1) + ". " + (log.ok ? "정답! ✓" : "다시 보기 (내 답: " + log.chosen + " → 정답: " + q.answer + ")") + "</span><br>" + q.exp;
+    expBox.appendChild(d);
+  });
+
+  if (!_engfitSent) {
+    _engfitSent = true;
+    engfitSubmit({
+      quizId: "clinic-chajungmin-0724",
+      quizTitle: "차정민 오답 클리닉 7/24 (A Peaceful Lake)",
+      student: studentName,
+      score: correctCount,
+      total: QUESTIONS.length,
+      wrong: wrongNumbers,
+      durationSec: Math.round((Date.now() - startTime) / 1000),
+      detail: answersLog
+    });
+  }
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+document.getElementById("kakao-btn").addEventListener("click", function () {
+  var mins = Math.round((Date.now() - startTime) / 1000 / 60);
+  var msg = "[영핏 오답 클리닉 결과]\n퀴즈: A Peaceful Lake 클리닉 (7/24)\n학생: " + studentName +
+            "\n점수: " + correctCount + "/" + QUESTIONS.length +
+            "\n틀린 문항: " + (wrongNumbers.length ? wrongNumbers.join(", ") : "없음") +
+            "\n풀이 시간: 약 " + mins + "분";
+  navigator.clipboard.writeText(msg).then(function () {
+    document.getElementById("kakao-btn").textContent = "복사 완료! 카톡에 붙여넣기 하세요 ✓";
+  }).catch(function () {
+    prompt("아래 내용을 길게 눌러 복사하세요", msg);
+  });
+});
+</script>
+</body>
+</html>
